@@ -1,6 +1,18 @@
 import React from 'react';
+import { useCart } from '../contexts/CartContext.jsx';
 
 const ProductDetailPage = () => {
+  const { addToCart } = useCart();
+
+  const product = {
+    id: 101,
+    name: 'UltraVision Smartphone 5G - 256GB Midnight Black',
+    price: '$899.00',
+    variant: 'Midnight Black',
+    image:
+      'https://lh3.googleusercontent.com/aida-public/AB6AXuCnT2DqsGv4lfZBKwJt7NZaAKEU9oeMVFPBcrXdkiraXaQkHgjMgV-gCTpVB_1st3q0-aOjCGY2Nv_4QZZdwx-_MNiC3SJ6vN286XRZopC-LFiYAxQTpHQILRbg-tLiyq_RFoK2y8CsS9dE4KqYHMO5DNJqvtjbzOTom5r7QYBEODvmHd_I2rQXXXIlTXOKJXHh06C-tPv0cYkiwTMAdvHA0mmqLfGkxe1Q760R58iN23Lfp-drdA68D_Fqa4NwOqpciYt8nApDuhQp',
+  };
+
   return (
     <div className="bg-background-light text-body-text transition-colors duration-200">
       {/* Top Navigation Bar */}
@@ -121,7 +133,11 @@ const ProductDetailPage = () => {
             </div>
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row gap-3">
-                <button className="flex-1 border border-primary text-primary bg-[#ffeeea] font-bold py-3.5 rounded-sm flex items-center justify-center gap-2 transition-all hover:bg-primary/10">
+                <button
+                  onClick={() => addToCart(product)}
+                  className="flex-1 border border-primary text-primary bg-[#ffeeea] font-bold py-3.5 rounded-sm flex items-center justify-center gap-2 transition-all hover:bg-primary/10"
+                  type="button"
+                >
                   <span className="material-symbols-outlined">add_shopping_cart</span>
                   Add to Cart
                 </button>

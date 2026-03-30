@@ -7,6 +7,8 @@ import ForgotPasswordPage from '../pages/ForgotPasswordPage';
 import ChangePasswordPage from '../pages/ChangePasswordPage';
 import ProductsPage from '../pages/ProductsPage';
 import ProductDetailPage from '../pages/ProductDetailPage';
+import CartPage from '../pages/CartPage';
+import ProfilePage from '../pages/ProfilePage';
 import { useAuth } from '../contexts/AuthContext';
 
 const ProtectedRoute = ({ children }) => {
@@ -24,6 +26,8 @@ const AppRoutes = () => {
       <Route path="/change-password" element={<ChangePasswordPage />} />
       <Route path="/products" element={<ProductsPage />} />
       <Route path="/product/:id" element={<ProductDetailPage />} />
+      <Route path="/cart" element={<CartPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

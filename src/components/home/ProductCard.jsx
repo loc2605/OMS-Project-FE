@@ -1,14 +1,21 @@
 import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { useCart } from '../../contexts/CartContext.jsx';
 import { useNavigate } from 'react-router-dom';
 
 const ProductCard = ({ product, isSkeleton = false }) => {
   const { isAuthenticated } = useAuth();
+  const { addToCart } = useCart();
   const navigate = useNavigate();
 
   const handleCardClick = () => {
     navigate(`/product/${product.id}`);
   };
+
+  const handleAddToCart = () => {
+    addToCart(product);
+  };
+
   if (isSkeleton) {
     return (
       <div className="bg-card-white rounded soft-shadow overflow-hidden flex flex-col">

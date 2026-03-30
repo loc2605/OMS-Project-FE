@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import { useCart } from '../../contexts/CartContext.jsx';
 
 const Header = () => {
   const { isAuthenticated, logout } = useAuth();
+  const { cartCount } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -85,10 +87,14 @@ const Header = () => {
           <div className="h-6 w-px bg-black/5"></div>
 
           <div className="flex items-center gap-3">
-            <button className="relative p-2 text-heading hover:text-primary transition-colors">
+            <button
+              onClick={() => navigate('/cart')}
+              type="button"
+              className="relative p-2 text-heading hover:text-primary transition-colors"
+            >
               <span className="material-symbols-outlined">shopping_cart</span>
               <span className="absolute top-0 right-0 size-4 bg-primary text-white text-[9px] font-bold rounded-full flex items-center justify-center border border-white">
-                3
+                {cartCount}
               </span>
             </button>
 
@@ -106,8 +112,19 @@ const Header = () => {
                 {openMenu && (
                   <div className="absolute right-0 mt-2 w-40 bg-white border border-black/10 rounded-lg shadow-lg py-2">
                     <button
+                      onClick={() => {
+                        setOpenMenu(false);
+                        navigate('/profile');
+                      }}
+                      className="w-full text-left px-4 py-2 text-sm text-heading hover:bg-gray-100"
+                      type="button"
+                    >
+                      Profile
+                    </button>
+                    <button
                       onClick={handleLogout}
                       className="w-full text-left px-4 py-2 text-sm text-heading hover:bg-gray-100"
+                      type="button"
                     >
                       Logout
                     </button>
