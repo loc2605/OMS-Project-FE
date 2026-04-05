@@ -8,6 +8,8 @@ import ChangePasswordPage from '../pages/ChangePasswordPage';
 import ProductsPage from '../pages/ProductsPage';
 import ProductDetailPage from '../pages/ProductDetailPage';
 import CartPage from '../pages/CartPage';
+import CheckoutPage from '../pages/CheckoutPage';
+import OrderTrackingPage from '../pages/OrderTrackingPage';
 import ProfilePage from '../pages/ProfilePage';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -27,6 +29,8 @@ const AppRoutes = () => {
       <Route path="/products" element={<ProductsPage />} />
       <Route path="/product/:id" element={<ProductDetailPage />} />
       <Route path="/cart" element={<CartPage />} />
+      <Route path="/checkout" element={<CheckoutPage />} />
+      <Route path="/order/:orderId" element={<OrderTrackingPage />} />
       <Route path="/profile" element={<ProfilePage />} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>

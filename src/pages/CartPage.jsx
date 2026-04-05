@@ -174,7 +174,10 @@ const CartPage = () => {
                   </div>
                   <p className="text-[10px] text-body-text mt-2 text-right italic">GST included where applicable</p>
                 </div>
-                <button className="w-full bg-primary text-white py-4 rounded-md font-bold text-lg hover:brightness-110 active:scale-[0.98] transition-all shadow-md shadow-primary/20 flex items-center justify-center gap-3">
+                <button
+                  onClick={() => navigate('/checkout')}
+                  className="w-full bg-primary text-white py-4 rounded-md font-bold text-lg hover:brightness-110 active:scale-[0.98] transition-all shadow-md shadow-primary/20 flex items-center justify-center gap-3"
+                >
                   <span>Proceed to Checkout</span>
                   <span className="material-symbols-outlined">arrow_forward</span>
                 </button>

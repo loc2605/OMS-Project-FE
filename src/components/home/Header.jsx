@@ -76,6 +76,15 @@ const Header = () => {
               Products
             </Link>
 
+            <Link
+              className={`text-sm font-medium hover:text-primary transition-colors ${
+                location.pathname.startsWith('/order') ? 'text-primary' : 'text-heading'
+              }`}
+              to="/order/99281"
+            >
+              My Orders
+            </Link>
+
             <a className="text-sm font-medium text-heading hover:text-primary transition-colors" href="#">
               Flash Sale
             </a>
