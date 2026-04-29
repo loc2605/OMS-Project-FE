@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import authApi from '../../api/authApi';
 
 const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -11,13 +12,31 @@ const RegisterForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simple validation
     if (password === confirmPassword && fullName && email && password) {
-      // Assume registration success, navigate to home
-      const from = location.state?.from || '/';
-      navigate(from, { replace: true });
+      try {
+        const payload = {
+          username: email.split('@')[0],
+          password,
+          confirmPassword,
+          email,
+          fullName,
+          phone
+        };
+        const response = await authApi.register(payload);
+        if (response.success) {
+          navigate('/login');
+        } else {
+          alert(response.message || 'Registration failed');
+        }
+      } catch (error) {
+        alert(error.message || 'Registration failed');
+      }
+    } else if (password !== confirmPassword) {
+      alert("Passwords do not match");
+    } else {
+      alert("Please fill in all required fields");
     }
   };
 

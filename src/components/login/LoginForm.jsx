@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import SocialLoginButtons from './SocialLoginButtons';
 import { useAuth } from '../../contexts/AuthContext';
+import authApi from '../../api/authApi';
 
 const LoginForm = () => {
   const [email, setEmail] = useState('customer@example.com');
@@ -12,13 +13,24 @@ const LoginForm = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
     if (email && password) {
-      login();
-      const from = location.state?.from || '/';
-      navigate(from, { replace: true });
+      try {
+        setPasswordError('');
+        const response = await authApi.login({ username: email, password });
+        if (response.success) {
+          login(response.result, response.result.token);
+          const from = location.state?.from || '/';
+          navigate(from, { replace: true });
+        } else {
+          setPasswordError(response.message || 'Login failed');
+        }
+      } catch (error) {
+        setPasswordError(error.message || 'Invalid credentials');
+      }
+    } else {
+      setPasswordError('Please fill in both fields');
     }
   };
 
