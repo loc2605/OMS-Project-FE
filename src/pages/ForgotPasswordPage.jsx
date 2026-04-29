@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import Header from '../components/home/Header';
 
 const ForgotPasswordPage = () => {
   const navigate = useNavigate();
@@ -47,23 +48,7 @@ const ForgotPasswordPage = () => {
 
   return (
     <div className="bg-background-light dark:bg-background-dark text-[#181411] dark:text-white min-h-screen flex flex-col font-display">
-      <header className="flex items-center justify-between whitespace-nowrap border-b border-solid border-[#e6dfdb] dark:border-[#3d2c20] bg-white dark:bg-background-dark px-10 py-3 sticky top-0 z-50">
-        <div className="flex items-center gap-4 text-[#181411] dark:text-white">
-          <div className="size-6 text-primary">
-            <span className="material-symbols-outlined text-3xl">shield_person</span>
-          </div>
-          <h2 className="text-lg font-bold leading-tight tracking-[-0.015em]">Security Center</h2>
-        </div>
-        <div className="flex flex-1 justify-end gap-8 items-center">
-          <div className="hidden md:flex items-center gap-9">
-            <a className="text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Help</a>
-            <a className="text-sm font-medium leading-normal hover:text-primary transition-colors" href="#">Support</a>
-          </div>
-          <button className="flex min-w-[84px] cursor-pointer items-center justify-center rounded-lg h-10 px-4 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] hover:bg-opacity-90 transition-all">
-            <Link to="/login">Sign In</Link>
-          </button>
-        </div>
-      </header>
+      <Header />
 
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-12">
         <div className="w-full max-w-[560px] space-y-8">
@@ -201,7 +186,7 @@ const ForgotPasswordPage = () => {
       </main>
 
       <footer className="mt-auto py-8 border-t border-[#e6dfdb] dark:border-[#3d2c20] bg-white dark:bg-background-dark text-center">
-        <p className="text-sm text-[#8a7260]">© 2024 Secure Flow Systems. All rights reserved.</p>
+        <p className="text-sm text-[#8a7260]">© 2024 ShopModern. All rights reserved.</p>
         <div className="mt-2 flex justify-center gap-4 text-xs font-semibold text-[#8a7260]">
           <a className="hover:text-primary" href="#">Privacy Policy</a>
           <a className="hover:text-primary" href="#">Terms of Service</a>

@@ -1,5 +1,6 @@
 import React from 'react';
 import { useCart } from '../contexts/CartContext.jsx';
+import Header from '../components/home/Header';
 
 const ProductDetailPage = () => {
   const { addToCart } = useCart();
@@ -16,43 +17,7 @@ const ProductDetailPage = () => {
   return (
     <div className="bg-background-light text-body-text transition-colors duration-200">
       {/* Top Navigation Bar */}
-      <header className="sticky top-0 z-50 bg-white border-b border-[#ececec] px-4 md:px-10 py-3 shadow-sm">
-        <div className="max-w-[1200px] mx-auto flex items-center justify-between gap-8">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-2 text-primary">
-              <div className="size-8">
-                <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"></path>
-                </svg>
-              </div>
-              <h2 className="text-primary text-xl font-extrabold leading-tight tracking-tight">ShopEase</h2>
-            </div>
-            <div className="hidden lg:flex items-center gap-6">
-              <a className="text-heading-text text-sm font-semibold hover:text-primary transition-colors" href="#">Flash Deals</a>
-              <a className="text-heading-text text-sm font-semibold hover:text-primary transition-colors" href="#">Trending</a>
-              <a className="text-heading-text text-sm font-semibold hover:text-primary transition-colors" href="#">New Arrivals</a>
-            </div>
-          </div>
-          <div className="flex-1 max-w-md hidden md:block">
-            <div className="relative">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
-              <input className="w-full bg-[#f5f5f5] border border-transparent rounded py-2 pl-10 pr-4 text-sm focus:ring-1 focus:ring-primary focus:bg-white focus:border-primary" placeholder="Search for products, brands and more"/>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="p-2 hover:bg-gray-100 rounded-full relative">
-              <span className="material-symbols-outlined text-heading-text">shopping_cart</span>
-              <span className="absolute top-1 right-1 bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">3</span>
-            </button>
-            <button className="p-2 hover:bg-gray-100 rounded-full">
-              <span className="material-symbols-outlined text-heading-text">notifications</span>
-            </button>
-            <button className="bg-primary hover:bg-primary/90 text-white font-bold py-2 px-6 rounded text-sm transition-all">
-              Login
-            </button>
-          </div>
-        </div>
-      </header>
+      <Header />
       <main className="max-w-[1200px] mx-auto px-2 md:px-4 py-4 space-y-4">
         {/* Breadcrumbs */}
         <div className="flex flex-wrap gap-2 items-center text-sm mb-2 text-gray-500">
@@ -249,15 +214,15 @@ const ProductDetailPage = () => {
                     <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"></path>
                   </svg>
                 </div>
-                <h2 className="text-heading-text text-lg font-bold leading-tight">ShopEase</h2>
+                <h2 className="text-heading-text text-lg font-bold leading-tight">ShopModern</h2>
               </div>
-              <p className="text-xs text-gray-500 leading-relaxed">ShopEase is a leading global e-commerce platform dedicated to providing quality tech gadgets and accessories at competitive prices.</p>
+              <p className="text-xs text-gray-500 leading-relaxed">ShopModern is a leading global e-commerce platform dedicated to providing quality tech gadgets and accessories at competitive prices.</p>
             </div>
             <div>
               <h4 className="font-bold text-sm mb-4 uppercase tracking-wider">Customer Service</h4>
               <ul className="text-xs text-gray-500 space-y-2">
                 <li><a className="hover:text-primary" href="#">Help Centre</a></li>
-                <li><a className="hover:text-primary" href="#">ShopEase Reward</a></li>
+                <li><a className="hover:text-primary" href="#">ShopModern Reward</a></li>
                 <li><a className="hover:text-primary" href="#">Shipping &amp; Delivery</a></li>
                 <li><a className="hover:text-primary" href="#">Return &amp; Refund</a></li>
               </ul>
@@ -298,7 +263,7 @@ const ProductDetailPage = () => {
             </div>
           </div>
           <div className="border-t border-gray-100 mt-10 pt-6 text-center text-[11px] text-gray-400">
-            © 2026 ShopEase. All Rights Reserved.
+            © 2026 ShopModern. All Rights Reserved.
           </div>
         </div>
       </footer>

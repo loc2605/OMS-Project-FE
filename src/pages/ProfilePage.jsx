@@ -1,40 +1,13 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import Header from '../components/home/Header';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
 
   return (
     <div className="bg-background text-on-surface-variant min-h-screen">
-      <nav className="bg-white border-b border-gray-100 sticky top-0 z-50">
-        <div className="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
-          <div className="text-2xl font-extrabold text-orange-600 tracking-tight">Amber Hearth</div>
-          <div className="hidden md:flex items-center gap-8">
-            <button type="button" onClick={() => navigate('/')} className="text-[#666666] font-medium hover:text-orange-500 transition-colors">
-              Home
-            </button>
-            <button type="button" onClick={() => navigate('/products')} className="text-[#666666] font-medium hover:text-orange-500 transition-colors">
-              Shop
-            </button>
-            <button type="button" className="text-[#666666] font-medium hover:text-orange-500 transition-colors">
-              Offers
-            </button>
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="p-2 rounded-full hover:bg-gray-50 transition-all" type="button">
-              <span className="material-symbols-outlined text-[#666666]">shopping_cart</span>
-            </button>
-            <button className="p-2 rounded-full hover:bg-gray-50 transition-all" type="button">
-              <span className="material-symbols-outlined text-[#666666]">notifications</span>
-            </button>
-            <img
-              alt="User profile avatar"
-              className="w-8 h-8 rounded-full border border-gray-100 object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBffIh3P0KwlefUA7oi4YguNUjaf301IpXyeyVA_laVisFbBG9FWqTqM59d2S2DFd_vuhclOIA1oabYPDUOT3dAU8H-30TelLPWldGhbEUhY4_p3cqKhojkwmnPyBmwqecXTlvYZm9hQbbE-prdgL5G9bx6_cKeQeeHG8frz6HFJ8wYwBd7p_JUmz0T7ySrcIg-Fdxh4hu-dGlxgQldNy93J0kW7RWUXAtLy3En8kqeovhk-5L7ylGVDVtjrRnm4tpfOTsC1tRQMbRg"
-            />
-          </div>
-        </div>
-      </nav>
+      <Header />
 
       <main className="max-w-7xl mx-auto px-8 py-8 flex flex-col md:flex-row gap-8">
         <aside className="md:w-60 flex-shrink-0">

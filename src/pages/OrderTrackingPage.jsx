@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import Header from '../components/home/Header';
 
 const OrderTrackingPage = () => {
   const { orderId } = useParams();
@@ -7,34 +8,7 @@ const OrderTrackingPage = () => {
 
   return (
     <div className="bg-background-light font-display text-body-text min-h-screen">
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#e6dfdb] px-4 lg:px-40 py-4">
-        <div className="flex items-center justify-between whitespace-nowrap max-w-[1200px] mx-auto">
-          <div className="flex items-center gap-4 text-heading-text">
-            <button
-              type="button"
-              onClick={() => navigate('/')}
-              className="flex items-center gap-3 text-primary"
-            >
-              <div className="size-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                <span className="material-symbols-outlined">shopping_basket</span>
-              </div>
-              <h2 className="text-xl font-bold tracking-tight">ShopEase</h2>
-            </button>
-          </div>
-
-          <div className="flex items-center gap-4 text-sm text-body-text">
-            <Link className="text-body-text hover:text-primary transition-colors" to="/">
-              Home
-            </Link>
-            <span className="text-[#8a7260]">/</span>
-            <Link className="text-body-text hover:text-primary transition-colors" to="/profile">
-              Account
-            </Link>
-            <span className="text-[#8a7260]">/</span>
-            <span className="text-primary font-bold">Order #{orderId || '99281'}</span>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       <main className="layout-container flex h-full grow flex-col px-4 md:px-20 lg:px-40 py-10">
         <div className="max-w-[1000px] mx-auto w-full flex flex-col gap-8">
@@ -242,7 +216,7 @@ const OrderTrackingPage = () => {
 
       <footer className="mt-20 py-12 px-4 md:px-20 lg:px-40 bg-white border-t border-gray-100 text-center shadow-sm">
         <div className="max-w-[1200px] mx-auto">
-          <p className="text-body text-sm font-semibold">© 2023 ShopEase E-commerce Inc. All rights reserved.</p>
+          <p className="text-body text-sm font-semibold">© 2023 ShopModern E-commerce Inc. All rights reserved.</p>
           <div className="flex justify-center gap-10 mt-6">
             <a className="text-xs text-body font-bold hover:text-primary transition-colors uppercase tracking-widest" href="#">
               Privacy Policy
