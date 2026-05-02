@@ -11,7 +11,7 @@ const MarketingBanner = () => {
               <path d="M6 6H42L36 24L42 42H6L12 24L6 6Z" fill="currentColor"></path>
             </svg>
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">ShopModern</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-[#181411]">Shop<span className="text-white">Modern</span></h1>
         </div>
         <div className="rounded-2xl overflow-hidden shadow-2xl bg-white/10 backdrop-blur-sm border border-white/20">
           <div

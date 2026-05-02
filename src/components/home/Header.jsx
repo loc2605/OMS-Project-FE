@@ -48,7 +48,7 @@ const Header = ({ onSearch }) => {
             <div className="size-9 bg-primary rounded flex items-center justify-center text-white">
               <span className="material-symbols-outlined text-xl">shopping_basket</span>
             </div>
-            <h2 className="text-xl font-bold tracking-tight text-primary">ShopModern</h2>
+            <h2 className="text-xl font-bold tracking-tight text-[#181411]">Shop<span className="text-primary">Modern</span></h2>
           </div>
 
           <div className="flex-1 max-w-2xl">

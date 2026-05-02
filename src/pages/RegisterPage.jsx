@@ -17,7 +17,7 @@ const RegisterPage = () => {
                     <path d="M6 6H42L36 24L42 42H6L12 24L6 6Z" fill="currentColor"></path>
                   </svg>
                 </div>
-                <h2 className="text-xl font-bold tracking-tight">ShopModern</h2>
+                <h2 className="text-xl font-bold tracking-tight text-[#181411]">Shop<span className="text-primary">Modern</span></h2>
               </div>
               <div className="mb-10">
                 <h1 className="text-3xl font-black text-gray-900 dark:text-white mb-2">Create Your Account</h1>

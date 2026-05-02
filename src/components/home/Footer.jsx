@@ -9,7 +9,7 @@ const Footer = () => {
             <div className="size-7 bg-primary rounded flex items-center justify-center text-white">
               <span className="material-symbols-outlined text-base">shopping_basket</span>
             </div>
-            <h2 className="text-base font-bold text-primary">ShopModern</h2>
+            <h2 className="text-base font-bold text-[#181411]">Shop<span className="text-primary">Modern</span></h2>
           </div>
           <p className="text-xs leading-relaxed text-body-text">The world's leading microservices-driven e-commerce platform for a seamless shopping experience.</p>
         </div>
