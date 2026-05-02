@@ -39,7 +39,7 @@ const ProductDetailPage = () => {
     return (
       <div className="bg-background-light min-h-screen">
         <Header />
-        <div className="max-w-[1200px] mx-auto px-4 py-20 text-center">
+        <div className="max-w-full mx-auto px-4 md:px-8 lg:px-12 py-20 text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-gray-500">Loading product details...</p>
         </div>
@@ -51,7 +51,7 @@ const ProductDetailPage = () => {
     return (
       <div className="bg-background-light min-h-screen">
         <Header />
-        <div className="max-w-[1200px] mx-auto px-4 py-20 text-center">
+        <div className="max-w-full mx-auto px-4 md:px-8 lg:px-12 py-20 text-center">
           <p className="text-gray-500">Product not found.</p>
         </div>
       </div>
@@ -62,7 +62,7 @@ const ProductDetailPage = () => {
     <div className="bg-background-light text-body-text transition-colors duration-200">
       {/* Top Navigation Bar */}
       <Header />
-      <main className="max-w-[1200px] mx-auto px-2 md:px-4 py-4 space-y-4">
+      <main className="max-w-full mx-auto px-4 md:px-8 lg:px-12 py-4 space-y-4">
         {/* Breadcrumbs */}
         <div className="flex flex-wrap gap-2 items-center text-sm mb-2 text-gray-500">
           <a className="hover:text-primary" href="#">Home</a>
@@ -244,7 +244,7 @@ const ProductDetailPage = () => {
       </main>
       {/* Footer */}
       <footer className="bg-card-white border-t border-gray-200 mt-12 py-10">
-        <div className="max-w-[1200px] mx-auto px-4">
+        <div className="max-w-full mx-auto px-4 md:px-8 lg:px-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="space-y-4">
               <div className="flex items-center gap-2 text-primary">

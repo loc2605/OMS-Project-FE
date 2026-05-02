@@ -14,7 +14,7 @@ const Sidebar = ({ activeCategory, onCategoryChange }) => {
               <button 
                 key={cat}
                 onClick={() => onCategoryChange(activeCategory === cat ? '' : cat)}
-                className={`w-full text-left px-2 py-2 text-sm transition-colors rounded ${
+                className={`w-full text-left px-2 py-2 text-base transition-colors rounded ${
                   activeCategory === cat ? 'text-primary bg-black/5 font-semibold' : 'text-heading hover:text-primary'
                 }`}
               >
@@ -28,11 +28,11 @@ const Sidebar = ({ activeCategory, onCategoryChange }) => {
           <h3 className="text-sm font-bold text-heading uppercase">Price Range</h3>
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <input className="w-full text-xs p-2 rounded border border-black/10 focus:ring-1 focus:ring-primary focus:border-primary" placeholder="Min" type="text" />
+              <input className="w-full text-sm p-2 rounded border border-black/10 focus:ring-1 focus:ring-primary focus:border-primary" placeholder="Min" type="text" />
               <span className="text-gray-400">-</span>
-              <input className="w-full text-xs p-2 rounded border border-black/10 focus:ring-1 focus:ring-primary focus:border-primary" placeholder="Max" type="text" />
+              <input className="w-full text-sm p-2 rounded border border-black/10 focus:ring-1 focus:ring-primary focus:border-primary" placeholder="Max" type="text" />
             </div>
-            <button className="w-full py-2 bg-primary text-white text-xs font-bold rounded uppercase mt-2">Apply</button>
+            <button className="w-full py-2 bg-primary text-white text-sm font-bold rounded uppercase mt-2">Apply</button>
           </div>
         </div>
       </div>

@@ -50,7 +50,7 @@ const ProfilePage = () => {
     <div className="bg-background text-on-surface-variant min-h-screen">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-8 py-8 flex flex-col md:flex-row gap-8">
+      <main className="max-w-full mx-auto px-4 md:px-8 lg:px-12 py-8 flex flex-col md:flex-row gap-8">
         <aside className="md:w-60 flex-shrink-0">
           <div className="space-y-6">
             <div className="flex items-center gap-3 px-2 mb-8">

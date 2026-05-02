@@ -42,7 +42,7 @@ const Header = ({ onSearch }) => {
 
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-black/5">
-      <div className="max-w-[1200px] mx-auto px-4 py-3 flex items-center justify-between gap-8">
+      <div className="max-w-full mx-auto px-4 md:px-8 lg:px-12 py-3 flex items-center justify-between gap-8">
         <div className="flex items-center gap-8 flex-1">
           <div className="flex items-center gap-2 shrink-0">
             <div className="size-9 bg-primary rounded flex items-center justify-center text-white">

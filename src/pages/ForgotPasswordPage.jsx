@@ -186,7 +186,7 @@ const ForgotPasswordPage = () => {
       </main>
 
       <footer className="mt-auto py-8 border-t border-[#e6dfdb] dark:border-[#3d2c20] bg-white dark:bg-background-dark text-center">
-        <p className="text-sm text-[#8a7260]">© 2024 ShopModern. All rights reserved.</p>
+        <p className="text-sm text-[#8a7260]">© 2026 ShopModern. All rights reserved.</p>
         <div className="mt-2 flex justify-center gap-4 text-xs font-semibold text-[#8a7260]">
           <a className="hover:text-primary" href="#">Privacy Policy</a>
           <a className="hover:text-primary" href="#">Terms of Service</a>

@@ -42,7 +42,7 @@ const OrderTrackingPage = () => {
     return (
       <div className="bg-background-light min-h-screen">
         <Header />
-        <div className="max-w-[1200px] mx-auto px-4 py-20 text-center">
+        <div className="max-w-full mx-auto px-4 md:px-8 lg:px-12 py-20 text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
           <p className="mt-4 text-gray-500">Fetching order status...</p>
         </div>
@@ -66,8 +66,8 @@ const OrderTrackingPage = () => {
     <div className="bg-background-light font-display text-body-text min-h-screen">
       <Header />
 
-      <main className="layout-container flex h-full grow flex-col px-4 md:px-20 lg:px-40 py-10">
-        <div className="max-w-[1000px] mx-auto w-full flex flex-col gap-8">
+      <main className="layout-container flex h-full grow flex-col px-4 md:px-8 lg:px-12 py-10">
+        <div className="max-w-full mx-auto w-full flex flex-col gap-8">
           <div className="bg-white p-8 rounded-[16px] shadow-sm">
             <div className="flex flex-wrap justify-between items-center gap-6">
               <div className="flex flex-col gap-3">
@@ -271,9 +271,9 @@ const OrderTrackingPage = () => {
         </div>
       </main>
 
-      <footer className="mt-20 py-12 px-4 md:px-20 lg:px-40 bg-white border-t border-gray-100 text-center shadow-sm">
-        <div className="max-w-[1200px] mx-auto">
-          <p className="text-body text-sm font-semibold">© 2023 ShopModern E-commerce Inc. All rights reserved.</p>
+      <footer className="mt-20 py-12 px-4 md:px-8 lg:px-12 bg-white border-t border-gray-100 text-center shadow-sm">
+        <div className="max-w-full mx-auto">
+          <p className="text-body text-sm font-semibold">© 2026 ShopModern E-commerce Inc. All rights reserved.</p>
           <div className="flex justify-center gap-10 mt-6">
             <a className="text-xs text-body font-bold hover:text-primary transition-colors uppercase tracking-widest" href="#">
               Privacy Policy

@@ -11,7 +11,7 @@ const HomePage = () => {
   return (
     <div className="bg-background-light font-display text-body-text min-h-screen">
       <Header onSearch={(val) => setFilters(prev => ({ ...prev, search: val }))} />
-      <main className="max-w-[1200px] mx-auto px-4 py-4">
+      <main className="max-w-full mx-auto px-4 md:px-8 lg:px-12 py-4">
         <Banner />
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
           <Sidebar 

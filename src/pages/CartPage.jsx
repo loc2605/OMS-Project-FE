@@ -24,8 +24,8 @@ const CartPage = () => {
     <div className="bg-background-light font-display text-body-text min-h-screen">
       <Header />
 
-      <main className="flex-1 px-4 lg:px-40 pt-6 pb-10">
-        <div className="max-w-[1200px] mx-auto">
+      <main className="flex-1 px-4 md:px-8 lg:px-12 pt-6 pb-10">
+        <div className="max-w-full mx-auto px-4 md:px-8 lg:px-12">
           <nav className="flex flex-wrap gap-2 mb-6 text-sm text-body-text">
             <button onClick={() => navigate('/')} className="hover:text-primary transition-colors">
               Home
