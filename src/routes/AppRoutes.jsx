@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from '../pages/HomePage';
 import LoginPage from '../pages/LoginPage';
@@ -11,6 +11,7 @@ import CartPage from '../pages/CartPage';
 import CheckoutPage from '../pages/CheckoutPage';
 import OrderTrackingPage from '../pages/OrderTrackingPage';
 import ProfilePage from '../pages/ProfilePage';
+import MyOrdersPage from '../pages/MyOrdersPage';
 import { useAuth } from '../contexts/AuthContext';
 
 const ProtectedRoute = ({ children }) => {
@@ -32,6 +33,8 @@ const AppRoutes = () => {
       <Route path="/checkout" element={<CheckoutPage />} />
       <Route path="/order/:orderId" element={<OrderTrackingPage />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/orders" element={<ProtectedRoute><MyOrdersPage /></ProtectedRoute>} />
+      <Route path="/profile/orders" element={<ProtectedRoute><MyOrdersPage /></ProtectedRoute>} />
       <Route path="*" element={<Navigate to="/" />} />
     </Routes>
   );

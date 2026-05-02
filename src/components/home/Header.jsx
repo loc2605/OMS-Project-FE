@@ -3,14 +3,23 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext.jsx';
 
-const Header = () => {
+const Header = ({ onSearch }) => {
   const { isAuthenticated, logout } = useAuth();
   const { cartCount } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
 
   const [openMenu, setOpenMenu] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
   const menuRef = useRef(null);
+
+  const handleSearchSubmit = (e) => {
+    e?.preventDefault();
+    if (onSearch) {
+      onSearch(searchValue);
+      if (location.pathname !== '/') navigate('/');
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -43,16 +52,18 @@ const Header = () => {
           </div>
 
           <div className="flex-1 max-w-2xl">
-            <div className="relative flex items-center">
+            <form onSubmit={handleSearchSubmit} className="relative flex items-center">
               <input
                 className="w-full h-10 pl-4 pr-12 bg-[#F5F5F5] border border-black/5 rounded focus:ring-1 focus:ring-primary focus:border-primary text-sm placeholder:text-[#999]"
                 placeholder="Search for products, brands, and shops..."
                 type="text"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
               />
-              <button className="absolute right-1 top-1 bottom-1 px-4 bg-primary text-white rounded flex items-center justify-center">
+              <button type="submit" className="absolute right-1 top-1 bottom-1 px-4 bg-primary text-white rounded flex items-center justify-center">
                 <span className="material-symbols-outlined text-xl">search</span>
               </button>
-            </div>
+            </form>
           </div>
         </div>
 
@@ -78,9 +89,9 @@ const Header = () => {
 
             <Link
               className={`text-sm font-medium hover:text-primary transition-colors ${
-                location.pathname.startsWith('/order') ? 'text-primary' : 'text-heading'
+                location.pathname === '/orders' ? 'text-primary' : 'text-heading'
               }`}
-              to="/order/99281"
+              to="/orders"
             >
               My Orders
             </Link>

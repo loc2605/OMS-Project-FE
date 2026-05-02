@@ -1,18 +1,62 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext.jsx';
 import Header from '../components/home/Header';
+import productApi from '../api/productApi';
+import inventoryApi from '../api/inventoryApi';
 
 const ProductDetailPage = () => {
+  const { id } = useParams();
   const { addToCart } = useCart();
+  const [product, setProduct] = useState(null);
+  const [inventory, setInventory] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const product = {
-    id: 101,
-    name: 'UltraVision Smartphone 5G - 256GB Midnight Black',
-    price: '$899.00',
-    variant: 'Midnight Black',
-    image:
-      'https://lh3.googleusercontent.com/aida-public/AB6AXuCnT2DqsGv4lfZBKwJt7NZaAKEU9oeMVFPBcrXdkiraXaQkHgjMgV-gCTpVB_1st3q0-aOjCGY2Nv_4QZZdwx-_MNiC3SJ6vN286XRZopC-LFiYAxQTpHQILRbg-tLiyq_RFoK2y8CsS9dE4KqYHMO5DNJqvtjbzOTom5r7QYBEODvmHd_I2rQXXXIlTXOKJXHh06C-tPv0cYkiwTMAdvHA0mmqLfGkxe1Q760R58iN23Lfp-drdA68D_Fqa4NwOqpciYt8nApDuhQp',
-  };
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        const [productRes, inventoryRes] = await Promise.all([
+          productApi.get(id),
+          inventoryApi.checkStock(id)
+        ]);
+        if (productRes.success) {
+          setProduct(productRes.result);
+        }
+        if (inventoryRes.success) {
+          setInventory(inventoryRes.result);
+        }
+      } catch (error) {
+        console.error('Failed to fetch product detail', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (id) fetchProduct();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="bg-background-light min-h-screen">
+        <Header />
+        <div className="max-w-[1200px] mx-auto px-4 py-20 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-gray-500">Loading product details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="bg-background-light min-h-screen">
+        <Header />
+        <div className="max-w-[1200px] mx-auto px-4 py-20 text-center">
+          <p className="text-gray-500">Product not found.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-background-light text-body-text transition-colors duration-200">
@@ -27,7 +71,7 @@ const ProductDetailPage = () => {
           <span className="material-symbols-outlined text-[14px]">chevron_right</span>
           <a className="hover:text-primary" href="#">Smartphones</a>
           <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-          <span className="text-heading-text font-medium">UltraVision Smartphone 5G</span>
+          <span className="text-heading-text font-medium">{product.name}</span>
         </div>
         {/* Main Content Area */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
@@ -35,21 +79,14 @@ const ProductDetailPage = () => {
           <div className="lg:col-span-5 bg-card-white p-4 shadow-soft">
             <div className="space-y-4">
               <div className="overflow-hidden bg-white border border-gray-100 rounded">
-                <div className="aspect-square bg-center bg-no-repeat bg-cover" data-alt="Close up of a premium black smartphone" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCnT2DqsGv4lfZBKwJt7NZaAKEU9oeMVFPBcrXdkiraXaQkHgjMgV-gCTpVB_1st3q0-aOjCGY2Nv_4QZZdwx-_MNiC3SJ6vN286XRZopC-LFiYAxQTpHQILRbg-tLiyq_RFoK2y8CsS9dE4KqYHMO5DNJqvtjbzOTom5r7QYBEODvmHd_I2rQXXXIlTXOKJXHh06C-tPv0cYkiwTMAdvHA0mmqLfGkxe1Q760R58iN23Lfp-drdA68D_Fqa4NwOqpciYt8nApDuhQp")'}}></div>
+                <div className="aspect-square bg-center bg-no-repeat bg-cover" data-alt={product.name} style={{backgroundImage: `url("${product.imageUrl?.[0] || product.image}")`}}></div>
               </div>
               <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
-                <div className="min-w-[80px] aspect-square rounded border-2 border-primary cursor-pointer overflow-hidden">
-                  <div className="w-full h-full bg-center bg-cover" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDVwlZUHyxsEYqhdksCblzyyHu5NQif53GG9ynHcb2zqkjNFul5hCXMcfLKMN52YrkLjNtgl8T2nPFFyIlxU_nC9qQnxtShqSupP0H3OwWCZ3vAC0blVm6yQcGyMbVfgmdutyKos6QWn3kgV0Yazt6tvMbjnIu0-NWf5fIhL4SGDMKjl_V1J1KhZoPgo13pt9OabRKiRc34kuKchj6TJTSOsVQf84-BCblUfYINEBQaSnZ-TyEo-D17z1OeNzSBQGvCiOebCYMwTr6x")'}}></div>
-                </div>
-                <div className="min-w-[80px] aspect-square rounded border border-gray-200 cursor-pointer overflow-hidden hover:border-primary/50 transition-colors">
-                  <div className="w-full h-full bg-center bg-cover" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCkQOK4t66rTg2kJyTUlysZW_dpHbhxQXHaX_m_GmOZgLG3VOdbh0zxDG2s2KDc2txUCFLvxIySDcOA5Xk5nj3ZjYqNPXz6icwsaf2Dv6v6groKSdp1fHY-6VGSa0t6KpAPKOpyKxabtprU6UlfHSrPRkqhAA7YBcSaxi_au-Dse2qy7aC4I7DLpt0Wql42arf-rMhRRXCDSitCmT6lAal-wJTATb7FDq-oeJhwULHFKVIZz9UenioKtVlNvTL3c4ytQvHBIBNlNHBO")'}}></div>
-                </div>
-                <div className="min-w-[80px] aspect-square rounded border border-gray-200 cursor-pointer overflow-hidden hover:border-primary/50 transition-colors">
-                  <div className="w-full h-full bg-center bg-cover" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCG66jn6Op3YGwcBlwlg0ZUDF2omExKkuVfHDo1BgsKYDxXpASy5Z4qADynbP718rYDjCx6HUDnjZD3wFGMVg2417duK55w4dEaFG_xzOcCu9nByUryuPTnZAA0hcJwJKSaouS1jMftWpJBLw5zXK-UfmOjjsC5MEKggEKKQBrVk2lSrvzV3jDS0CvhLbEwLkHe01nrQIDcsOG8FUuaz1r7Yw7beh-dOPl0BEG9VxS5NW6d_qsifDb_SS-0BgUKRNH-O3X22t2Jx85a")'}}></div>
-                </div>
-                <div className="min-w-[80px] aspect-square rounded border border-gray-200 cursor-pointer overflow-hidden hover:border-primary/50 transition-colors">
-                  <div className="w-full h-full bg-center bg-cover" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuBB3xiiEBSXrGuHGvFrmM-mulo2u5Mh8YJZB4ikraiXQ7kt1uw3qXwRUwoh_ZozcJC5FH3reAKBjBnREpm9XmKB2xB0AdLI0OvUJH6XgeK5hklTr_NLCmNfOXP2BsTPAcwccgFjlf8I0mUb8lpc1EJoKAMsgGpTHMZN6Ss9aZMlpLHPyyKQQ2c7xyuTBD4T_Re9JjY90nHKOBjLaHn7AID366Ugn9dw0zFhfmH0WuGkt_kdxX-a4PzqNA6yAetNyAv7enQAnRhiZY5A")'}}></div>
-                </div>
+                {(product.imageUrl || [product.image]).map((img, index) => (
+                  <div key={index} className={`min-w-[80px] aspect-square rounded border-2 ${index === 0 ? 'border-primary' : 'border-gray-200'} cursor-pointer overflow-hidden`}>
+                    <div className="w-full h-full bg-center bg-cover" style={{backgroundImage: `url("${img}")`}}></div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
@@ -58,9 +95,9 @@ const ProductDetailPage = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <span className="pastel-badge-primary text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm">Top Seller</span>
-                <span className="text-gray-400 text-xs font-medium">SKU: UV-5G-256-MB</span>
+                <span className="text-gray-400 text-xs font-medium">SKU: {product.sku || 'N/A'}</span>
               </div>
-              <h1 className="text-2xl font-bold tracking-tight text-heading-text">UltraVision Smartphone 5G - 256GB Midnight Black</h1>
+              <h1 className="text-2xl font-bold tracking-tight text-heading-text">{product.name}</h1>
               <div className="flex items-center gap-4 text-sm">
                 <div className="flex items-center text-primary">
                   <span className="material-symbols-outlined text-[16px]">star</span>
@@ -78,23 +115,25 @@ const ProductDetailPage = () => {
             </div>
             <div className="p-5 bg-[#fafafa] rounded space-y-4">
               <div className="flex items-center gap-4">
-                <span className="text-gray-400 line-through text-sm">$1,199.00</span>
-                <span className="text-3xl font-bold text-primary">$899.00</span>
-                <span className="pastel-badge-primary text-[11px] font-bold px-1.5 py-0.5 rounded">25% OFF</span>
+                {product.oldPrice && <span className="text-gray-400 line-through text-sm">${product.oldPrice}</span>}
+                <span className="text-3xl font-bold text-primary">${product.price}</span>
+                {product.discount && <span className="pastel-badge-primary text-[11px] font-bold px-1.5 py-0.5 rounded">{product.discount}</span>}
               </div>
               {/* Inventory Urgency */}
-              <div className="space-y-1.5">
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-primary font-medium flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[14px]">local_fire_department</span>
-                    Hurry! Only 15 items left in stock
-                  </span>
-                  <span className="text-gray-500">85% Sold</span>
+              {inventory && (
+                <div className="space-y-1.5">
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-primary font-medium flex items-center gap-1">
+                      <span className="material-symbols-outlined text-[14px]">local_fire_department</span>
+                      Hurry! Only {inventory.availableQuantity} items left in stock
+                    </span>
+                    <span className="text-gray-500">{Math.round((inventory.reservedQuantity / inventory.totalQuantity) * 100) || 0}% Sold</span>
+                  </div>
+                  <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="h-full bg-primary" style={{ width: `${(inventory.reservedQuantity / inventory.totalQuantity) * 100}%` }}></div>
+                  </div>
                 </div>
-                <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                  <div className="w-[85%] h-full bg-primary"></div>
-                </div>
-              </div>
+              )}
             </div>
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row gap-3">
@@ -150,7 +189,7 @@ const ProductDetailPage = () => {
             <div className="p-6 space-y-8">
               <div className="prose prose-sm max-w-none text-body-text">
                 <p className="text-base leading-relaxed">
-                  Experience the future with the UltraVision Smartphone 5G. Engineered with a revolutionary 200MP camera system, a cinematic 144Hz AMOLED display, and the lightning-fast Snapdragon Elite processor.
+                  {product.description}
                 </p>
                 <h3 className="text-lg font-bold mt-8 mb-4">Highlights</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">

@@ -1,10 +1,66 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Header from '../components/home/Header';
+import orderApi from '../api/orderApi';
 
 const OrderTrackingPage = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
+  const [order, setOrder] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let interval;
+    const fetchOrder = async (isFirst = false) => {
+      try {
+        if (isFirst) setLoading(true);
+        const res = await orderApi.get(orderId);
+        if (res.success) {
+          setOrder(res.result);
+          // Stop polling if order is in a final state
+          if (['CONFIRMED', 'CANCELLED', 'SHIPPED', 'DELIVERED'].includes(res.result.status)) {
+            if (interval) clearInterval(interval);
+          }
+        }
+      } catch (e) {
+        console.error('Polling error:', e);
+        if (interval) clearInterval(interval);
+      } finally {
+        if (isFirst) setLoading(false);
+      }
+    };
+
+    fetchOrder(true);
+    interval = setInterval(() => fetchOrder(false), 5000);
+    
+    return () => {
+      if (interval) clearInterval(interval);
+    };
+  }, [orderId]);
+
+  if (loading) {
+    return (
+      <div className="bg-background-light min-h-screen">
+        <Header />
+        <div className="max-w-[1200px] mx-auto px-4 py-20 text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-gray-500">Fetching order status...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const getStatusDisplay = (status) => {
+    switch (status) {
+      case 'PAYMENT_PENDING': return { text: 'Payment Pending', color: 'bg-yellow-50 text-yellow-600 border-yellow-200' };
+      case 'CONFIRMED': return { text: 'Confirmed', color: 'bg-green-50 text-green-600 border-green-200' };
+      case 'SHIPPED': return { text: 'Shipped', color: 'bg-blue-50 text-blue-600 border-blue-200' };
+      case 'CANCELLED': return { text: 'Cancelled', color: 'bg-red-50 text-red-600 border-red-200' };
+      default: return { text: status, color: 'bg-gray-50 text-gray-600 border-gray-200' };
+    }
+  };
+
+  const statusInfo = getStatusDisplay(order?.status);
 
   return (
     <div className="bg-background-light font-display text-body-text min-h-screen">
@@ -16,14 +72,15 @@ const OrderTrackingPage = () => {
             <div className="flex flex-wrap justify-between items-center gap-6">
               <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-4">
-                  <h1 className="text-heading text-3xl font-extrabold leading-tight tracking-tight">In Delivery</h1>
-                  <span className="px-4 py-1.5 bg-orange-50 text-primary text-[10px] font-extrabold rounded-full uppercase tracking-widest border border-primary/10">
-                    Shipped
+                  <h1 className="text-heading text-3xl font-extrabold leading-tight tracking-tight">{statusInfo.text}</h1>
+                  <span className={`px-4 py-1.5 ${statusInfo.color} text-[10px] font-extrabold rounded-full uppercase tracking-widest border`}>
+                    {order?.status}
                   </span>
                 </div>
                 <p className="text-body text-sm font-medium">
-                  Order ID: <span className="text-heading font-bold">#{orderId || 'ORD-99281'}</span> • Placed on Oct 12, 2023
+                  Order ID: <span className="text-heading font-bold">#{orderId}</span>
                 </p>
+                <p className="text-sm text-gray-500 mt-1">{order?.message}</p>
               </div>
               <div className="flex gap-4">
                 <button className="flex items-center justify-center rounded-lg h-12 px-8 border border-gray-200 bg-white text-heading text-sm font-bold hover:bg-gray-50 transition-colors shadow-sm">

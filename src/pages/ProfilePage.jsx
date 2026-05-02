@@ -1,9 +1,50 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/home/Header';
+import profileApi from '../api/profileApi';
+import { useAuth } from '../contexts/AuthContext';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [profile, setProfile] = useState(null);
+  const [addresses, setAddresses] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [profileRes, addressRes] = await Promise.all([
+          profileApi.getProfile(),
+          profileApi.getAddresses()
+        ]);
+        if (profileRes.success) setProfile(profileRes.result);
+        if (addressRes.success) setAddresses(addressRes.result);
+      } catch (error) {
+        console.error('Failed to fetch profile data', error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleAddAddress = async () => {
+    const newAddress = {
+      street: "123 Le Loi",
+      ward: "Ben Nghe",
+      district: "Quan 1",
+      city: "Ho Chi Minh",
+      receiverName: profile?.fullname || user?.fullName || "Nguyen Van A",
+      receiverPhone: profile?.phone || "0901234567",
+      isDefault: addresses.length === 0
+    };
+    try {
+      const res = await profileApi.addAddress(newAddress);
+      if (res.success) {
+        setAddresses([...addresses, res.result]);
+      }
+    } catch (error) {
+      alert("Add address failed!");
+    }
+  };
 
   return (
     <div className="bg-background text-on-surface-variant min-h-screen">
@@ -19,7 +60,7 @@ const ProfilePage = () => {
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuDg7_5gUJrzkNWqNUmjcjBcdlwJuLrR2Sim5A8tlxl4D2KHtlqfhdh0At_BRsDSkRPgLa66CfXHOVX4UmF2VJNlVGFRbPv_YEx8jRtfO-q_DjE5cAPGfnbxMswJcWPoYY9W5VQ4_R-4A9Ht00kqMAwkosQcUUTfNBcEpUilZXxDtXNKT9aNiTz21jgWhUT-jm2-4AsS-r8Uzx3jnByj0Xjf63yVYi7mj9__L2Fms4GZe5wxQOrpqJUp_8gE2uSqVBOqx0KStdvo9F9q"
               />
               <div className="overflow-hidden">
-                <p className="text-[#333333] font-bold text-sm truncate">Alex Smith</p>
+                <p className="text-[#333333] font-bold text-sm truncate">{profile?.fullname || user?.fullName || 'User'}</p>
                 <button className="text-[#666666] text-xs flex items-center gap-1 hover:text-primary" type="button">
                   <span className="material-symbols-outlined text-[14px]">edit</span>
                   Edit Profile
@@ -51,7 +92,11 @@ const ProfilePage = () => {
                   </button>
                 </div>
               </div>
-              <button type="button" className="flex items-center gap-3 px-2 py-1 text-[#666666] hover:text-primary font-medium text-sm transition-colors">
+              <button 
+                type="button" 
+                onClick={() => navigate('/orders')}
+                className="flex items-center gap-3 px-2 py-1 text-[#666666] hover:text-primary font-medium text-sm transition-colors"
+              >
                 <span className="material-symbols-outlined text-[20px]">shopping_bag</span>
                 My Purchase
               </button>
@@ -74,21 +119,21 @@ const ProfilePage = () => {
                 <div className="grid grid-cols-1 gap-6 max-w-2xl">
                   <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <label className="md:w-32 text-sm text-[#666666] md:text-right">Username</label>
-                    <span className="text-sm text-[#333333]">alexsmith92</span>
+                    <span className="text-sm text-[#333333]">{user?.username || 'user'}</span>
                   </div>
                   <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <label className="md:w-32 text-sm text-[#666666] md:text-right">Name</label>
                     <input
                       className="flex-grow border border-gray-200 rounded-[8px] px-4 py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all"
                       type="text"
-                      value="Alex Smith"
+                      value={profile?.fullname || user?.fullName || ''}
                       readOnly
                     />
                   </div>
                   <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <label className="md:w-32 text-sm text-[#666666] md:text-right">Email</label>
                     <div className="flex-grow flex items-center justify-between">
-                      <span className="text-sm text-[#333333]">al********@example.com</span>
+                      <span className="text-sm text-[#333333]">{user?.email || 'email@example.com'}</span>
                       <button className="text-blue-500 text-sm hover:underline" type="button">
                         Change
                       </button>
@@ -97,7 +142,7 @@ const ProfilePage = () => {
                   <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <label className="md:w-32 text-sm text-[#666666] md:text-right">Phone Number</label>
                     <div className="flex-grow flex items-center justify-between">
-                      <span className="text-sm text-[#333333]">*******34</span>
+                      <span className="text-sm text-[#333333]">{profile?.phone || 'Not set'}</span>
                       <button className="text-blue-500 text-sm hover:underline" type="button">
                         Change
                       </button>
@@ -107,15 +152,15 @@ const ProfilePage = () => {
                     <label className="md:w-32 text-sm text-[#666666] md:text-right">Gender</label>
                     <div className="flex gap-6">
                       <label className="flex items-center gap-2 cursor-pointer">
-                        <input className="w-4 h-4 text-primary border-gray-300 focus:ring-primary" name="gender" type="radio" defaultChecked />
+                        <input className="w-4 h-4 text-primary border-gray-300 focus:ring-primary" name="gender" type="radio" defaultChecked={profile?.gender === 'MALE'} />
                         <span className="text-sm text-[#333333]">Male</span>
                       </label>
                       <label className="flex items-center gap-2 cursor-pointer">
-                        <input className="w-4 h-4 text-primary border-gray-300 focus:ring-primary" name="gender" type="radio" />
+                        <input className="w-4 h-4 text-primary border-gray-300 focus:ring-primary" name="gender" type="radio" defaultChecked={profile?.gender === 'FEMALE'} />
                         <span className="text-sm text-[#333333]">Female</span>
                       </label>
                       <label className="flex items-center gap-2 cursor-pointer">
-                        <input className="w-4 h-4 text-primary border-gray-300 focus:ring-primary" name="gender" type="radio" />
+                        <input className="w-4 h-4 text-primary border-gray-300 focus:ring-primary" name="gender" type="radio" defaultChecked={profile?.gender === 'OTHER'} />
                         <span className="text-sm text-[#333333]">Other</span>
                       </label>
                     </div>
@@ -123,15 +168,7 @@ const ProfilePage = () => {
                   <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <label className="md:w-32 text-sm text-[#666666] md:text-right">Date of Birth</label>
                     <div className="flex-grow flex items-center gap-2">
-                      <select className="border border-gray-200 rounded-[8px] px-3 py-2 text-sm flex-1" defaultValue="15">
-                        <option>15</option>
-                      </select>
-                      <select className="border border-gray-200 rounded-[8px] px-3 py-2 text-sm flex-1" defaultValue="May">
-                        <option>May</option>
-                      </select>
-                      <select className="border border-gray-200 rounded-[8px] px-3 py-2 text-sm flex-1" defaultValue="1992">
-                        <option>1992</option>
-                      </select>
+                      <span className="text-sm text-[#333333]">{profile?.dateOfBirth || 'Not set'}</span>
                     </div>
                   </div>
                   <div className="flex flex-col md:flex-row md:items-center gap-4 mt-4">
@@ -170,57 +207,41 @@ const ProfilePage = () => {
                 <h2 className="text-lg font-bold text-[#333333]">My Addresses</h2>
                 <p className="text-[#666666] text-sm mt-1">Shipping locations for your orders</p>
               </div>
-              <button className="bg-primary text-white px-6 py-2.5 rounded-[8px] font-medium text-sm transition-all flex items-center gap-2 shadow-sm hover:opacity-90" type="button">
+              <button onClick={handleAddAddress} className="bg-primary text-white px-6 py-2.5 rounded-[8px] font-medium text-sm transition-all flex items-center gap-2 shadow-sm hover:opacity-90" type="button">
                 <span className="material-symbols-outlined text-[20px]">add</span>
-                Add New Address
+                Add Mock Address
               </button>
             </div>
             <div className="space-y-4">
-              <div className="py-6 border-b border-gray-100 flex flex-col md:flex-row justify-between gap-4">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-bold border-r border-gray-300 pr-3 text-[#333333]">Alex Smith</span>
-                    <span className="text-sm text-[#666666]">(+1) 555 000 1234</span>
+              {addresses.length === 0 ? (
+                <p className="text-[#666666] text-sm py-4">No addresses found.</p>
+              ) : (
+                addresses.map(addr => (
+                  <div key={addr.id} className="py-6 border-b border-gray-100 flex flex-col md:flex-row justify-between gap-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-bold border-r border-gray-300 pr-3 text-[#333333]">{addr.receiverName || 'User'}</span>
+                        <span className="text-sm text-[#666666]">{addr.receiverPhone || ''}</span>
+                      </div>
+                      <div className="text-sm text-[#666666]">
+                        {addr.street}, {addr.ward}, {addr.district}, {addr.city}
+                      </div>
+                      {addr.isDefault && (
+                        <span className="inline-block border border-primary text-primary text-[10px] px-1.5 py-0.5 rounded-[2px] font-bold mt-2">DEFAULT</span>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      <div className="flex items-center gap-3">
+                        <button className="text-blue-500 text-sm hover:underline" type="button">Edit</button>
+                        <button className="text-blue-500 text-sm hover:underline" type="button">Delete</button>
+                      </div>
+                      <button className="border border-gray-200 px-4 py-1.5 rounded-[8px] text-sm text-[#666666] disabled:opacity-50 disabled:cursor-not-allowed" type="button" disabled={addr.isDefault}>
+                        Set as Default
+                      </button>
+                    </div>
                   </div>
-                  <div className="text-sm text-[#666666]">
-                    123 Amber Lane, Hearth District, Building B, Suite 405
-                    <br />
-                    San Francisco, California, United States 94103
-                  </div>
-                  <span className="inline-block border border-primary text-primary text-[10px] px-1.5 py-0.5 rounded-[2px] font-bold mt-2">DEFAULT</span>
-                </div>
-                <div className="flex flex-col items-end gap-2">
-                  <div className="flex items-center gap-3">
-                    <button className="text-blue-500 text-sm hover:underline" type="button">Edit</button>
-                    <button className="text-blue-500 text-sm hover:underline" type="button">Delete</button>
-                  </div>
-                  <button className="border border-gray-200 px-4 py-1.5 rounded-[8px] text-sm text-[#666666] disabled:opacity-50 disabled:cursor-not-allowed" type="button" disabled>
-                    Set as Default
-                  </button>
-                </div>
-              </div>
-              <div className="py-6 flex flex-col md:flex-row justify-between gap-4">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-bold border-r border-gray-300 pr-3 text-[#333333]">Office - Amber Hearth HQ</span>
-                    <span className="text-sm text-[#666666]">(+1) 555 999 8888</span>
-                  </div>
-                  <div className="text-sm text-[#666666]">
-                    456 Innovation Way, Tech Park, Level 12, Office 1204
-                    <br />
-                    Palo Alto, California, United States 94301
-                  </div>
-                </div>
-                <div className="flex flex-col items-end gap-2">
-                  <div className="flex items-center gap-3">
-                    <button className="text-blue-500 text-sm hover:underline" type="button">Edit</button>
-                    <button className="text-blue-500 text-sm hover:underline" type="button">Delete</button>
-                  </div>
-                  <button className="border border-gray-200 px-4 py-1.5 rounded-[8px] text-sm text-[#666666] hover:bg-gray-50 transition-colors" type="button">
-                    Set as Default
-                  </button>
-                </div>
-              </div>
+                ))
+              )}
             </div>
           </section>
         </div>

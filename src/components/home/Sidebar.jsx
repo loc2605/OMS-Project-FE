@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Sidebar = () => {
+const Sidebar = ({ activeCategory, onCategoryChange }) => {
   return (
     <aside className="w-48 shrink-0 hidden md:block">
       <div className="sticky top-24 space-y-6">
@@ -10,21 +10,17 @@ const Sidebar = () => {
             Categories
           </h3>
           <div className="space-y-1">
-            <button className="w-full text-left px-2 py-2 text-primary text-sm font-semibold rounded hover:bg-black/5">
-              Electronics
-            </button>
-            <button className="w-full text-left px-2 py-2 text-heading text-sm hover:text-primary transition-colors">
-              Fashion
-            </button>
-            <button className="w-full text-left px-2 py-2 text-heading text-sm hover:text-primary transition-colors">
-              Home & Living
-            </button>
-            <button className="w-full text-left px-2 py-2 text-heading text-sm hover:text-primary transition-colors">
-              Beauty
-            </button>
-            <button className="w-full text-left px-2 py-2 text-heading text-sm hover:text-primary transition-colors">
-              Health
-            </button>
+            {['Electronics', 'Fashion', 'Home & Living', 'Beauty', 'Health'].map((cat) => (
+              <button 
+                key={cat}
+                onClick={() => onCategoryChange(activeCategory === cat ? '' : cat)}
+                className={`w-full text-left px-2 py-2 text-sm transition-colors rounded ${
+                  activeCategory === cat ? 'text-primary bg-black/5 font-semibold' : 'text-heading hover:text-primary'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
           </div>
         </div>
 

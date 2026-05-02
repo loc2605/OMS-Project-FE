@@ -71,7 +71,7 @@ const CartPage = () => {
                       {groupedByStore[storeName].map((item) => (
                         <div key={item.id} className="p-8 flex flex-col md:flex-row gap-8">
                           <div className="flex items-center gap-6">
-                            <div className="size-24 rounded-[6px] bg-cover bg-center border border-gray-100" style={{ backgroundImage: `url(${item.image})` }} />
+                            <div className="size-24 rounded-[6px] bg-cover bg-center border border-gray-100" style={{ backgroundImage: `url(${item.imageUrl?.[0] || item.image})` }} />
                           </div>
                           <div className="flex-1 flex flex-col justify-between">
                             <div>

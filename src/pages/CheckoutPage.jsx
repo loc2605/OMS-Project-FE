@@ -1,7 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext.jsx';
 import Header from '../components/home/Header';
+import { useAuth } from '../contexts/AuthContext';
+import orderApi from '../api/orderApi';
+import paymentApi from '../api/paymentApi';
+import profileApi from '../api/profileApi';
 
 const formatCurrency = (value) => {
   const amount = Number(String(value).replace(/[^0-9.-]+/g, ''));
@@ -22,11 +26,32 @@ const paymentOptions = [
 ];
 
 const CheckoutPage = () => {
-  const { cartItems, cartCount, cartTotal } = useCart();
+  const { cartItems, cartCount, cartTotal, clearCart } = useCart();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [selectedShipping, setSelectedShipping] = useState('standard');
   const [selectedPayment, setSelectedPayment] = useState('cod');
   const [voucherCode, setVoucherCode] = useState('');
+  
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchAddresses = async () => {
+      try {
+        const res = await profileApi.getAddresses();
+        if (res.success && res.result.length > 0) {
+          setAddresses(res.result);
+          const defaultAddr = res.result.find(a => a.isDefault) || res.result[0];
+          setSelectedAddress(defaultAddr);
+        }
+      } catch (e) {
+        console.error('Failed to fetch addresses', e);
+      }
+    };
+    fetchAddresses();
+  }, []);
 
   const shippingFee = useMemo(
     () => shippingOptions.find((option) => option.id === selectedShipping)?.price || 0,
@@ -40,13 +65,58 @@ const CheckoutPage = () => {
 
   const totalAmount = cartTotal + shippingFee - voucherDiscount;
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     if (cartItems.length === 0) {
-      alert('Your cart is empty. Add products before placing an order.');
+      alert('Your cart is empty.');
       return;
     }
-    alert('Order placed successfully! Thank you for shopping with ShopModern.');
-    navigate('/');
+    if (!selectedAddress) {
+      alert('Please select or add a shipping address.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const orderData = {
+        userId: user?.accountId,
+        orderItems: cartItems.map(item => ({
+          productId: item.id,
+          productName: item.name,
+          price: typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price,
+          quantity: item.quantity
+        })),
+        address: {
+          street: selectedAddress.street,
+          ward: selectedAddress.ward,
+          district: selectedAddress.district,
+          city: selectedAddress.city,
+          receiverName: selectedAddress.receiverName,
+          receiverPhone: selectedAddress.receiverPhone
+        }
+      };
+
+      const orderRes = await orderApi.create(orderData);
+      if (orderRes.success) {
+        const orderId = orderRes.result.orderId;
+        
+        if (selectedPayment === 'card' || selectedPayment === 'wallet') {
+          // Mock payment call
+          const payRes = await paymentApi.pay({ orderId, amount: totalAmount });
+          if (!payRes.success) {
+            alert('Order created but payment failed: ' + payRes.message);
+          }
+        }
+        
+        clearCart();
+        alert('Order placed successfully!');
+        navigate(`/order-tracking/${orderId}`);
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Failed to place order. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -91,31 +161,47 @@ const CheckoutPage = () => {
                   </div>
                   <h2 className="text-xl font-bold text-heading-text">1. Shipping Address</h2>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div>
-                    <label className="block mb-2 text-xs font-bold uppercase tracking-tight text-gray-500">Full Name</label>
-                    <input
-                      className="w-full rounded-xl border border-gray-200 bg-[#fafafa] focus:bg-white focus:border-primary focus:ring-0 h-11 px-4 text-sm transition-all"
-                      placeholder="John Doe"
-                      type="text"
-                    />
-                  </div>
-                  <div>
-                    <label className="block mb-2 text-xs font-bold uppercase tracking-tight text-gray-500">Phone Number</label>
-                    <input
-                      className="w-full rounded-xl border border-gray-200 bg-[#fafafa] focus:bg-white focus:border-primary focus:ring-0 h-11 px-4 text-sm transition-all"
-                      placeholder="+65 9123 4567"
-                      type="tel"
-                    />
-                  </div>
-                  <div className="md:col-span-2">
-                    <label className="block mb-2 text-xs font-bold uppercase tracking-tight text-gray-500">Complete Address</label>
-                    <textarea
-                      className="w-full rounded-xl border border-gray-200 bg-[#fafafa] focus:bg-white focus:border-primary focus:ring-0 px-4 py-3 text-sm transition-all"
-                      placeholder="Unit/Building, Street, District, City"
-                      rows="3"
-                    />
-                  </div>
+                <div className="space-y-4">
+                  {addresses.length > 0 ? (
+                    <div className="grid grid-cols-1 gap-4">
+                      {addresses.map((addr) => (
+                        <label
+                          key={addr.id}
+                          className={`flex items-start gap-4 p-4 rounded-xl border cursor-pointer transition-all ${
+                            selectedAddress?.id === addr.id ? 'border-primary bg-primary/5' : 'border-gray-100 hover:border-primary/20'
+                          }`}
+                        >
+                          <input
+                            type="radio"
+                            name="address"
+                            className="mt-1 text-primary focus:ring-primary"
+                            checked={selectedAddress?.id === addr.id}
+                            onChange={() => setSelectedAddress(addr)}
+                          />
+                          <div className="flex-1 text-sm">
+                            <p className="font-bold text-heading-text">
+                              {addr.receiverName} <span className="text-gray-400 font-normal ml-2">{addr.receiverPhone}</span>
+                            </p>
+                            <p className="text-gray-500 mt-1">{addr.street}, {addr.ward}, {addr.district}, {addr.city}</p>
+                            {addr.isDefault && (
+                              <span className="inline-block bg-primary/10 text-primary text-[10px] px-1.5 py-0.5 rounded font-bold mt-2">DEFAULT</span>
+                            )}
+                          </div>
+                        </label>
+                      ))}
+                      <Link to="/profile" className="text-primary text-sm font-bold flex items-center gap-1 hover:underline mt-2">
+                        <span className="material-symbols-outlined text-[18px]">add</span>
+                        Manage Addresses
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="p-8 text-center border-2 border-dashed border-gray-100 rounded-2xl">
+                      <p className="text-gray-400 text-sm mb-4">No shipping addresses found.</p>
+                      <Link to="/profile" className="bg-primary text-white px-6 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-all">
+                        Add New Address
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </section>
 
@@ -202,7 +288,7 @@ const CheckoutPage = () => {
                         <div key={item.id} className="flex gap-4">
                           <div
                             className="size-16 rounded-2xl bg-cover bg-center flex-shrink-0 border border-gray-100"
-                            style={{ backgroundImage: `url(${item.image})` }}
+                            style={{ backgroundImage: `url(${item.imageUrl?.[0] || item.image})` }}
                           />
                           <div className="flex-1">
                             <p className="text-sm font-bold text-heading-text line-clamp-1">{item.name}</p>
@@ -235,11 +321,18 @@ const CheckoutPage = () => {
                   </div>
                   <button
                     type="button"
+                    disabled={loading || cartItems.length === 0}
                     onClick={handlePlaceOrder}
-                    className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-2xl text-sm shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 mb-4"
+                    className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-2xl text-sm shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 mb-4 disabled:opacity-50"
                   >
-                    Place Order Now
-                    <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                    {loading ? (
+                      <div className="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                    ) : (
+                      <>
+                        Place Order Now
+                        <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+                      </>
+                    )}
                   </button>
                   <div className="flex items-center justify-center gap-2 text-gray-400 text-xs">
                     <span className="material-symbols-outlined text-[16px]">verified_user</span>

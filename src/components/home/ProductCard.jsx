@@ -29,10 +29,15 @@ const ProductCard = ({ product, isSkeleton = false }) => {
     );
   }
 
+  const productImage = product.imageUrl?.[0] || product.image;
+  const formattedPrice = typeof product.price === 'number' 
+    ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(product.price)
+    : product.price;
+
   return (
     <div className="group bg-card-white rounded soft-shadow overflow-hidden border border-transparent hover:border-primary transition-all duration-200 cursor-pointer" onClick={handleCardClick}>
       <div className="relative aspect-square overflow-hidden bg-gray-50">
-        <img className="w-full h-full object-cover" src={product.image} alt={product.name} />
+        <img className="w-full h-full object-cover" src={productImage} alt={product.name} />
         {product.discount && (
           <div className="absolute top-0 right-0 bg-primary/90 text-white text-[10px] font-bold px-1.5 py-1">{product.discount}</div>
         )}
@@ -40,15 +45,15 @@ const ProductCard = ({ product, isSkeleton = false }) => {
       <div className="p-3 space-y-1.5">
         <h3 className="text-xs text-heading line-clamp-2 leading-relaxed min-h-[2.5rem]">{product.name}</h3>
         <div className="flex items-center gap-2">
-          <span className="text-primary font-medium text-base">{product.price}</span>
+          <span className="text-primary font-medium text-base">{formattedPrice}</span>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center text-[#ffce3d]">
             {[...Array(5)].map((_, i) => (
-              <span key={i} className={`material-symbols-outlined text-[10px] ${i < product.rating ? 'fill-current' : 'text-gray-200'}`}>star</span>
+              <span key={i} className={`material-symbols-outlined text-[10px] ${i < (product.rating || 5) ? 'fill-current' : 'text-gray-200'}`}>star</span>
             ))}
           </div>
-          <div className="text-[10px] text-body-text">{product.sold} Sold</div>
+          <div className="text-[10px] text-body-text">{product.sold || '0'} Sold</div>
         </div>
         <button onClick={(e) => { e.stopPropagation(); handleAddToCart(); }} className="w-full bg-primary text-white text-xs font-medium py-2 rounded hover:bg-primary/90 transition-colors">
           Add to Cart
