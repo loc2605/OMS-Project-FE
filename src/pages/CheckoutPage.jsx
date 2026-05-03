@@ -120,7 +120,7 @@ const CheckoutPage = () => {
   };
 
   return (
-    <div className="bg-background-light font-display text-body-text min-h-screen">
+    <div className="bg-background-light text-body-text min-h-screen">
       <Header />
 
       <main className="flex-1 px-4 md:px-8 lg:px-12 pt-6 pb-10">

@@ -19,7 +19,7 @@ const ChangePasswordPage = () => {
   };
 
   return (
-    <div className="bg-background-light dark:bg-background-dark min-h-screen font-display">
+    <div className="bg-background-light dark:bg-background-dark min-h-screen">
       <div className="flex flex-col min-h-screen">
         <Header />
 

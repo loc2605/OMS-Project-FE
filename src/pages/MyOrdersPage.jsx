@@ -36,7 +36,7 @@ const MyOrdersPage = () => {
   };
 
   return (
-    <div className="bg-background-light min-h-screen font-display">
+    <div className="bg-background-light min-h-screen">
       <Header />
       <main className="max-w-full mx-auto px-4 md:px-8 lg:px-12 py-10">
         <h1 className="text-3xl font-black text-heading mb-8">My Orders</h1>

@@ -47,7 +47,7 @@ const ForgotPasswordPage = () => {
   };
 
   return (
-    <div className="bg-background-light dark:bg-background-dark text-[#181411] dark:text-white min-h-screen flex flex-col font-display">
+    <div className="bg-background-light dark:bg-background-dark text-[#181411] dark:text-white min-h-screen flex flex-col">
       <Header />
 
       <main className="flex-1 flex flex-col items-center justify-center px-4 py-12">

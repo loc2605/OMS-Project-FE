@@ -63,7 +63,7 @@ const OrderTrackingPage = () => {
   const statusInfo = getStatusDisplay(order?.status);
 
   return (
-    <div className="bg-background-light font-display text-body-text min-h-screen">
+    <div className="bg-background-light text-body-text min-h-screen">
       <Header />
 
       <main className="layout-container flex h-full grow flex-col px-4 md:px-8 lg:px-12 py-10">
