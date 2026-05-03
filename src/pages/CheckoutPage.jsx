@@ -9,14 +9,14 @@ import profileApi from '../api/profileApi';
 
 const formatCurrency = (value) => {
   const amount = Number(String(value).replace(/[^0-9.-]+/g, ''));
-  if (Number.isNaN(amount)) return '$0.00';
-  return new Intl.NumberFormat('en-SG', { style: 'currency', currency: 'SGD' }).format(amount);
+  if (Number.isNaN(amount)) return '0 ₫';
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 };
 
 const shippingOptions = [
-  { id: 'standard', label: 'Standard', details: '3-5 business days', price: 5 },
-  { id: 'express', label: 'Express', details: '24-48 hours', price: 12 },
-  { id: 'economy', label: 'Economy', details: '7-10 business days', price: 2 },
+  { id: 'standard', label: 'Tiêu chuẩn', details: '3-5 ngày làm việc', price: 30000 },
+  { id: 'express', label: 'Hỏa tốc', details: '24-48 giờ', price: 60000 },
+  { id: 'economy', label: 'Tiết kiệm', details: '7-10 ngày làm việc', price: 15000 },
 ];
 
 const paymentOptions = [
@@ -38,6 +38,7 @@ const CheckoutPage = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
     const fetchAddresses = async () => {
       try {
         const res = await profileApi.getAddresses();
@@ -59,7 +60,7 @@ const CheckoutPage = () => {
   );
 
   const voucherDiscount = useMemo(() => {
-    if (voucherCode.trim().toUpperCase() === 'SAVENOW') return 10;
+    if (voucherCode.trim().toUpperCase() === 'SAVENOW') return 50000;
     return 0;
   }, [voucherCode]);
 
@@ -82,7 +83,7 @@ const CheckoutPage = () => {
         orderItems: cartItems.map(item => ({
           productId: item.id,
           productName: item.name,
-          price: typeof item.price === 'string' ? parseFloat(item.price.replace('$', '')) : item.price,
+          price: typeof item.price === 'string' ? parseFloat(item.price.replace(/[^\d.-]/g, '')) : item.price,
           quantity: item.quantity
         })),
         address: {
@@ -123,9 +124,9 @@ const CheckoutPage = () => {
     <div className="bg-background-light text-body-text min-h-screen">
       <Header />
 
-      <main className="flex-1 px-4 md:px-8 lg:px-12 pt-6 pb-10">
+      <main className="flex-1 px-4 md:px-8 lg:px-12 pt-2 pb-10">
         <div className="max-w-full mx-auto px-4 md:px-8 lg:px-12">
-          <nav className="flex flex-wrap gap-2 mb-6 text-sm text-body-text">
+          <nav className="flex flex-wrap gap-2 mb-4 text-sm text-body-text">
             <Link to="/" className="hover:text-primary transition-colors">
               Home
             </Link>
@@ -137,25 +138,11 @@ const CheckoutPage = () => {
             <span className="text-heading-text font-medium">Checkout</span>
           </nav>
 
-          <div className="mb-10 max-w-4xl mx-auto">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-bold uppercase tracking-wider text-primary">Checkout Progress</span>
-              <span className="text-xs font-bold text-heading-text">Step 2 of 3</span>
-            </div>
-            <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
-              <div className="h-full bg-primary rounded-full transition-all duration-500" style={{ width: '66%' }} />
-            </div>
-            <div className="flex justify-between mt-4 text-[11px] font-bold">
-              <span className="text-gray-400">CART</span>
-              <span className="text-primary">SHIPPING & PAYMENT</span>
-              <span className="text-gray-400">CONFIRMATION</span>
-            </div>
-          </div>
 
           <div className="flex flex-col lg:flex-row gap-8">
-            <div className="flex-1 space-y-6">
-              <section className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-                <div className="flex items-center gap-3 mb-8">
+            <div className="flex-1 space-y-4">
+              <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-3 mb-6">
                   <div className="bg-primary/10 p-2 rounded-full">
                     <span className="material-symbols-outlined text-primary">location_on</span>
                   </div>
@@ -206,7 +193,7 @@ const CheckoutPage = () => {
               </section>
 
               <section className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-                <div className="flex items-center gap-3 mb-8">
+                <div className="flex items-center gap-3 mb-6">
                   <div className="bg-primary/10 p-2 rounded-full">
                     <span className="material-symbols-outlined text-primary">local_shipping</span>
                   </div>
@@ -235,8 +222,8 @@ const CheckoutPage = () => {
                 </div>
               </section>
 
-              <section className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-                <div className="flex items-center gap-3 mb-8">
+              <section className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <div className="flex items-center gap-3 mb-6">
                   <div className="bg-primary/10 p-2 rounded-full">
                     <span className="material-symbols-outlined text-primary">payments</span>
                   </div>
@@ -272,8 +259,8 @@ const CheckoutPage = () => {
             </div>
 
             <aside className="w-full lg:w-[360px]">
-              <div className="sticky top-24 space-y-6">
-                <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+              <div className="sticky top-24 space-y-4">
+                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                   <div className="flex items-center justify-between mb-6">
                     <div>
                       <h3 className="text-lg font-bold text-heading-text">Order Summary</h3>

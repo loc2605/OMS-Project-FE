@@ -4,6 +4,11 @@ import { useCart } from '../contexts/CartContext.jsx';
 import Header from '../components/home/Header';
 import productApi from '../api/productApi';
 import inventoryApi from '../api/inventoryApi';
+const formatCurrency = (value) => {
+  const amount = Number(String(value).replace(/[^0-9.-]+/g, ''));
+  if (Number.isNaN(amount)) return '0 ₫';
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+};
 
 const ProductDetailPage = () => {
   const { id } = useParams();
@@ -115,8 +120,8 @@ const ProductDetailPage = () => {
             </div>
             <div className="p-5 bg-[#fafafa] rounded space-y-4">
               <div className="flex items-center gap-4">
-                {product.oldPrice && <span className="text-gray-400 line-through text-sm">${product.oldPrice}</span>}
-                <span className="text-3xl font-bold text-primary">${product.price}</span>
+                {product.oldPrice && <span className="text-gray-400 line-through text-sm">{formatCurrency(product.oldPrice)}</span>}
+                <span className="text-3xl font-bold text-primary">{formatCurrency(product.price)}</span>
                 {product.discount && <span className="pastel-badge-primary text-[11px] font-bold px-1.5 py-0.5 rounded">{product.discount}</span>}
               </div>
               {/* Inventory Urgency */}
@@ -171,7 +176,7 @@ const ProductDetailPage = () => {
                   <span className="material-symbols-outlined">confirmation_number</span>
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-heading-text">Claim $50 Voucher</p>
+                  <p className="text-sm font-bold text-heading-text">Nhận Voucher {formatCurrency(100000)}</p>
                   <p className="text-[11px] text-gray-500">For new customers only</p>
                 </div>
               </div>

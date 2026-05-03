@@ -6,7 +6,7 @@ import Header from '../components/home/Header';
 const formatCurrency = (value) => {
   const amount = Number(String(value).replace(/[^0-9.-]+/g, ''));
   if (Number.isNaN(amount)) return '$0.00';
-  return new Intl.NumberFormat('en-SG', { style: 'currency', currency: 'SGD' }).format(amount);
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
 };
 
 const CartPage = () => {
@@ -24,9 +24,9 @@ const CartPage = () => {
     <div className="bg-background-light text-body-text min-h-screen">
       <Header />
 
-      <main className="flex-1 px-4 md:px-8 lg:px-12 pt-6 pb-10">
+      <main className="flex-1 px-4 md:px-8 lg:px-12 pt-2 pb-10">
         <div className="max-w-full mx-auto px-4 md:px-8 lg:px-12">
-          <nav className="flex flex-wrap gap-2 mb-6 text-sm text-body-text">
+          <nav className="flex flex-wrap gap-2 mb-4 text-sm text-body-text">
             <button onClick={() => navigate('/')} className="hover:text-primary transition-colors">
               Home
             </button>
@@ -34,9 +34,9 @@ const CartPage = () => {
             <span className="text-heading-text font-medium">Shopping Cart</span>
           </nav>
 
-          <div className="flex items-center justify-between mb-10">
+          <div className="flex items-center justify-between mb-6">
             <div>
-              <h1 className="text-heading-text text-4xl font-extrabold leading-tight tracking-tight">
+              <h1 className="text-heading-text text-3xl font-extrabold leading-tight tracking-tight">
                 Shopping Cart
               </h1>
               <p className="text-sm text-body-text mt-2">You have {cartCount} item{cartCount === 1 ? '' : 's'} in your cart.</p>
@@ -44,7 +44,7 @@ const CartPage = () => {
           </div>
 
           <div className="flex flex-col lg:flex-row gap-8 items-start">
-            <div className="flex-1 w-full space-y-8">
+            <div className="flex-1 w-full space-y-4">
               <div className="bg-white p-6 rounded-md shadow-sm flex items-center">
                 <p className="text-heading-text text-base font-bold">Select items to proceed</p>
               </div>
@@ -56,7 +56,7 @@ const CartPage = () => {
               ) : (
                 Object.keys(groupedByStore).map((storeName) => (
                   <div key={storeName} className="bg-white rounded-md shadow-sm overflow-hidden">
-                    <div className="px-8 py-5 border-b border-gray-50 bg-gray-50/30 flex items-center justify-between">
+                    <div className="px-6 py-3 border-b border-gray-50 bg-gray-50/30 flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2 text-primary">
                           <span className="material-symbols-outlined text-[20px]">store</span>
@@ -126,11 +126,11 @@ const CartPage = () => {
                   </div>
                   <div className="flex justify-between">
                     <p className="text-body-text font-medium">Estimated Shipping</p>
-                    <p className="text-heading-text font-bold">{cartItems.length ? 'S$ 5.00' : 'S$ 0.00'}</p>
+                    <p className="text-heading-text font-bold">{cartItems.length ? formatCurrency(50000) : formatCurrency(0)}</p>
                   </div>
                   <div className="flex justify-between text-green-600">
                     <p className="font-medium">Shipping Discount</p>
-                    <p className="font-bold">- S$ 5.00</p>
+                    <p className="font-bold">- {formatCurrency(50000)}</p>
                   </div>
                   <div className="pt-6 border-t border-gray-100 flex flex-col gap-4">
                     <label className="text-xs font-bold uppercase tracking-wider text-body-text">Voucher Code</label>
@@ -175,8 +175,8 @@ const CartPage = () => {
               <div className="mt-8 bg-primary/5 border border-primary/10 p-6 rounded-md flex items-center gap-5">
                 <span className="material-symbols-outlined text-primary text-[32px]">redeem</span>
                 <div>
-                  <p className="text-heading-text text-sm font-bold leading-tight">Get S$ 10 off!</p>
-                  <p className="text-body-text text-xs mt-1">Spend S$ 150 more to unlock gold rewards.</p>
+                  <p className="text-heading-text text-sm font-bold leading-tight">Nhận ưu đãi 100.000 ₫!</p>
+                  <p className="text-body-text text-xs mt-1">Chi tiêu thêm 500.000 ₫ để mở khóa phần thưởng Vàng.</p>
                 </div>
               </div>
             </aside>

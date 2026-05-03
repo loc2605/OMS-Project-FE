@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import Header from '../components/home/Header';
 import orderApi from '../api/orderApi';
+const formatCurrency = (value) => {
+  const amount = Number(String(value).replace(/[^0-9.-]+/g, ''));
+  if (Number.isNaN(amount)) return '0 ₫';
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+};
 
 const OrderTrackingPage = () => {
   const { orderId } = useParams();
@@ -145,7 +150,7 @@ const OrderTrackingPage = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="lg:col-span-2 bg-white p-8 rounded-[16px] shadow-sm">
+            <div className="lg:col-span-2 bg-white p-6 rounded-[12px] shadow-sm">
               <h2 className="text-heading text-xl font-extrabold mb-8">Order Items</h2>
               <div className="space-y-6">
                 <div className="flex items-center gap-6 p-5 rounded-lg bg-gray-50/50 hover:bg-gray-50 transition-colors">
@@ -161,8 +166,8 @@ const OrderTrackingPage = () => {
                     <p className="text-sm text-body mt-1 font-medium">Color: Silver • Qty: 1</p>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <p className="text-lg font-extrabold text-primary">$349.00</p>
-                    <p className="text-xs text-body/50 line-through font-medium">$399.00</p>
+                    <p className="text-lg font-extrabold text-primary">{formatCurrency(3490000)}</p>
+                    <p className="text-xs text-body/50 line-through font-medium">{formatCurrency(3990000)}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-6 p-5 rounded-lg bg-gray-50/50 hover:bg-gray-50 transition-colors">
@@ -178,8 +183,8 @@ const OrderTrackingPage = () => {
                     <p className="text-sm text-body mt-1 font-medium">Length: 2m • Qty: 2</p>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <p className="text-lg font-extrabold text-primary">$38.00</p>
-                    <p className="text-xs text-body/50 font-medium">$19.00 each</p>
+                    <p className="text-lg font-extrabold text-primary">{formatCurrency(380000)}</p>
+                    <p className="text-xs text-body/50 font-medium">{formatCurrency(190000)} mỗi mục</p>
                   </div>
                 </div>
               </div>
@@ -187,26 +192,26 @@ const OrderTrackingPage = () => {
               <div className="mt-10 pt-8 border-t border-gray-100 space-y-4">
                 <div className="flex justify-between text-body text-sm font-semibold">
                   <span>Merchandise Subtotal</span>
-                  <span className="text-heading">$387.00</span>
+                  <span className="text-heading">{formatCurrency(3870000)}</span>
                 </div>
                 <div className="flex justify-between text-body text-sm font-semibold">
                   <span>Shipping Fee</span>
-                  <span className="text-heading">$12.00</span>
+                  <span className="text-heading">{formatCurrency(120000)}</span>
                 </div>
                 <div className="flex justify-between text-body text-sm font-semibold">
                   <span>Voucher Applied</span>
-                  <span className="text-green-600">-$20.00</span>
+                  <span className="text-green-600">-{formatCurrency(200000)}</span>
                 </div>
                 <div className="flex justify-between text-heading text-2xl font-black pt-4">
                   <span>Total Amount</span>
-                  <span className="text-primary">$379.00</span>
+                  <span className="text-primary">{formatCurrency(3790000)}</span>
                 </div>
               </div>
             </div>
             </div>
 
             <div className="lg:col-span-1 flex flex-col gap-8">
-              <div className="bg-white p-8 rounded-[16px] shadow-sm">
+              <div className="bg-white p-6 rounded-[12px] shadow-sm">
                 <div className="flex items-center gap-3 mb-6">
                   <span className="material-symbols-outlined text-primary font-bold">location_on</span>
                   <h3 className="text-lg font-bold text-heading">Delivery Address</h3>
@@ -271,8 +276,8 @@ const OrderTrackingPage = () => {
         </div>
       </main>
 
-      <footer className="mt-20 py-12 px-4 md:px-8 lg:px-12 bg-white border-t border-gray-100 text-center shadow-sm">
-        <div className="max-w-full mx-auto">
+      <footer className="mt-20 py-12 px-4 md:px-6 bg-white border-t border-gray-100 text-center shadow-sm">
+        <div className="max-w-6xl mx-auto">
           <p className="text-body text-sm font-semibold">© 2026 ShopModern E-commerce Inc. All rights reserved.</p>
           <div className="flex justify-center gap-10 mt-6">
             <a className="text-xs text-body font-bold hover:text-primary transition-colors uppercase tracking-widest" href="#">

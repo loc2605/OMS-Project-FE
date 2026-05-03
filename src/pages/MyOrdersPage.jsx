@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/home/Header';
 import orderApi from '../api/orderApi';
+const formatCurrency = (value) => {
+  const amount = Number(String(value).replace(/[^0-9.-]+/g, ''));
+  if (Number.isNaN(amount)) return '0 ₫';
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+};
 
 const MyOrdersPage = () => {
   const [orders, setOrders] = useState([]);
@@ -88,7 +93,7 @@ const MyOrdersPage = () => {
                   <div className="text-right">
                     <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Total Amount</p>
                     <p className="text-2xl font-black text-primary">
-                      ${typeof order.totalAmount === 'number' ? order.totalAmount.toFixed(2) : order.totalAmount}
+                      {formatCurrency(order.totalAmount)}
                     </p>
                   </div>
                 </div>

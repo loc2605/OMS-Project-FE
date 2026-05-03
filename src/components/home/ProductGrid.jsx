@@ -11,13 +11,13 @@ const ProductGrid = ({ filters }) => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await productApi.getAll({ 
-          page: pagination.page, 
+        const response = await productApi.getAll({
+          page: pagination.page,
           size: pagination.size,
           category: filters?.category || undefined,
           name: filters?.search || undefined
         });
-        
+
         if (response.success) {
           if (Array.isArray(response.result)) {
             setProducts(response.result);
@@ -52,7 +52,7 @@ const ProductGrid = ({ filters }) => {
         <h2 className="text-base font-medium text-heading">Recommended for You</h2>
         <div className="flex items-center gap-4">
           <span className="text-sm text-body-text">Sort by:</span>
-          <select className="bg-white border border-black/10 text-sm px-4 py-1.5 rounded focus:ring-1 focus:ring-primary focus:border-primary cursor-pointer">
+          <select className="bg-white border border-primary/40 text-sm min-w-[160px] px-5 py-1.5 rounded focus:ring-1 focus:ring-primary focus:border-primary cursor-pointer transition-all">
             <option>Most Popular</option>
             <option>Lowest Price</option>
             <option>Newest Arrival</option>
@@ -76,7 +76,7 @@ const ProductGrid = ({ filters }) => {
       {!loading && products.length > 0 && (
         <div className="mt-6 flex justify-center">
           <div className="flex items-center gap-1 text-sm">
-            <button 
+            <button
               disabled={pagination.page === 0}
               onClick={() => handlePageChange(pagination.page - 1)}
               className="px-4 py-2 text-body-text hover:text-primary transition-colors disabled:opacity-30"
@@ -84,7 +84,7 @@ const ProductGrid = ({ filters }) => {
               <span className="material-symbols-outlined">chevron_left</span>
             </button>
             {[...Array(pagination.totalPages)].map((_, idx) => (
-              <button 
+              <button
                 key={idx}
                 onClick={() => handlePageChange(idx)}
                 className={`w-8 h-8 flex items-center justify-center rounded transition-colors ${pagination.page === idx ? 'bg-primary text-white font-medium' : 'hover:bg-primary/10'}`}
@@ -92,7 +92,7 @@ const ProductGrid = ({ filters }) => {
                 {idx + 1}
               </button>
             ))}
-            <button 
+            <button
               disabled={pagination.page === pagination.totalPages - 1}
               onClick={() => handlePageChange(pagination.page + 1)}
               className="px-4 py-2 text-body-text hover:text-primary transition-colors disabled:opacity-30"

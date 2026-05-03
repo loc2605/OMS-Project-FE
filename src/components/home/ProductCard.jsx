@@ -31,7 +31,7 @@ const ProductCard = ({ product, isSkeleton = false }) => {
 
   const productImage = product.imageUrl?.[0] || product.image;
   const formattedPrice = typeof product.price === 'number' 
-    ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(product.price)
+    ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)
     : product.price;
 
   return (
