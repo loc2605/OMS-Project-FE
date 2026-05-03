@@ -184,7 +184,7 @@ const OrderTrackingPage = () => {
                   </div>
                   <div className="text-right flex-shrink-0">
                     <p className="text-lg font-extrabold text-primary">{formatCurrency(380000)}</p>
-                    <p className="text-xs text-body/50 font-medium">{formatCurrency(190000)} mỗi mục</p>
+                    <p className="text-xs text-body/50 font-medium">{formatCurrency(190000)} each</p>
                   </div>
                 </div>
               </div>

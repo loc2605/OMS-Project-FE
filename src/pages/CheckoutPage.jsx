@@ -14,9 +14,9 @@ const formatCurrency = (value) => {
 };
 
 const shippingOptions = [
-  { id: 'standard', label: 'Tiêu chuẩn', details: '3-5 ngày làm việc', price: 30000 },
-  { id: 'express', label: 'Hỏa tốc', details: '24-48 giờ', price: 60000 },
-  { id: 'economy', label: 'Tiết kiệm', details: '7-10 ngày làm việc', price: 15000 },
+  { id: 'standard', label: 'Standard', details: '3-5 business days', price: 30000 },
+  { id: 'express', label: 'Express', details: '24-48 hours', price: 60000 },
+  { id: 'economy', label: 'Economy', details: '7-10 business days', price: 15000 },
 ];
 
 const paymentOptions = [

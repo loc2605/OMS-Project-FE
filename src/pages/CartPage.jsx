@@ -175,8 +175,8 @@ const CartPage = () => {
               <div className="mt-8 bg-primary/5 border border-primary/10 p-6 rounded-md flex items-center gap-5">
                 <span className="material-symbols-outlined text-primary text-[32px]">redeem</span>
                 <div>
-                  <p className="text-heading-text text-sm font-bold leading-tight">Nhận ưu đãi 100.000 ₫!</p>
-                  <p className="text-body-text text-xs mt-1">Chi tiêu thêm 500.000 ₫ để mở khóa phần thưởng Vàng.</p>
+                  <p className="text-heading-text text-sm font-bold leading-tight">Get {formatCurrency(100000)} off!</p>
+                  <p className="text-body-text text-xs mt-1">Spend {formatCurrency(500000)} more to unlock gold rewards.</p>
                 </div>
               </div>
             </aside>

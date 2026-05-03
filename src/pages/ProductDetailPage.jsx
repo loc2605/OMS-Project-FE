@@ -176,7 +176,7 @@ const ProductDetailPage = () => {
                   <span className="material-symbols-outlined">confirmation_number</span>
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-heading-text">Nhận Voucher {formatCurrency(100000)}</p>
+                  <p className="text-sm font-bold text-heading-text">Claim {formatCurrency(100000)} Voucher</p>
                   <p className="text-[11px] text-gray-500">For new customers only</p>
                 </div>
               </div>
