@@ -55,8 +55,8 @@ const LoginForm = () => {
           <label className="text-[#181411] dark:text-stone-200 text-sm font-semibold leading-normal">Username or Email</label>
           <input
             className="form-input block w-full rounded-lg border border-[#e6dfdb] dark:border-stone-700 bg-white dark:bg-stone-800 px-4 py-3.5 text-[#181411] dark:text-white placeholder:text-[#8a7260] focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-            placeholder="Enter your email"
-            type="email"
+            placeholder="Enter your username or email"
+            type="text"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
