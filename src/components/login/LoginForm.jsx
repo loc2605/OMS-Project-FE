@@ -5,7 +5,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import authApi from '../../api/authApi';
 
 const LoginForm = () => {
-  const [email, setEmail] = useState('customer@example.com');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState('Cannot be empty');
