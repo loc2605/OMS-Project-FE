@@ -21,6 +21,7 @@ const ProductsPage = () => {
           <Sidebar 
             activeCategory={filters.category} 
             onCategoryChange={(cat) => setFilters(prev => ({ ...prev, category: cat }))} 
+            onPriceChange={({ minPrice, maxPrice }) => setFilters(prev => ({ ...prev, minPrice, maxPrice }))}
           />
           <ProductGrid filters={filters} />
         </div>

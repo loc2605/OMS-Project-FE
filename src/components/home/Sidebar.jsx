@@ -1,6 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-const Sidebar = ({ activeCategory, onCategoryChange }) => {
+const Sidebar = ({ activeCategory, onCategoryChange, onPriceChange }) => {
+  const [minPrice, setMinPrice] = useState('');
+  const [maxPrice, setMaxPrice] = useState('');
+
+  const handleApplyPrice = () => {
+    if (onPriceChange) {
+      onPriceChange({
+        minPrice: minPrice ? Number(minPrice) : undefined,
+        maxPrice: maxPrice ? Number(maxPrice) : undefined,
+      });
+    }
+  };
   return (
     <aside className="w-48 shrink-0 hidden md:block">
       <div className="sticky top-24 space-y-6">
@@ -28,11 +39,23 @@ const Sidebar = ({ activeCategory, onCategoryChange }) => {
           <h3 className="text-sm font-bold text-heading uppercase">Price Range</h3>
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <input className="w-full text-sm p-2 rounded border border-black/10 focus:ring-1 focus:ring-primary focus:border-primary" placeholder="Min" type="text" />
+              <input 
+                className="w-full text-sm p-2 rounded border border-black/10 focus:ring-1 focus:ring-primary focus:border-primary" 
+                placeholder="Min" 
+                type="number" 
+                value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
+              />
               <span className="text-gray-400">-</span>
-              <input className="w-full text-sm p-2 rounded border border-black/10 focus:ring-1 focus:ring-primary focus:border-primary" placeholder="Max" type="text" />
+              <input 
+                className="w-full text-sm p-2 rounded border border-black/10 focus:ring-1 focus:ring-primary focus:border-primary" 
+                placeholder="Max" 
+                type="number" 
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+              />
             </div>
-            <button className="w-full py-2 bg-primary text-white text-sm font-bold rounded uppercase mt-2">Apply</button>
+            <button onClick={handleApplyPrice} className="w-full py-2 bg-primary text-white text-sm font-bold rounded uppercase mt-2">Apply</button>
           </div>
         </div>
       </div>

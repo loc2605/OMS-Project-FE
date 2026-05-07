@@ -22,7 +22,7 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(() => parseCartStorage());
 
   useEffect(() => {
-    localStorage.removeItem(STORAGE_KEY); // Xóa dữ liệu cũ nếu có
+    localStorage.removeItem(STORAGE_KEY);
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(cartItems));
   }, [cartItems]);
 

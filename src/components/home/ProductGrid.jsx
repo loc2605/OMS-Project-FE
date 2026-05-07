@@ -7,26 +7,20 @@ const ProductGrid = ({ filters }) => {
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({ page: 0, size: 20, totalPages: 1 });
 
+  const [allProducts, setAllProducts] = useState([]);
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await productApi.getAll({
-          page: pagination.page,
-          size: pagination.size,
-          category: filters?.category || undefined,
-          name: filters?.search || undefined
-        });
+        // Fetch all products since backend doesn't support filtering
+        const response = await productApi.getAll({ page: 0, size: 1000 });
 
         if (response.success) {
           if (Array.isArray(response.result)) {
-            setProducts(response.result);
+            setAllProducts(response.result);
           } else if (response.result?.content) {
-            setProducts(response.result.content);
-            setPagination(prev => ({
-              ...prev,
-              totalPages: response.result.totalPages || 1
-            }));
+            setAllProducts(response.result.content);
           }
         }
       } catch (error) {
@@ -36,11 +30,35 @@ const ProductGrid = ({ filters }) => {
       }
     };
     fetchProducts();
-  }, [pagination.page, pagination.size, filters]);
+  }, []);
 
   useEffect(() => {
-    setPagination(prev => ({ ...prev, page: 0 }));
-  }, [filters]);
+    let filtered = [...allProducts];
+
+    if (filters?.category) {
+      filtered = filtered.filter(p => p.categoryName === filters.category);
+    }
+    if (filters?.search) {
+      filtered = filtered.filter(p => p.name?.toLowerCase().includes(filters.search.toLowerCase()));
+    }
+    if (filters?.minPrice !== undefined && filters.minPrice !== '') {
+      filtered = filtered.filter(p => p.price >= Number(filters.minPrice));
+    }
+    if (filters?.maxPrice !== undefined && filters.maxPrice !== '') {
+      filtered = filtered.filter(p => p.price <= Number(filters.maxPrice));
+    }
+
+    const totalPages = Math.ceil(filtered.length / pagination.size) || 1;
+    let currentPage = pagination.page;
+    if (currentPage >= totalPages) currentPage = 0;
+
+    setProducts(filtered.slice(currentPage * pagination.size, (currentPage + 1) * pagination.size));
+    
+    setPagination(prev => {
+      if (prev.totalPages === totalPages && prev.page === currentPage) return prev;
+      return { ...prev, totalPages, page: currentPage };
+    });
+  }, [allProducts, filters, pagination.page, pagination.size]);
 
   const handlePageChange = (newPage) => {
     setPagination(prev => ({ ...prev, page: newPage }));
