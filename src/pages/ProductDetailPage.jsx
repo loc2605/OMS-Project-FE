@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext.jsx';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
 import Header from '../components/home/Header';
 import productApi from '../api/productApi';
 import inventoryApi from '../api/inventoryApi';
@@ -85,10 +84,16 @@ const ProductDetailPage = () => {
       <main className="max-w-full mx-auto px-4 md:px-8 lg:px-12 py-4 space-y-4">
         {/* Breadcrumbs */}
         <div className="flex flex-wrap gap-2 items-center text-sm mb-2 text-gray-500">
-          <a className="hover:text-primary" href="#">Home</a>
+          <Link className="hover:text-primary transition-colors" to="/">Home</Link>
           <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-          <a className="hover:text-primary" href="#">{product.categoryName || 'Category'}</a>
-          <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+          {product.categoryName && (
+            <>
+              <Link className="hover:text-primary transition-colors" to={`/products?category=${encodeURIComponent(product.categoryName)}`}>
+                {product.categoryName}
+              </Link>
+              <span className="material-symbols-outlined text-[14px]">chevron_right</span>
+            </>
+          )}
           <span className="text-heading-text font-medium">{product.name}</span>
         </div>
         {/* Main Content Area */}
