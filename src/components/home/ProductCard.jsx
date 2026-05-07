@@ -13,6 +13,10 @@ const ProductCard = ({ product, isSkeleton = false }) => {
   };
 
   const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
     addToCart(product);
   };
 

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext.jsx';
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/home/Header';
 import productApi from '../api/productApi';
 import inventoryApi from '../api/inventoryApi';
@@ -13,6 +15,8 @@ const formatCurrency = (value) => {
 const ProductDetailPage = () => {
   const { id } = useParams();
   const { addToCart } = useCart();
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [product, setProduct] = useState(null);
   const [inventory, setInventory] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -39,6 +43,14 @@ const ProductDetailPage = () => {
     };
     if (id) fetchProduct();
   }, [id]);
+
+  const handleAddToCart = () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    addToCart(product);
+  };
 
   if (loading) {
     return (
@@ -141,7 +153,7 @@ const ProductDetailPage = () => {
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
-                  onClick={() => addToCart(product)}
+                  onClick={handleAddToCart}
                   className="flex-1 border border-primary text-primary bg-[#ffeeea] font-bold py-3.5 rounded-sm flex items-center justify-center gap-2 transition-all hover:bg-primary/10"
                   type="button"
                 >
