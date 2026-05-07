@@ -72,9 +72,7 @@ const ProductDetailPage = () => {
         <div className="flex flex-wrap gap-2 items-center text-sm mb-2 text-gray-500">
           <a className="hover:text-primary" href="#">Home</a>
           <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-          <a className="hover:text-primary" href="#">Electronics</a>
-          <span className="material-symbols-outlined text-[14px]">chevron_right</span>
-          <a className="hover:text-primary" href="#">Smartphones</a>
+          <a className="hover:text-primary" href="#">{product.categoryName || 'Category'}</a>
           <span className="material-symbols-outlined text-[14px]">chevron_right</span>
           <span className="text-heading-text font-medium">{product.name}</span>
         </div>
@@ -185,64 +183,15 @@ const ProductDetailPage = () => {
           </div>
         </div>
         {/* Product Details & Seller Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-          <div className="lg:col-span-9 bg-card-white shadow-soft">
-            <div className="flex border-b border-gray-100">
-              <button className="px-8 py-4 text-primary border-b-2 border-primary font-bold text-sm">PRODUCT SPECIFICATIONS</button>
-              <button className="px-8 py-4 text-heading-text hover:text-primary font-medium text-sm">PRODUCT DESCRIPTION</button>
-            </div>
-            <div className="p-6 space-y-8">
-              <div className="prose prose-sm max-w-none text-body-text">
-                <p className="text-base leading-relaxed">
-                  {product.description}
-                </p>
-                <h3 className="text-lg font-bold mt-8 mb-4">Highlights</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                  <div className="rounded overflow-hidden aspect-video bg-cover bg-center shadow-sm" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuD4NJ2YSUwddpgafTM6-onHTkbf_7p81A-I4i61JX_ItD49SOQMPuUvnLYG3XUziLBq1wDbaHuH0935U3lPhy7mR7wh7gBM0D9qBbad1i62IN7X1WryK5EoP-uYVBcUsXDc91FvzTpTAIOh2nmCeCXI6Yra37tawT42GMTthyA1flX9P2FpQMYECHmVh4FjMF0a1VBlfZP13cLc-n9y5FGtkancDxn77Mbxs2TdMTlK-hHHzcLaFJwoHqVrDkyvAH3YRa0xjIkKKXAF")'}}></div>
-                  <div className="rounded overflow-hidden aspect-video bg-cover bg-center shadow-sm" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuC4zGNkti5YGwJvqWkPs04gMsKRNT6-UmLzT6zaNpTfNG76zNcldAgLPCnEZorPCblw3eYRofFgVhICrmw3x8NPdO1Kx9FdUxY46YT_6v53SywVYoYzzbb_lNhp56KDJmWTm2PtKsfZSj2Wjk_vyni1jUQWJ8913HdUIMpV74_11oRHfRXSgy0RQdMXLYU5ocCb7hRQnCBt9_7v-HdBxsVQQ03OH6vNtvXnsWj5iPD9o1rSmvAcRTBNT9hz1FpVQqjm_9anHQ9tROy4")'}}></div>
-                </div>
-                <ul className="space-y-3 text-body-text">
-                  <li className="flex items-start gap-2">
-                    <span className="material-symbols-outlined text-primary text-[18px]">check</span>
-                    <span><strong className="text-heading-text">Next-Gen Performance:</strong> Snapdragon Elite processor with 12GB RAM.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="material-symbols-outlined text-primary text-[18px]">check</span>
-                    <span><strong className="text-heading-text">Crystal Clear Display:</strong> 6.7" Dynamic AMOLED 2X.</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <span className="material-symbols-outlined text-primary text-[18px]">check</span>
-                    <span><strong className="text-heading-text">All-Day Battery:</strong> 5000mAh battery with 100W HyperCharge.</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
+        <div className="bg-card-white shadow-soft rounded overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-100">
+            <h3 className="font-bold text-heading-text uppercase tracking-wider text-sm">Product Description</h3>
           </div>
-          <div className="lg:col-span-3 space-y-4">
-            <div className="bg-card-white p-5 shadow-soft">
-              <h3 className="font-bold text-sm mb-4 uppercase text-gray-400 tracking-wider">Seller Details</h3>
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-12 h-12 bg-gray-100 rounded-full bg-center bg-cover border border-gray-100" style={{backgroundImage: 'url("https://lh3.googleusercontent.com/aida-public/AB6AXuAAdM7eW3FowuYynUVaaRx7ELiZy2g1iP72leAKKqikViG1M308sfQ3j-qigA0X1MaTqbdlkqsVF6_xME_ZmjcHcgxF_Gz5_3jzP6S1JCQva-TS9fbBL14Qa7kEUwTX30Af6Y9aaE8uFDJtmUW4UPQN8y3jEBhj4KLB3K8DIXtPMI3gAbQSZw4vCI6L29PN-StoWzqvUoxU4NhLCYd3kgA1XM9EcmJ8yahT6ITZ_NQb-BHl0CrpiXkO5RIREACugx4WCR7tXHNxSC47")'}}></div>
-                <div>
-                  <p className="font-bold text-sm text-heading-text">Official Tech Store</p>
-                  <p className="text-[11px] text-green-500 font-semibold flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span> Active Now
-                  </p>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2 text-center mb-5">
-                <div className="p-2 bg-[#fcfcfc] border border-gray-50 rounded">
-                  <p className="text-sm font-bold text-primary">98%</p>
-                  <p className="text-[9px] text-gray-500 uppercase font-medium">Positive</p>
-                </div>
-                <div className="p-2 bg-[#fcfcfc] border border-gray-50 rounded">
-                  <p className="text-sm font-bold text-primary">4.9/5</p>
-                  <p className="text-[9px] text-gray-500 uppercase font-medium">Rating</p>
-                </div>
-              </div>
-              <button className="w-full py-2 border border-primary text-primary text-sm font-bold rounded-sm hover:bg-primary/5 transition-colors">
-                Visit Shop
-              </button>
+          <div className="p-6">
+            <div className="prose prose-sm max-w-none text-body-text">
+              <p className="text-base leading-relaxed">
+                {product.description}
+              </p>
             </div>
           </div>
         </div>

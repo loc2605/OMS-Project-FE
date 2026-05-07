@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext.jsx';
 
-const Header = ({ onSearch }) => {
+const Header = () => {
   const { isAuthenticated, logout } = useAuth();
   const { cartCount } = useCart();
   const navigate = useNavigate();
@@ -15,9 +15,10 @@ const Header = ({ onSearch }) => {
 
   const handleSearchSubmit = (e) => {
     e?.preventDefault();
-    if (onSearch) {
-      onSearch(searchValue);
-      if (location.pathname !== '/') navigate('/');
+    if (searchValue.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchValue.trim())}`);
+    } else {
+      navigate('/products');
     }
   };
 
