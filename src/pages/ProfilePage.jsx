@@ -10,15 +10,29 @@ const ProfilePage = () => {
   const [profile, setProfile] = useState(null);
   const [addresses, setAddresses] = useState([]);
 
+  const defaultAvatar = 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';
+  const userAvatar = profile?.avatarUrl || user?.avatarUrl || profile?.avatar || user?.avatar || defaultAvatar;
+  const displayName = profile?.fullname || profile?.fullName || user?.fullName || user?.username || 'User';
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [profileRes, addressRes] = await Promise.all([
-          profileApi.getProfile(),
-          profileApi.getAddresses()
-        ]);
-        if (profileRes.success) setProfile(profileRes.result);
-        if (addressRes.success) setAddresses(addressRes.result);
+        const profileRes = await profileApi.getProfile();
+        if (profileRes.success) {
+          setProfile(profileRes.result);
+          // If addresses are included in profile result, use them
+          if (profileRes.result.addresses) {
+            setAddresses(profileRes.result.addresses);
+          }
+        }
+
+        // Try to fetch addresses separately if needed, but don't let it crash the profile
+        try {
+          const addressRes = await profileApi.getAddresses();
+          if (addressRes.success) setAddresses(addressRes.result);
+        } catch (addrError) {
+          console.warn('Failed to fetch addresses separately', addrError);
+        }
       } catch (error) {
         console.error('Failed to fetch profile data', error);
       }
@@ -57,10 +71,10 @@ const ProfilePage = () => {
               <img
                 alt="User profile picture"
                 className="w-12 h-12 rounded-full object-cover border border-gray-100"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDg7_5gUJrzkNWqNUmjcjBcdlwJuLrR2Sim5A8tlxl4D2KHtlqfhdh0At_BRsDSkRPgLa66CfXHOVX4UmF2VJNlVGFRbPv_YEx8jRtfO-q_DjE5cAPGfnbxMswJcWPoYY9W5VQ4_R-4A9Ht00kqMAwkosQcUUTfNBcEpUilZXxDtXNKT9aNiTz21jgWhUT-jm2-4AsS-r8Uzx3jnByj0Xjf63yVYi7mj9__L2Fms4GZe5wxQOrpqJUp_8gE2uSqVBOqx0KStdvo9F9q"
+                src={userAvatar}
               />
               <div className="overflow-hidden">
-                <p className="text-[#333333] font-bold text-sm truncate">{profile?.fullname || user?.fullName || 'User'}</p>
+                <p className="text-[#333333] font-bold text-sm truncate">{displayName}</p>
                 <button className="text-[#666666] text-xs flex items-center gap-1 hover:text-primary" type="button">
                   <span className="material-symbols-outlined text-[14px]">edit</span>
                   Edit Profile
@@ -123,12 +137,7 @@ const ProfilePage = () => {
                   </div>
                   <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <label className="md:w-32 text-sm text-[#666666] md:text-right">Name</label>
-                    <input
-                      className="flex-grow border border-gray-200 rounded-[8px] px-4 py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all"
-                      type="text"
-                      value={profile?.fullname || user?.fullName || ''}
-                      readOnly
-                    />
+                    <span className="text-sm text-[#333333]">{profile?.fullname || profile?.fullName || user?.fullName || ''}</span>
                   </div>
                   <div className="flex flex-col md:flex-row md:items-center gap-4">
                     <label className="md:w-32 text-sm text-[#666666] md:text-right">Email</label>
@@ -184,7 +193,7 @@ const ProfilePage = () => {
                   <img
                     alt="User profile avatar large"
                     className="w-24 h-24 rounded-full object-cover border border-gray-100 shadow-sm"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuB-zktnuMFuP2LVsTwrZivmZhZKZnqjzm5luYKTGVpHWlpEOBlVvsekwqXF2Oo12UCxqT5xgl3Wg2KzWOCvqe0Lr7RrMoFAEYfkr29zVpvAely6KV6pqVQ5YOvLqTC0G6-C_6oa2a1j7Cgz5oCsXHuhpqaXmT0DsJ9D2mYWVlsJzcnuKJoKby3-4R5KuB_WUC6iTuKFX3edpKqhqbck8bDAi_MRbsgfv7ilyLPldLkijDyr84qAhTBOP9rzNmxKE2ZWac9yU-ck59MY"
+                    src={userAvatar}
                   />
                 </div>
                 <button className="border border-gray-200 px-5 py-2 rounded-[8px] text-sm text-[#666666] hover:bg-gray-50 transition-colors" type="button">

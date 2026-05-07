@@ -4,7 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext.jsx';
 
 const Header = () => {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
   const { cartCount, clearCart } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
@@ -145,12 +145,15 @@ const Header = () => {
               <div className="relative" ref={menuRef}>
                 <button
                   onClick={() => setOpenMenu(!openMenu)}
-                  className="size-8 rounded-full bg-cover bg-center border border-black/5"
+                  className="size-8 rounded-full bg-cover bg-center border border-black/5 flex items-center justify-center overflow-hidden"
                   style={{
-                    backgroundImage:
-                      'url("https://lh3.googleusercontent.com/aida-public/AB6AXuD_81lQTMq2eC__GSW-CPsbIeAP2br__-8QxeJL37GnKnn5onNgRVsbSC_YxeWINh77eLBs0B09d5QcoJKNgp0MUHFn2Peq2t4e3LoGR0yxCF1qNKmHn-QAQn3JuRvYPmvKEKGbHzt1wUaHGUVhZCFwabx3sM5ndox4GpAWTCnkh6hzpyDRAnpZIpQn_-5WeSQzq_Hy5gk1TrKqgr0QOqNCTHQ4B7Wv0Cp-T3E-stkODf11Lvpr371P0JrVZMf5bUp9HBf_kIjybOvm")'
+                    backgroundImage: `url("${user?.avatarUrl || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'}")`
                   }}
-                ></button>
+                >
+                  {!user?.avatarUrl && (
+                    <span className="material-symbols-outlined text-gray-400 text-xl">account_circle</span>
+                  )}
+                </button>
 
                 {openMenu && (
                   <div className="absolute right-0 mt-2 w-40 bg-white border border-black/10 rounded-lg shadow-lg py-2">
