@@ -6,7 +6,7 @@ const STORAGE_KEY = 'oms_cart_items';
 
 const parseCartStorage = () => {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = sessionStorage.getItem(STORAGE_KEY);
     return stored ? JSON.parse(stored) : [];
   } catch {
     return [];
@@ -22,7 +22,8 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState(() => parseCartStorage());
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(cartItems));
+    localStorage.removeItem(STORAGE_KEY); // Xóa dữ liệu cũ nếu có
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(cartItems));
   }, [cartItems]);
 
   const addToCart = (product) => {

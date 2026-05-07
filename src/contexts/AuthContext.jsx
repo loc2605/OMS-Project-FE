@@ -11,10 +11,15 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Check if user is logged in (e.g., from localStorage)
-    const loggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    // Dọn dẹp localStorage cũ để tránh bị lỗi tự động đăng nhập từ các lần test trước
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+
+    // Khởi tạo trạng thái đăng nhập từ sessionStorage (chỉ lưu trong một phiên làm việc)
+    const loggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
     setIsAuthenticated(loggedIn);
-    const storedUser = localStorage.getItem('user');
+    const storedUser = sessionStorage.getItem('user');
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser));
@@ -27,17 +32,17 @@ export const AuthProvider = ({ children }) => {
   const login = (userData, token) => {
     setIsAuthenticated(true);
     setUser(userData);
-    localStorage.setItem('isLoggedIn', 'true');
-    if (token) localStorage.setItem('token', token);
-    if (userData) localStorage.setItem('user', JSON.stringify(userData));
+    sessionStorage.setItem('isLoggedIn', 'true');
+    if (token) sessionStorage.setItem('token', token);
+    if (userData) sessionStorage.setItem('user', JSON.stringify(userData));
   };
 
   const logout = () => {
     setIsAuthenticated(false);
     setUser(null);
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('isLoggedIn');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
   };
 
   return (

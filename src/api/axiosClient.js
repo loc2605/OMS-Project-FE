@@ -10,14 +10,14 @@ const axiosClient = axios.create({
 // Interceptor cho Request
 axiosClient.interceptors.request.use(
   (config) => {
-    // Lấy token từ localStoragepe 
-    const token = localStorage.getItem('token');
+    // Lấy token từ sessionStorage
+    const token = sessionStorage.getItem('token');
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
 
     // Nếu có accountId lưu trong storage, có thể truyền header X-Account-Id theo yêu cầu
-    const userString = localStorage.getItem('user');
+    const userString = sessionStorage.getItem('user');
     if (userString) {
       try {
         const user = JSON.parse(userString);
@@ -25,7 +25,7 @@ axiosClient.interceptors.request.use(
           config.headers['X-Account-Id'] = user.accountId;
         }
       } catch (e) {
-        console.error('Error parsing user from localStorage', e);
+        console.error('Error parsing user from sessionStorage', e);
       }
     }
 

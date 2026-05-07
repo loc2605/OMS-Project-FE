@@ -5,7 +5,7 @@ import { useCart } from '../../contexts/CartContext.jsx';
 
 const Header = () => {
   const { isAuthenticated, logout } = useAuth();
-  const { cartCount } = useCart();
+  const { cartCount, clearCart } = useCart();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -24,6 +24,7 @@ const Header = () => {
 
   const handleLogout = () => {
     logout();
+    clearCart();
     setOpenMenu(false);
     navigate('/login');
   };
