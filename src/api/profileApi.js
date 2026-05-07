@@ -12,6 +12,18 @@ const profileApi = {
   addAddress: (data) => {
     const url = '/customers/me/addresses';
     return axiosClient.post(url, data);
+  },
+  updateAddress: (addressId, data) => {
+    const url = `/customers/me/addresses/${addressId}`;
+    return axiosClient.put(url, data);
+  },
+  deleteAddress: (addressId) => {
+    const url = `/customers/me/addresses/${addressId}`;
+    return axiosClient.delete(url);
+  },
+  setDefaultAddress: (addressId) => {
+    const url = `/customers/me/addresses/${addressId}/default`;
+    return axiosClient.patch(url);
   }
 };
 

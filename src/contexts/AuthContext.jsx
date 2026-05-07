@@ -29,11 +29,12 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = (userData, token) => {
+  const login = (userData, token, refreshToken) => {
     setIsAuthenticated(true);
     setUser(userData);
     sessionStorage.setItem('isLoggedIn', 'true');
     if (token) sessionStorage.setItem('token', token);
+    if (refreshToken) sessionStorage.setItem('refreshToken', refreshToken);
     if (userData) sessionStorage.setItem('user', JSON.stringify(userData));
   };
 
@@ -42,6 +43,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     sessionStorage.removeItem('isLoggedIn');
     sessionStorage.removeItem('token');
+    sessionStorage.removeItem('refreshToken');
     sessionStorage.removeItem('user');
   };
 

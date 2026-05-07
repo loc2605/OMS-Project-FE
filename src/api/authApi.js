@@ -8,6 +8,10 @@ const authApi = {
   register: (data) => {
     const url = '/auth/register';
     return axiosClient.post(url, data);
+  },
+  refreshToken: (data) => {
+    const url = '/auth/refresh';
+    return axiosClient.post(url, data);
   }
 };
 

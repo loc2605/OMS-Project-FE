@@ -20,14 +20,24 @@ const LoginForm = () => {
         setPasswordError('');
         const response = await authApi.login({ username: email, password });
         if (response.success) {
-          login(response.result, response.result.token);
+          // Pass token and refreshToken to login context
+          login(response.result, response.result.token, response.result.refreshToken);
           const from = location.state?.from || '/';
           navigate(from, { replace: true });
         } else {
-          setPasswordError(response.message || 'Login failed');
+          // Check for locked account message from BE
+          if (response.message?.toLowerCase().includes('lock')) {
+            setPasswordError('Your account has been locked due to multiple failed attempts. Please contact support.');
+          } else {
+            setPasswordError(response.message || 'Login failed');
+          }
         }
       } catch (error) {
-        setPasswordError(error.message || 'Invalid credentials');
+        if (error.message?.toLowerCase().includes('lock')) {
+          setPasswordError('Account locked. Please try again later or contact support.');
+        } else {
+          setPasswordError(error.message || 'Invalid credentials');
+        }
       }
     } else {
       setPasswordError('Please fill in both fields');

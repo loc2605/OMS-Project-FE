@@ -25,6 +25,8 @@ const ProductGrid = ({ filters }) => {
           params.sort = 'price,asc';
         } else if (sortOption === 'priceDesc') {
           params.sort = 'price,desc';
+        } else if (sortOption === 'newest') {
+          params.sort = 'createdAt,desc';
         }
 
         const response = await productApi.getAll(params);
@@ -68,6 +70,7 @@ const ProductGrid = ({ filters }) => {
             onChange={(e) => setSortOption(e.target.value)}
             className="bg-white border border-primary/40 text-sm min-w-[160px] px-5 py-1.5 rounded focus:ring-1 focus:ring-primary focus:border-primary cursor-pointer transition-all"
           >
+            <option value="newest">Newest</option>
             <option value="priceAsc">Lowest Price</option>
             <option value="priceDesc">Highest Price</option>
           </select>
