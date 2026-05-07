@@ -163,7 +163,21 @@ const ProfilePage = () => {
       setWards([]);
     }
   };
-
+  const handleCloseModal = () => {
+    setShowAddressModal(false);
+    setAddressForm({
+      receiverName: '',
+      receiverPhone: '',
+      street: '',
+      ward: '',
+      district: '',
+      city: '',
+      isDefault: false
+    });
+    setDistricts([]);
+    setWards([]);
+    setActiveDropdown(null);
+  };
   const [activeDropdown, setActiveDropdown] = useState(null); // 'province', 'district', 'ward'
 
   const CustomSelect = ({ label, options, value, onChange, disabled, placeholder }) => {
@@ -457,7 +471,7 @@ const ProfilePage = () => {
           <div className="bg-white rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center">
               <h3 className="text-xl font-bold text-heading">New Address</h3>
-              <button onClick={() => setShowAddressModal(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+              <button onClick={handleCloseModal} className="text-gray-400 hover:text-gray-600 transition-colors">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
@@ -540,7 +554,7 @@ const ProfilePage = () => {
               <div className="flex gap-3 pt-6">
                 <button
                   type="button"
-                  onClick={() => setShowAddressModal(false)}
+                  onClick={handleCloseModal}
                   className="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 font-bold hover:bg-gray-50 transition-all uppercase tracking-wider text-xs"
                 >
                   Cancel
