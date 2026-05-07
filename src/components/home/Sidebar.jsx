@@ -10,7 +10,7 @@ const Sidebar = ({ activeCategory, onCategoryChange }) => {
             Categories
           </h3>
           <div className="space-y-1">
-            {['Electronics', 'Fashion', 'Home & Living', 'Beauty', 'Health'].map((cat) => (
+            {['Women', 'Men', 'Kids'].map((cat) => (
               <button 
                 key={cat}
                 onClick={() => onCategoryChange(activeCategory === cat ? '' : cat)}
