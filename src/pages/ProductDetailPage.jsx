@@ -27,12 +27,15 @@ const ProductDetailPage = () => {
         setLoading(true);
         const [productRes, inventoryRes] = await Promise.all([
           productApi.get(id),
-          inventoryApi.checkStock(id)
+          inventoryApi.checkStock(id).catch(err => {
+            console.warn('Inventory fetch failed (likely unauthorized):', err);
+            return { success: false };
+          })
         ]);
         if (productRes.success) {
           setProduct(productRes.result);
         }
-        if (inventoryRes.success) {
+        if (inventoryRes && inventoryRes.success) {
           setInventory(inventoryRes.result);
         }
       } catch (error) {
