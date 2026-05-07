@@ -6,6 +6,7 @@ const ProductGrid = ({ filters }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({ page: 0, size: 20, totalPages: 1 });
+  const [sortOption, setSortOption] = useState('priceAsc');
 
   const [allProducts, setAllProducts] = useState([]);
 
@@ -48,6 +49,12 @@ const ProductGrid = ({ filters }) => {
       filtered = filtered.filter(p => p.price <= Number(filters.maxPrice));
     }
 
+    if (sortOption === 'priceAsc') {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (sortOption === 'priceDesc') {
+      filtered.sort((a, b) => b.price - a.price);
+    }
+
     const totalPages = Math.ceil(filtered.length / pagination.size) || 1;
     let currentPage = pagination.page;
     if (currentPage >= totalPages) currentPage = 0;
@@ -58,7 +65,7 @@ const ProductGrid = ({ filters }) => {
       if (prev.totalPages === totalPages && prev.page === currentPage) return prev;
       return { ...prev, totalPages, page: currentPage };
     });
-  }, [allProducts, filters, pagination.page, pagination.size]);
+  }, [allProducts, filters, pagination.page, pagination.size, sortOption]);
 
   const handlePageChange = (newPage) => {
     setPagination(prev => ({ ...prev, page: newPage }));
@@ -70,10 +77,13 @@ const ProductGrid = ({ filters }) => {
         <h2 className="text-base font-medium text-heading">Recommended for You</h2>
         <div className="flex items-center gap-4">
           <span className="text-sm text-body-text">Sort by:</span>
-          <select className="bg-white border border-primary/40 text-sm min-w-[160px] px-5 py-1.5 rounded focus:ring-1 focus:ring-primary focus:border-primary cursor-pointer transition-all">
-            <option>Most Popular</option>
-            <option>Lowest Price</option>
-            <option>Newest Arrival</option>
+          <select 
+            value={sortOption}
+            onChange={(e) => setSortOption(e.target.value)}
+            className="bg-white border border-primary/40 text-sm min-w-[160px] px-5 py-1.5 rounded focus:ring-1 focus:ring-primary focus:border-primary cursor-pointer transition-all"
+          >
+            <option value="priceAsc">Lowest Price</option>
+            <option value="priceDesc">Highest Price</option>
           </select>
         </div>
       </div>

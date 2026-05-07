@@ -12,14 +12,35 @@ const Sidebar = ({ activeCategory, onCategoryChange, onPriceChange }) => {
       });
     }
   };
+
+  const handleReset = () => {
+    setMinPrice('');
+    setMaxPrice('');
+    if (onPriceChange) {
+      onPriceChange({ minPrice: undefined, maxPrice: undefined });
+    }
+    if (onCategoryChange) {
+      onCategoryChange('');
+    }
+  };
+
   return (
     <aside className="w-48 shrink-0 hidden md:block">
       <div className="sticky top-24 space-y-6">
         <div className="space-y-3">
-          <h3 className="text-sm font-bold text-heading uppercase flex items-center gap-2">
-            <span className="material-symbols-outlined text-lg">list</span>
-            Categories
-          </h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-bold text-heading uppercase flex items-center gap-2">
+              <span className="material-symbols-outlined text-lg">list</span>
+              Categories
+            </h3>
+            <button 
+              onClick={handleReset} 
+              className="size-7 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-primary transition-colors"
+              title="Reset Filters"
+            >
+              <span className="material-symbols-outlined text-[16px]">filter_alt_off</span>
+            </button>
+          </div>
           <div className="space-y-1">
             {['Women', 'Men', 'Kids'].map((cat) => (
               <button 
@@ -55,7 +76,7 @@ const Sidebar = ({ activeCategory, onCategoryChange, onPriceChange }) => {
                 onChange={(e) => setMaxPrice(e.target.value)}
               />
             </div>
-            <button onClick={handleApplyPrice} className="w-full py-2 bg-primary text-white text-sm font-bold rounded uppercase mt-2">Apply</button>
+            <button onClick={handleApplyPrice} className="w-full py-2 bg-primary text-white text-sm font-bold rounded uppercase mt-2 hover:bg-primary/90 transition-colors">Apply</button>
           </div>
         </div>
       </div>
