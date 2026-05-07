@@ -10,8 +10,14 @@ const Header = () => {
   const location = useLocation();
 
   const [openMenu, setOpenMenu] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
+  const searchParams = new URLSearchParams(location.search);
+  const searchParamValue = searchParams.get('search') || '';
+  const [searchValue, setSearchValue] = useState(searchParamValue);
   const menuRef = useRef(null);
+
+  useEffect(() => {
+    setSearchValue(searchParamValue);
+  }, [searchParamValue]);
 
   const handleSearchSubmit = (e) => {
     e?.preventDefault();
@@ -20,6 +26,13 @@ const Header = () => {
     } else {
       navigate('/products');
     }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleClearSearch = () => {
+    setSearchValue('');
+    navigate('/products');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleLogout = () => {
@@ -55,16 +68,27 @@ const Header = () => {
 
           <div className="flex-1 max-w-2xl">
             <form onSubmit={handleSearchSubmit} className="relative flex items-center">
-              <input
-                className="w-full h-10 pl-4 pr-12 bg-[#F5F5F5] border border-black/5 rounded focus:ring-1 focus:ring-primary focus:border-primary text-sm placeholder:text-[#999]"
-                placeholder="Search for products, brands, and shops..."
-                type="text"
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-              />
-              <button type="submit" className="absolute right-1 top-1 bottom-1 px-4 bg-primary text-white rounded flex items-center justify-center">
-                <span className="material-symbols-outlined text-xl">search</span>
-              </button>
+              <div className="relative flex items-center w-full">
+                <input
+                  className="w-full h-10 pl-4 pr-[80px] bg-[#F5F5F5] border border-black/5 rounded focus:ring-1 focus:ring-primary focus:border-primary text-sm placeholder:text-[#999]"
+                  placeholder="Search for product name"
+                  type="text"
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                />
+                {searchValue && (
+                  <button 
+                    type="button" 
+                    onClick={handleClearSearch} 
+                    className="absolute right-12 text-gray-400 hover:text-gray-600 flex items-center justify-center p-1"
+                  >
+                    <span className="material-symbols-outlined text-[18px]">close</span>
+                  </button>
+                )}
+                <button type="submit" className="absolute right-1 top-1 bottom-1 px-3 bg-primary text-white rounded flex items-center justify-center">
+                  <span className="material-symbols-outlined text-xl">search</span>
+                </button>
+              </div>
             </form>
           </div>
         </div>
@@ -72,27 +96,24 @@ const Header = () => {
         <div className="flex items-center gap-6">
           <nav className="hidden lg:flex items-center gap-6">
             <Link
-              className={`text-sm font-medium hover:text-primary transition-colors ${
-                location.pathname === '/' ? 'text-primary' : 'text-heading'
-              }`}
+              className={`text-sm font-medium hover:text-primary transition-colors ${location.pathname === '/' ? 'text-primary' : 'text-heading'
+                }`}
               to="/"
             >
               Home
             </Link>
 
             <Link
-              className={`text-sm font-medium hover:text-primary transition-colors ${
-                location.pathname === '/products' ? 'text-primary' : 'text-heading'
-              }`}
+              className={`text-sm font-medium hover:text-primary transition-colors ${location.pathname === '/products' ? 'text-primary' : 'text-heading'
+                }`}
               to="/products"
             >
               Products
             </Link>
 
             <Link
-              className={`text-sm font-medium hover:text-primary transition-colors ${
-                location.pathname === '/orders' ? 'text-primary' : 'text-heading'
-              }`}
+              className={`text-sm font-medium hover:text-primary transition-colors ${location.pathname === '/orders' ? 'text-primary' : 'text-heading'
+                }`}
               to="/orders"
             >
               My Orders
@@ -156,11 +177,10 @@ const Header = () => {
             ) : (
               <Link
                 to="/login"
-                className={`inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-bold transition-all active:scale-[0.98] ${
-                  location.pathname === '/login'
+                className={`inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-bold transition-all active:scale-[0.98] ${location.pathname === '/login'
                     ? 'bg-primary text-white shadow-lg shadow-primary/20'
                     : 'border border-black/10 bg-white text-heading hover:bg-primary hover:text-white'
-                }`}
+                  }`}
               >
                 Login
               </Link>
