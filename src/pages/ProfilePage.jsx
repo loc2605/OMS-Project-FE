@@ -52,14 +52,6 @@ const ProfilePage = () => {
             setAddresses(profileRes.result.addresses);
           }
         }
-
-        // Try to fetch addresses separately if needed, but don't let it crash the profile
-        try {
-          const addressRes = await profileApi.getAddresses();
-          if (addressRes.success) setAddresses(addressRes.result);
-        } catch (addrError) {
-          console.warn('Failed to fetch addresses separately', addrError);
-        }
       } catch (error) {
         console.error('Failed to fetch profile data', error);
       }
@@ -166,8 +158,6 @@ const ProfilePage = () => {
   const handleCloseModal = () => {
     setShowAddressModal(false);
     setAddressForm({
-      receiverName: '',
-      receiverPhone: '',
       street: '',
       ward: '',
       district: '',
@@ -178,7 +168,7 @@ const ProfilePage = () => {
     setWards([]);
     setActiveDropdown(null);
   };
-  const [activeDropdown, setActiveDropdown] = useState(null); // 'province', 'district', 'ward'
+  const [activeDropdown, setActiveDropdown] = useState(null);
 
   const CustomSelect = ({ label, options, value, onChange, disabled, placeholder }) => {
     const isOpen = activeDropdown === label;

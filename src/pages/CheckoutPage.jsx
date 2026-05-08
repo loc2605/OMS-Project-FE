@@ -21,8 +21,7 @@ const shippingOptions = [
 
 const paymentOptions = [
   { id: 'cod', label: 'Cash on Delivery (COD)', description: 'Pay when you receive the items', icon: 'payments' },
-  { id: 'card', label: 'Credit / Debit Card', description: 'Visa, Mastercard, JCB supported', icon: 'credit_card' },
-  { id: 'wallet', label: 'E-Wallet / Online Banking', description: 'GCash, Maya, or Bank Transfer', icon: 'account_balance_wallet' },
+  { id: 'transfer', label: 'Bank Transfer', description: 'Transfer via bank account or e-wallet', icon: 'account_balance' },
 ];
 
 const CheckoutPage = () => {
@@ -41,14 +40,14 @@ const CheckoutPage = () => {
     window.scrollTo(0, 0);
     const fetchAddresses = async () => {
       try {
-        const res = await profileApi.getAddresses();
-        if (res.success && res.result.length > 0) {
-          setAddresses(res.result);
-          const defaultAddr = res.result.find(a => a.isDefault) || res.result[0];
+        const res = await profileApi.getProfile();
+        if (res.success && res.result.addresses && res.result.addresses.length > 0) {
+          setAddresses(res.result.addresses);
+          const defaultAddr = res.result.addresses.find(a => a.isDefault) || res.result.addresses[0];
           setSelectedAddress(defaultAddr);
         }
       } catch (e) {
-        console.error('Failed to fetch addresses', e);
+        console.error('Failed to fetch profile/addresses', e);
       }
     };
     fetchAddresses();
@@ -100,7 +99,7 @@ const CheckoutPage = () => {
       if (orderRes.success) {
         const orderId = orderRes.result.orderId;
         
-        if (selectedPayment === 'card' || selectedPayment === 'wallet') {
+        if (selectedPayment === 'transfer') {
           // Mock payment call
           const payRes = await paymentApi.pay({ orderId, amount: totalAmount });
           if (!payRes.success) {
@@ -264,7 +263,7 @@ const CheckoutPage = () => {
                   <div className="flex items-center justify-between mb-6">
                     <div>
                       <h3 className="text-lg font-bold text-heading-text">Order Summary</h3>
-                      <p className="text-xs text-body-text mt-1">{cartCount} item{cartCount === 1 ? '' : 's'} in your order</p>
+                      <p className="text-xs text-body-text mt-1">{cartCount} items in your order</p>
                     </div>
                   </div>
                   <div className="space-y-6 mb-8">
