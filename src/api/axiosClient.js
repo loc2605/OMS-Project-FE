@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL: 'http://localhost:8888/api/v1',
+  baseURL: 'http://192.168.10.159:8888/api/v1',
   headers: {
     'Content-Type': 'application/json',
   },
@@ -16,18 +16,7 @@ axiosClient.interceptors.request.use(
       config.headers['Authorization'] = `Bearer ${token}`;
     }
 
-    // Nếu có accountId lưu trong storage, có thể truyền header X-Account-Id theo yêu cầu
-    const userString = sessionStorage.getItem('user');
-    if (userString) {
-      try {
-        const user = JSON.parse(userString);
-        if (user && user.accountId) {
-          config.headers['X-Account-Id'] = user.accountId;
-        }
-      } catch (e) {
-        console.error('Error parsing user from sessionStorage', e);
-      }
-    }
+
 
     return config;
   },
@@ -57,8 +46,8 @@ axiosClient.interceptors.response.use(
         const refreshToken = sessionStorage.getItem('refreshToken');
         if (refreshToken) {
           // Gọi API refresh token (sử dụng axios gốc để tránh interceptor lặp vô tận nếu refresh cũng lỗi 401)
-          const res = await axios.post('http://localhost:8888/api/v1/auth/refresh', { refreshToken });
-          
+          const res = await axios.post('http://localhost:8080/api/v1/auth/refresh', { refreshToken });
+
           if (res.data && res.data.success) {
             const newToken = res.data.result.token;
             const newRefreshToken = res.data.result.refreshToken;

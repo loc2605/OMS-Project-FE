@@ -17,8 +17,6 @@ const ProfilePage = () => {
   const [wards, setWards] = useState([]);
 
   const [addressForm, setAddressForm] = useState({
-    receiverName: '',
-    receiverPhone: '',
     street: '',
     ward: '',
     district: '',
@@ -62,13 +60,16 @@ const ProfilePage = () => {
   const handleAddAddress = async (e) => {
     e.preventDefault();
     try {
-      const res = await profileApi.addAddress(addressForm);
+      const { street, ward, district, city, isDefault } = addressForm;
+      const res = await profileApi.addAddress({ street, ward, district, city, isDefault });
       if (res.success) {
-        setAddresses([...addresses, res.result]);
+        // Fetch lại toàn bộ profile để đảm bảo dữ liệu (bao gồm ID địa chỉ mới) đồng bộ với Server
+        const profileRes = await profileApi.getProfile();
+        if (profileRes.success && profileRes.result.addresses) {
+          setAddresses(profileRes.result.addresses);
+        }
         setShowAddressModal(false);
         setAddressForm({
-          receiverName: '',
-          receiverPhone: '',
           street: '',
           ward: '',
           district: '',
@@ -383,8 +384,6 @@ const ProfilePage = () => {
                 onClick={() => {
                   setAddressForm({
                     ...addressForm,
-                    receiverName: profile?.fullname || user?.fullName || '',
-                    receiverPhone: profile?.phone || '',
                     isDefault: addresses.length === 0
                   });
                   setShowAddressModal(true);
@@ -400,17 +399,16 @@ const ProfilePage = () => {
               {addresses.length === 0 ? (
                 <p className="text-[#666666] text-sm py-4">No addresses found.</p>
               ) : (
-                addresses.map(addr => (
-                  <div key={addr.id} className="py-6 border-b border-gray-100 flex flex-col md:flex-row justify-between gap-4">
+                addresses.map((addr, index) => addr && (
+                  <div key={addr.id || index} className="py-6 border-b border-gray-100 flex flex-col md:flex-row justify-between gap-4">
                     <div className="space-y-2">
                       <div className="flex items-center gap-3">
-                        <span className="text-sm font-bold border-r border-gray-300 pr-3 text-[#333333]">{addr.receiverName || 'User'}</span>
-                        <span className="text-sm text-[#666666]">{addr.receiverPhone || ''}</span>
+                        <span className="text-sm font-bold text-[#333333]">{addr?.city || ''}</span>
                       </div>
                       <div className="text-sm text-[#666666]">
-                        {addr.street}, {addr.ward}, {addr.district}, {addr.city}
+                        {addr?.street}, {addr?.ward}, {addr?.district}, {addr?.city}
                       </div>
-                      {addr.isDefault && (
+                      {addr?.isDefault && (
                         <span className="inline-block border border-primary text-primary text-[10px] px-1.5 py-0.5 rounded-[2px] font-bold mt-2">DEFAULT</span>
                       )}
                     </div>
@@ -423,7 +421,7 @@ const ProfilePage = () => {
                         onClick={() => handleSetDefaultAddress(addr.id)}
                         className="border border-gray-200 px-4 py-1.5 rounded-[8px] text-sm text-[#666666] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
                         type="button"
-                        disabled={addr.isDefault}
+                        disabled={addr?.isDefault}
                       >
                         Set as Default
                       </button>
@@ -466,28 +464,7 @@ const ProfilePage = () => {
               </button>
             </div>
             <form onSubmit={handleAddAddress} className="p-6 space-y-4 bg-gray-50/30">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Receiver Name</label>
-                  <input
-                    required
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm bg-white shadow-sm font-medium"
-                    placeholder="Enter full name"
-                    value={addressForm.receiverName}
-                    onChange={(e) => setAddressForm({ ...addressForm, receiverName: e.target.value })}
-                  />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Phone Number</label>
-                  <input
-                    required
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm bg-white shadow-sm font-medium"
-                    placeholder="Enter phone number"
-                    value={addressForm.receiverPhone}
-                    onChange={(e) => setAddressForm({ ...addressForm, receiverPhone: e.target.value })}
-                  />
-                </div>
-              </div>
+
 
               <div className="space-y-4 pt-2">
                 <div className="grid grid-cols-3 gap-3">

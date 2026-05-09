@@ -217,12 +217,9 @@ const OrderTrackingPage = () => {
                   <h3 className="text-lg font-bold text-heading">Delivery Address</h3>
               </div>
               <div className="space-y-3">
-                <p className="font-bold text-heading text-base">John Doe</p>
-                <p className="text-sm text-body font-medium">(+84) 912 345 678</p>
                 <p className="text-sm text-body leading-relaxed">
-                  123 Sunshine Avenue, District 1<br />
-                  Ho Chi Minh City, 700000<br />
-                  Vietnam
+                  {order?.address?.street}, {order?.address?.ward}<br />
+                  {order?.address?.district}, {order?.address?.city}
                 </p>
               </div>
               <div className="mt-6 rounded-lg h-36 w-full overflow-hidden shadow-inner ring-1 ring-gray-100">

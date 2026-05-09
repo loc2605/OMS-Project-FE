@@ -2,27 +2,32 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/home/Header';
 import orderApi from '../api/orderApi';
-const formatCurrency = (value) => {
-  const amount = Number(String(value).replace(/[^0-9.-]+/g, ''));
-  if (Number.isNaN(amount)) return '0 ₫';
-  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
-};
 
 const MyOrdersPage = () => {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('ALL');
+
+  const tabs = [
+    { id: 'ALL', label: 'All' },
+    { id: 'PENDING', label: 'Pending' },
+    { id: 'CONFIRMED', label: 'Confirmed' },
+    { id: 'SHIPPING', label: 'Shipping' },
+    { id: 'COMPLETED', label: 'Completed' },
+    { id: 'CANCELLED', label: 'Cancelled' },
+  ];
 
   useEffect(() => {
     const fetchOrders = async () => {
       try {
         setLoading(true);
-        const res = await orderApi.getMyOrders();
-        if (res.success) {
-          setOrders(res.result);
+        const response = await orderApi.getMyOrders();
+        if (response.success) {
+          setOrders(response.result.content || response.result || []);
         }
       } catch (error) {
-        console.error('Failed to fetch orders', error);
+        console.error('Failed to fetch orders:', error);
       } finally {
         setLoading(false);
       }
@@ -30,72 +35,148 @@ const MyOrdersPage = () => {
     fetchOrders();
   }, []);
 
+  const filteredOrders = Array.isArray(orders)
+    ? (activeTab === 'ALL' ? orders : orders.filter(order => order.status === activeTab))
+    : [];
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount).replace('₫', 'đ');
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('vi-VN', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
-      case 'PAYMENT_PENDING': return 'text-yellow-600 bg-yellow-50';
-      case 'CONFIRMED': return 'text-green-600 bg-green-50';
-      case 'SHIPPED': return 'text-blue-600 bg-blue-50';
-      case 'CANCELLED': return 'text-red-600 bg-red-50';
-      default: return 'text-gray-600 bg-gray-50';
+      case 'COMPLETED': return 'text-emerald-500 bg-emerald-50 border-emerald-100';
+      case 'SHIPPING': return 'text-blue-500 bg-blue-50 border-blue-100';
+      case 'CONFIRMED': return 'text-cyan-500 bg-cyan-50 border-cyan-100';
+      case 'CANCELLED': return 'text-red-500 bg-red-50 border-red-100';
+      case 'PENDING': return 'text-orange-500 bg-orange-50 border-orange-100';
+      default: return 'text-gray-500 bg-gray-50 border-gray-100';
     }
   };
 
   return (
-    <div className="bg-background-light min-h-screen">
+    <div className="bg-[#f5f5f5] min-h-screen pb-20">
       <Header />
-      <main className="max-w-full mx-auto px-4 md:px-8 lg:px-12 py-10">
-        <h1 className="text-3xl font-black text-heading mb-8">My Orders</h1>
-        
-        {loading ? (
-          <div className="flex justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-          </div>
-        ) : orders.length === 0 ? (
-          <div className="bg-white rounded-2xl p-20 text-center shadow-sm">
-            <span className="material-symbols-outlined text-6xl text-gray-200 mb-4">shopping_bag</span>
-            <p className="text-gray-500">You haven't placed any orders yet.</p>
-            <button 
-              onClick={() => navigate('/')}
-              className="mt-6 bg-primary text-white px-8 py-3 rounded-xl font-bold hover:opacity-90 transition-all"
+
+      <main className="max-w-[1200px] mx-auto px-4 pt-4">
+        {/* Tab Navigation */}
+        <div className="bg-white rounded-sm shadow-sm mb-4 flex sticky top-[100px] z-10">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-1 py-4 text-sm font-medium transition-all relative ${activeTab === tab.id ? 'text-primary' : 'text-gray-600 hover:text-primary'
+                }`}
             >
-              Start Shopping
+              {tab.label}
+              {activeTab === tab.id && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary animate-in fade-in duration-300"></div>
+              )}
             </button>
+          ))}
+        </div>
+
+        {/* Search Order*/}
+        <div className="bg-[#eaeaea] rounded-sm flex items-center px-4 py-2 mb-4">
+          <span className="material-symbols-outlined text-gray-400 mr-3">search</span>
+          <input
+            type="text"
+            placeholder="You can search by Order ID or Product Name"
+            className="bg-transparent border-none outline-none text-sm w-full py-1"
+          />
+        </div>
+
+        {/* Orders List */}
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 bg-white rounded-sm shadow-sm">
+            <div className="size-12 border-4 border-gray-100 border-t-primary rounded-full animate-spin mb-4"></div>
+            <p className="text-gray-500 text-sm">Loading your orders...</p>
+          </div>
+        ) : filteredOrders.length === 0 ? (
+          <div className="bg-white rounded-sm shadow-sm py-24 text-center">
+            <div className="size-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="material-symbols-outlined text-gray-300 text-6xl">order_approve</span>
+            </div>
+            <p className="text-gray-500">No orders yet</p>
           </div>
         ) : (
           <div className="space-y-4">
-            {orders.map((order) => (
-              <div 
-                key={order.orderId}
-                onClick={() => navigate(`/order/${order.orderId}`)}
-                className="bg-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-all cursor-pointer border border-transparent hover:border-primary/10"
-              >
-                <div className="flex justify-between items-center">
-                  <div className="space-y-1">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Order ID</p>
-                    <p className="text-lg font-bold text-heading">#{order.orderId}</p>
+            {filteredOrders.map((order) => (
+              <div key={order.orderId} className="bg-white rounded-sm shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {/* Order Header */}
+                <div className="px-6 py-4 border-b border-gray-50 flex justify-between items-center">
+                  <div className="flex items-center gap-3">
+                    <span className="text-sm font-bold text-gray-800">Order ID: {order.orderId}</span>
+                    <span className="text-gray-300">|</span>
+                    <span className="text-xs text-gray-500 italic">{formatDate(order.createdAt)}</span>
                   </div>
-                  <div className={`px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest ${getStatusColor(order.status)}`}>
+                  <span className={`text-[11px] font-bold uppercase px-2 py-1 rounded-sm ${getStatusColor(order.status)}`}>
                     {order.status}
-                  </div>
+                  </span>
                 </div>
-                
-                <div className="mt-6 pt-6 border-t border-gray-50 flex justify-between items-end">
-                  <div className="space-y-1">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Date Placed</p>
-                    <p className="text-sm font-medium text-body">
-                      {new Date(order.createdAt).toLocaleDateString('en-US', { 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric' 
-                      })}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Total Amount</p>
-                    <p className="text-2xl font-black text-primary">
-                      {formatCurrency(order.totalAmount)}
-                    </p>
-                  </div>
+
+                {/* Order Content */}
+                <div className="p-6 bg-white border-b border-gray-50/50">
+                  {order.orderItems && order.orderItems.length > 0 ? (
+                    <div className="flex justify-between items-center">
+                      <div className="flex gap-4">
+                        <div className="size-20 bg-gray-50 rounded-sm flex items-center justify-center border border-gray-100 flex-shrink-0">
+                          <span className="material-symbols-outlined text-gray-300 text-4xl">inventory_2</span>
+                        </div>
+                        <div className="flex flex-col justify-center">
+                          <h4 className="text-sm font-medium text-gray-800 line-clamp-2">
+                            {order.orderItems[0].productName}
+                          </h4>
+                          <p className="text-sm text-gray-400 mt-1">
+                            Quantity: {order.orderItems[0].quantity}
+                          </p>
+                          {order.orderItems.length > 1 && (
+                            <p className="text-sm text-primary/70 mt-1 font-medium">
+                              + {order.orderItems.length - 1} other items
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm text-primary font-medium">{formatCurrency(order.orderItems[0].price)}</div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-4">
+                      <div className="size-20 bg-gray-50 rounded-sm flex items-center justify-center border border-gray-100">
+                        <span className="material-symbols-outlined text-gray-300 text-4xl">inventory_2</span>
+                      </div>
+                      <p className="text-sm text-gray-500 italic">No items information</p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="px-6 py-4 flex justify-end items-center gap-2 bg-[#fdfdfd]">
+                  <span className="material-symbols-outlined text-primary text-[20px]">verified</span>
+                  <span className="text-sm text-gray-600">Order Total:</span>
+                  <span className="text-xl font-bold text-primary ml-2">{formatCurrency(order.totalAmount)}</span>
+                </div>
+
+                {/* Order Footer */}
+                <div className="px-6 py-4 bg-[#fffcf5] border-t border-gray-50 flex justify-end gap-3">
+                  <button
+                    onClick={() => navigate(`/order/${order.orderId}`)}
+                    className="px-6 py-2 bg-primary text-white text-sm font-medium rounded-sm hover:bg-primary/90 transition-all shadow-sm"
+                  >
+                    View Details
+                  </button>
+                  <button className="px-6 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-sm hover:bg-white transition-all">
+                    Contact Seller
+                  </button>
                 </div>
               </div>
             ))}
