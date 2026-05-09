@@ -57,9 +57,10 @@ const OrderTrackingPage = () => {
 
   const getStatusDisplay = (status) => {
     switch (status) {
-      case 'PAYMENT_PENDING': return { text: 'Payment Pending', color: 'bg-yellow-50 text-yellow-600 border-yellow-200' };
-      case 'CONFIRMED': return { text: 'Confirmed', color: 'bg-green-50 text-green-600 border-green-200' };
-      case 'SHIPPED': return { text: 'Shipped', color: 'bg-blue-50 text-blue-600 border-blue-200' };
+      case 'PENDING': return { text: 'Pending', color: 'bg-orange-50 text-orange-600 border-orange-200' };
+      case 'CONFIRMED': return { text: 'Confirmed', color: 'bg-cyan-50 text-cyan-600 border-cyan-200' };
+      case 'SHIPPING': return { text: 'Shipping', color: 'bg-blue-50 text-blue-600 border-blue-200' };
+      case 'COMPLETED': return { text: 'Completed', color: 'bg-emerald-50 text-emerald-600 border-emerald-200' };
       case 'CANCELLED': return { text: 'Cancelled', color: 'bg-red-50 text-red-600 border-red-200' };
       default: return { text: status, color: 'bg-gray-50 text-gray-600 border-gray-200' };
     }
@@ -68,206 +69,162 @@ const OrderTrackingPage = () => {
   const statusInfo = getStatusDisplay(order?.status);
 
   return (
-    <div className="bg-background-light text-body-text min-h-screen">
+    <div className="bg-[#f5f5f5] text-body-text min-h-screen">
       <Header />
 
-      <main className="layout-container flex h-full grow flex-col px-4 md:px-8 lg:px-12 py-10">
-        <div className="max-w-full mx-auto w-full flex flex-col gap-8">
-          <div className="bg-white p-8 rounded-[16px] shadow-sm">
-            <div className="flex flex-wrap justify-between items-center gap-6">
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-4">
-                  <h1 className="text-heading text-3xl font-extrabold leading-tight tracking-tight">{statusInfo.text}</h1>
-                  <span className={`px-4 py-1.5 ${statusInfo.color} text-[10px] font-extrabold rounded-full uppercase tracking-widest border`}>
-                    {order?.status}
+      <main className="max-w-[1200px] mx-auto px-4 py-10">
+        <div className="flex flex-col gap-6">
+          
+          {/* Order Header Card */}
+          <div className="bg-white p-8 rounded-sm shadow-sm border-b-2 border-primary/10">
+            <div className="flex flex-wrap justify-between items-start gap-6">
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <h1 className="text-2xl font-bold text-gray-800 tracking-tight">Order Details</h1>
+                  <span className={`px-3 py-1 ${statusInfo.color} text-[11px] font-bold rounded-sm uppercase tracking-wider border`}>
+                    {statusInfo.text}
                   </span>
                 </div>
-                <p className="text-body text-sm font-medium">
-                  Order ID: <span className="text-heading font-bold">#{orderId}</span>
-                </p>
-                <p className="text-sm text-gray-500 mt-1">{order?.message}</p>
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <span className="font-medium">Order ID: {orderId}</span>
+                  <span>•</span>
+                  <span>Placed on {new Date(order?.createdAt).toLocaleDateString('vi-VN')}</span>
+                </div>
               </div>
-              <div className="flex gap-4">
-                <button className="flex items-center justify-center rounded-lg h-12 px-8 border border-gray-200 bg-white text-heading text-sm font-bold hover:bg-gray-50 transition-colors shadow-sm">
-                  <span className="material-symbols-outlined text-xl mr-2">chat_bubble</span>
-                  Contact Seller
-                </button>
-                <button className="flex items-center justify-center rounded-lg h-12 px-8 bg-primary text-white text-sm font-bold shadow-md shadow-primary/20 hover:opacity-95 transition-all">
-                  Confirm Receipt
-                </button>
+              <div className="flex gap-3">
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-8 rounded-[16px] shadow-sm">
-            <h2 className="text-heading text-xl font-extrabold mb-10 flex items-center gap-3">
-              <span className="material-symbols-outlined text-primary text-2xl">local_shipping</span>
-              Shipping Progress
-            </h2>
-            <div className="relative pl-20 space-y-12">
-              <div className="absolute left-[33px] top-2 bottom-2 w-0.5 bg-gray-100"></div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column: Items & Payment */}
+            <div className="lg:col-span-2 space-y-6">
+              
+              {/* Order Items List */}
+              <div className="bg-white p-6 rounded-sm shadow-sm">
+                <h2 className="text-base font-bold text-gray-800 mb-6 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary text-[20px]">shopping_bag</span>
+                  ORDER ITEMS ({order?.orderItems?.length || 0})
+                </h2>
+                <div className="divide-y divide-gray-50">
+                  {order?.orderItems?.map((item, idx) => (
+                    <div key={idx} className="py-5 flex gap-4 first:pt-0 last:pb-0 group">
+                      <div className="size-20 bg-gray-50 rounded-sm border border-gray-100 flex items-center justify-center flex-shrink-0 group-hover:border-primary/30 transition-all">
+                        <span className="material-symbols-outlined text-gray-300 text-3xl">inventory_2</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-medium text-gray-800 line-clamp-2 hover:text-primary cursor-pointer transition-colors">
+                          {item.productName}
+                        </h4>
+                        <div className="flex items-center justify-between mt-3">
+                          <div className="text-xs text-gray-400">
+                            Unit Price: <span className="text-gray-600">{formatCurrency(item.price)}</span>
+                            <span className="mx-2">•</span>
+                            Qty: <span className="text-gray-600">{item.quantity}</span>
+                          </div>
+                          <div className="text-sm font-bold text-gray-800">
+                            {formatCurrency(item.price * item.quantity)}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
-              <div className="relative">
-                <div className="absolute -left-[47px] size-10 rounded-full bg-primary flex items-center justify-center text-white ring-8 ring-white z-10">
-                  <span className="material-symbols-outlined text-xl">local_shipping</span>
-                </div>
-                <div className="flex flex-col pt-1">
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-primary text-lg font-bold">In Delivery</h3>
-                    <span className="text-body/40 text-xs font-medium">— 14:00, Today</span>
+                {/* Total Summary */}
+                <div className="mt-8 pt-6 border-t border-gray-100 space-y-3">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Merchandise Subtotal</span>
+                    <span className="text-gray-800 font-medium">{formatCurrency(order?.totalAmount)}</span>
                   </div>
-                  <p className="text-heading text-sm font-semibold mt-2">Shipper: Nguyen Van A</p>
-                  <p className="text-body text-sm mt-1 leading-relaxed">Your package is on its way to you and expected to arrive by evening.</p>
-                </div>
-              </div>
-
-              <div className="relative">
-                <div className="absolute -left-[47px] size-10 rounded-full bg-gray-50 border-2 border-primary/20 flex items-center justify-center text-primary ring-8 ring-white z-10">
-                  <span className="material-symbols-outlined text-xl">payments</span>
-                </div>
-                <div className="flex flex-col pt-1">
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-heading text-lg font-bold">Paid Successfully</h3>
-                    <span className="text-body/40 text-xs font-medium">— 10:05, Oct 12</span>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Shipping Fee</span>
+                    <span className="text-gray-800 font-medium">{formatCurrency(0)}</span>
                   </div>
-                  <p className="text-body text-sm mt-2">Payment processed via Visa ending in •••• 4242.</p>
-                </div>
-              </div>
-
-              <div className="relative">
-                <div className="absolute -left-[47px] size-10 rounded-full bg-gray-50 border-2 border-primary/20 flex items-center justify-center text-primary ring-8 ring-white z-10">
-                  <span className="material-symbols-outlined text-xl">list_alt</span>
-                </div>
-                <div className="flex flex-col pt-1">
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-heading text-lg font-bold">Order Placed</h3>
-                    <span className="text-body/40 text-xs font-medium">— 10:00, Oct 12</span>
-                  </div>
-                  <p className="text-body text-sm mt-2">We have received your order and started processing.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="lg:col-span-2 bg-white p-6 rounded-[12px] shadow-sm">
-              <h2 className="text-heading text-xl font-extrabold mb-8">Order Items</h2>
-              <div className="space-y-6">
-                <div className="flex items-center gap-6 p-5 rounded-lg bg-gray-50/50 hover:bg-gray-50 transition-colors">
-                  <div
-                    className="size-24 bg-white rounded-lg flex-shrink-0 bg-cover bg-center border border-gray-100 shadow-sm"
-                    style={{
-                      backgroundImage:
-                        'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDYTlK9YM0Jje6AmtEvPOA9lVFg4uXffoLQJuflHZZql_IWATEdArhO1-zpCS_rb1F977VUDLyFwJSrRbW4MQF1ld9CJiFyHUAtxsnZqlgV6qXEARw9u8Ml69-4fYLUkQpGCjMrFI5ALAL6IuJ824cay72BhzDG8OZDvQD-zhYFo1YLoiVwX5xZFRqRCcmLvLkhnm3nLUHKwR_8ODeGFCRbml0P6rRlrTK7DWWdOx-7SlRCsub4ch3qyaFn-2hhXrPNJ9CnEQ1wDa14")',
-                    }}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-base font-bold text-heading truncate">Sony WH-1000XM5 Wireless Headphones</p>
-                    <p className="text-sm text-body mt-1 font-medium">Color: Silver • Qty: 1</p>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    <p className="text-lg font-extrabold text-primary">{formatCurrency(3490000)}</p>
-                    <p className="text-xs text-body/50 line-through font-medium">{formatCurrency(3990000)}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-6 p-5 rounded-lg bg-gray-50/50 hover:bg-gray-50 transition-colors">
-                  <div
-                    className="size-24 bg-white rounded-lg flex-shrink-0 bg-cover bg-center border border-gray-100 shadow-sm"
-                    style={{
-                      backgroundImage:
-                        'url("https://lh3.googleusercontent.com/aida-public/AB6AXuDjo_DKWAY3_4lCloOlLMw1nfDA3BYTx0HRrjC9GhLx8jXELpcaHZbTdfqwhFBfxRF3i9gPqP9PXuyCiTX0Dnf9pXfvCgdxj3SLQkmPT9Z1i1CFNwXTQjKtueM4ArKvikE_ib3m0RCgK2gFoVhxeKMBZTORdYgZB-ocFp3thSa4tagIddyEWYNcpB2GP2x1FPIcIStXDKlmzHprC5I8JMByb18zhbzDjxXbmO-19Zf58NFT8-wLqluiuClFq_z_jvdoV0lGCEVDPpXX")',
-                    }}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-base font-bold text-heading truncate">Premium Braided USB-C to Lightning Cable</p>
-                    <p className="text-sm text-body mt-1 font-medium">Length: 2m • Qty: 2</p>
-                  </div>
-                  <div className="text-right flex-shrink-0">
-                    <p className="text-lg font-extrabold text-primary">{formatCurrency(380000)}</p>
-                    <p className="text-xs text-body/50 font-medium">{formatCurrency(190000)} each</p>
+                  <div className="flex justify-between items-center pt-4 border-t border-gray-50 mt-4">
+                    <span className="text-lg font-bold text-gray-800">Total Amount</span>
+                    <div className="text-right">
+                      <div className="text-2xl font-black text-primary">{formatCurrency(order?.totalAmount)}</div>
+                      <p className="text-[10px] text-gray-400 mt-1 italic">Included VAT (if applicable)</p>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-10 pt-8 border-t border-gray-100 space-y-4">
-                <div className="flex justify-between text-body text-sm font-semibold">
-                  <span>Merchandise Subtotal</span>
-                  <span className="text-heading">{formatCurrency(3870000)}</span>
-                </div>
-                <div className="flex justify-between text-body text-sm font-semibold">
-                  <span>Shipping Fee</span>
-                  <span className="text-heading">{formatCurrency(120000)}</span>
-                </div>
-                <div className="flex justify-between text-body text-sm font-semibold">
-                  <span>Voucher Applied</span>
-                  <span className="text-green-600">-{formatCurrency(200000)}</span>
-                </div>
-                <div className="flex justify-between text-heading text-2xl font-black pt-4">
-                  <span>Total Amount</span>
-                  <span className="text-primary">{formatCurrency(3790000)}</span>
+              {/* Payment Method */}
+              <div className="bg-white p-6 rounded-sm shadow-sm">
+                <h2 className="text-base font-bold text-gray-800 mb-6 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary text-[20px]">account_balance_wallet</span>
+                  PAYMENT METHOD
+                </h2>
+                <div className="flex items-center gap-4 p-4 bg-[#fcfcfc] border border-dashed border-gray-200 rounded-sm">
+                  <div className="size-10 bg-white rounded-full flex items-center justify-center text-primary shadow-sm border border-gray-50">
+                    <span className="material-symbols-outlined text-xl">
+                      {order?.paymentMethod === 'COD' ? 'payments' : 'account_balance'}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-bold text-gray-700">
+                      {order?.paymentMethod === 'COD' ? 'Cash on Delivery (COD)' : 'Bank Transfer'}
+                    </p>
+                    <p className="text-[11px] text-gray-400 mt-0.5 uppercase tracking-wide">
+                      Transaction ID: {order?.paymentId || 'N/A'}
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
-            </div>
 
-            <div className="lg:col-span-1 flex flex-col gap-8">
-              <div className="bg-white p-6 rounded-[12px] shadow-sm">
-                <div className="flex items-center gap-3 mb-6">
-                  <span className="material-symbols-outlined text-primary font-bold">location_on</span>
-                  <h3 className="text-lg font-bold text-heading">Delivery Address</h3>
+            {/* Right Column: Shipping Info */}
+            <div className="space-y-6">
+              {/* Delivery Address */}
+              <div className="bg-white p-6 rounded-sm shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-primary"></div>
+                <h2 className="text-base font-bold text-gray-800 mb-6 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary text-[20px]">location_on</span>
+                  DELIVERY ADDRESS
+                </h2>
+                {order?.shippingAddress ? (
+                  <div className="space-y-4">
+                    <div>
+                      <p className="text-sm font-bold text-gray-800">{order.shippingAddress.receiverName}</p>
+                      <p className="text-sm text-gray-500 mt-0.5">{order.shippingAddress.receiverPhone}</p>
+                    </div>
+                    <div className="space-y-1">
+                      <p className="text-sm text-gray-600 leading-relaxed">
+                        {order.shippingAddress.street}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {order.shippingAddress.ward}, {order.shippingAddress.district}
+                      </p>
+                      <p className="text-sm text-gray-500">
+                        {order.shippingAddress.city}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="text-sm text-gray-400 italic">Address information not available</p>
+                )}
+                
+                <div className="mt-8 pt-6 border-t border-gray-50">
+                   <div className="bg-[#f0f9ff] p-4 rounded-sm border border-blue-50">
+                      <p className="text-[12px] text-blue-600 flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[18px]">info</span>
+                        Our courier will contact you before delivery.
+                      </p>
+                   </div>
+                </div>
               </div>
-              <div className="space-y-3">
-                <p className="text-sm text-body leading-relaxed">
-                  {order?.address?.street}, {order?.address?.ward}<br />
-                  {order?.address?.district}, {order?.address?.city}
+
+              {/* Order Status Message */}
+              <div className="bg-white p-6 rounded-sm shadow-sm">
+                <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2 uppercase tracking-wide">
+                   Latest Update
+                </h3>
+                <p className="text-sm text-gray-600 leading-relaxed bg-gray-50 p-4 rounded-sm italic border-l-4 border-gray-200">
+                  "{order?.message || 'We have received your order and are processing it.'}"
                 </p>
               </div>
-              <div className="mt-6 rounded-lg h-36 w-full overflow-hidden shadow-inner ring-1 ring-gray-100">
-                <div
-                  className="w-full h-full bg-cover bg-center grayscale-[0.5] contrast-[0.9]"
-                  style={{
-                    backgroundImage:
-                      'url("https://lh3.googleusercontent.com/aida-public/AB6AXuCZCgB0sWsv3TIV5-HjcZU705vA7DNBuYuwMvSLU_lw2h9TSIo7rKdfQaLEavsbfuPkDbu3UCyer4XN5BFaPlPiMjiJk4vG50lVz9MDoOU3nnVPIzIUrLQG9bCwKUkAFVhA7U-uOoxxHlDTOC7E58tsscInTAXXYyyjWAz6W11Ss4yQN6GqJ8cpkkh0sGSwFzfwwaoIF-oJO-xPvbtY9YyjS6_2FAIs5aN2b_kyQUu-Zv2OuBbGxZYITuK2Fd5PRHnj-Frw0wygUBE1")',
-                  }}
-                />
-              </div>
-            </div>
-            <div className="bg-white p-8 rounded-[16px] shadow-sm">
-              <div className="flex items-center gap-3 mb-6">
-                <span className="material-symbols-outlined text-primary font-bold">account_balance_wallet</span>
-                <h3 className="text-lg font-bold text-heading">Payment Method</h3>
-              </div>
-              <div className="flex items-center gap-4 p-4 rounded-lg bg-gray-50 border border-gray-100">
-                <div className="size-12 bg-white rounded-lg flex items-center justify-center shadow-sm text-body">
-                  <span className="material-symbols-outlined text-2xl">credit_card</span>
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-heading uppercase tracking-wide">Visa •••• 4242</p>
-                  <p className="text-[11px] text-body font-medium mt-0.5">Paid Oct 12, 10:05 AM</p>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col gap-4">
-              <Link
-                to="#"
-                className="flex items-center justify-between p-5 bg-white rounded-lg shadow-sm hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100 group"
-              >
-                <div className="flex items-center gap-4">
-                  <span className="material-symbols-outlined text-body/60 group-hover:text-primary transition-colors">assignment_return</span>
-                  <span className="text-sm font-bold text-heading">Return / Refund Policy</span>
-                </div>
-                <span className="material-symbols-outlined text-body/40 group-hover:translate-x-1 transition-transform">chevron_right</span>
-              </Link>
-              <Link
-                to="#"
-                className="flex items-center justify-between p-5 bg-white rounded-lg shadow-sm hover:bg-gray-50 transition-all border border-transparent hover:border-gray-100 group"
-              >
-                <div className="flex items-center gap-4">
-                  <span className="material-symbols-outlined text-body/60 group-hover:text-primary transition-colors">help</span>
-                  <span className="text-sm font-bold text-heading">Need help with this order?</span>
-                </div>
-                <span className="material-symbols-outlined text-body/40 group-hover:translate-x-1 transition-transform">chevron_right</span>
-              </Link>
             </div>
           </div>
         </div>

@@ -8,6 +8,8 @@ const MyOrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('ALL');
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const tabs = [
     { id: 'ALL', label: 'All' },
@@ -35,8 +37,12 @@ const MyOrdersPage = () => {
     fetchOrders();
   }, []);
 
-  const filteredOrders = Array.isArray(orders)
-    ? (activeTab === 'ALL' ? orders : orders.filter(order => order.status === activeTab))
+  const filteredOrders = Array.isArray(orders) 
+    ? orders.filter(order => {
+        const matchesTab = activeTab === 'ALL' || order.status === activeTab;
+        const matchesSearch = order.orderId.toLowerCase().includes(searchTerm.toLowerCase());
+        return matchesTab && matchesSearch;
+      })
     : [];
 
   const formatCurrency = (amount) => {
@@ -67,62 +73,102 @@ const MyOrdersPage = () => {
     <div className="bg-[#f5f5f5] min-h-screen pb-20">
       <Header />
 
-      <main className="max-w-[1200px] mx-auto px-4 pt-4">
-        {/* Tab Navigation */}
-        <div className="bg-white rounded-sm shadow-sm mb-4 flex sticky top-[100px] z-10">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 py-4 text-sm font-medium transition-all relative ${activeTab === tab.id ? 'text-primary' : 'text-gray-600 hover:text-primary'
-                }`}
-            >
-              {tab.label}
-              {activeTab === tab.id && (
-                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary animate-in fade-in duration-300"></div>
-              )}
-            </button>
-          ))}
-        </div>
-
-        {/* Search Order*/}
-        <div className="bg-[#eaeaea] rounded-sm flex items-center px-4 py-2 mb-4">
-          <span className="material-symbols-outlined text-gray-400 mr-3">search</span>
-          <input
-            type="text"
-            placeholder="You can search by Order ID or Product Name"
-            className="bg-transparent border-none outline-none text-sm w-full py-1"
-          />
-        </div>
-
-        {/* Orders List */}
-        {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 bg-white rounded-sm shadow-sm">
-            <div className="size-12 border-4 border-gray-100 border-t-primary rounded-full animate-spin mb-4"></div>
-            <p className="text-gray-500 text-sm">Loading your orders...</p>
-          </div>
-        ) : filteredOrders.length === 0 ? (
-          <div className="bg-white rounded-sm shadow-sm py-24 text-center">
-            <div className="size-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="material-symbols-outlined text-gray-300 text-6xl">order_approve</span>
-            </div>
-            <p className="text-gray-500">No orders yet</p>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {filteredOrders.map((order) => (
-              <div key={order.orderId} className="bg-white rounded-sm shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-                {/* Order Header */}
-                <div className="px-6 py-4 border-b border-gray-50 flex justify-between items-center">
-                  <div className="flex items-center gap-3">
-                    <span className="text-sm font-bold text-gray-800">Order ID: {order.orderId}</span>
-                    <span className="text-gray-300">|</span>
-                    <span className="text-xs text-gray-500 italic">{formatDate(order.createdAt)}</span>
-                  </div>
-                  <span className={`text-[11px] font-bold uppercase px-2 py-1 rounded-sm ${getStatusColor(order.status)}`}>
-                    {order.status}
-                  </span>
+      <main className="max-w-[1400px] mx-auto px-4 pt-8">
+        <div className="flex flex-col lg:flex-row gap-8 items-start">
+          
+          {/* Sidebar - Search & Filter */}
+          <aside className="w-full lg:w-[320px] sticky top-[80px] space-y-6">
+            <div className="bg-white rounded-sm shadow-sm p-6 space-y-8">
+              {/* Search Section */}
+              <div>
+                <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary text-[20px]">search</span>
+                  SEARCH ORDER
+                </h3>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Enter Order ID..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full bg-[#f8f8f8] border border-gray-100 rounded-sm py-2.5 px-4 text-sm outline-none focus:border-primary focus:bg-white transition-all"
+                  />
                 </div>
+              </div>
+
+              {/* Status Filter Section */}
+              <div>
+                <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-primary text-[20px]">filter_list</span>
+                  ORDER STATUS
+                </h3>
+                <div className="space-y-1">
+                  {tabs.map((tab) => (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`w-full flex items-center justify-between px-4 py-2.5 rounded-sm text-sm transition-all ${
+                        activeTab === tab.id
+                          ? 'bg-primary text-white font-medium shadow-md shadow-primary/20'
+                          : 'text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      <span>{tab.label}</span>
+                      {activeTab === tab.id && (
+                        <span className="material-symbols-outlined text-[18px]">chevron_right</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Helper Text */}
+              <div className="pt-4 border-t border-gray-50">
+                <p className="text-[11px] text-gray-400 leading-relaxed italic">
+                  * Select a status or use search to quickly find your orders.
+                </p>
+              </div>
+            </div>
+          </aside>
+
+          {/* Main Content - Orders List */}
+          <div className="flex-1 w-full">
+            {loading ? (
+              <div className="flex flex-col items-center justify-center py-32 bg-white rounded-sm shadow-sm">
+                <div className="size-12 border-4 border-gray-100 border-t-primary rounded-full animate-spin mb-4"></div>
+                <p className="text-gray-500 text-sm">Synchronizing your orders...</p>
+              </div>
+            ) : filteredOrders.length === 0 ? (
+              <div className="bg-white rounded-sm shadow-sm py-32 text-center">
+                <div className="size-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <span className="material-symbols-outlined text-gray-300 text-6xl">order_approve</span>
+                </div>
+                <h3 className="text-lg font-medium text-gray-800">No orders found</h3>
+                <p className="text-gray-400 text-sm mt-2">Try adjusting your filters or search terms.</p>
+                {activeTab !== 'ALL' || searchTerm !== '' ? (
+                  <button 
+                    onClick={() => { setActiveTab('ALL'); setSearchTerm(''); }}
+                    className="mt-6 text-primary text-sm font-medium hover:underline"
+                  >
+                    Clear all filters
+                  </button>
+                ) : null}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {filteredOrders.map((order) => (
+                  <div key={order.orderId} className="bg-white rounded-sm shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 hover:shadow-md transition-shadow">
+                    {/* Order Header */}
+                    <div className="px-6 py-4 border-b border-gray-50 flex justify-between items-center bg-[#fcfcfc]">
+                      <div className="flex items-center gap-3">
+                        <span className="text-sm font-bold text-gray-800">Order ID: {order.orderId}</span>
+                        <span className="text-gray-300">|</span>
+                        <span className="text-xs text-gray-500">{formatDate(order.createdAt)}</span>
+                      </div>
+                      <span className={`text-[11px] font-bold uppercase px-3 py-1 rounded-full border ${getStatusColor(order.status)}`}>
+                        {order.status}
+                      </span>
+                    </div>
 
                 {/* Order Content */}
                 <div className="p-6 bg-white border-b border-gray-50/50">
@@ -174,15 +220,14 @@ const MyOrdersPage = () => {
                   >
                     View Details
                   </button>
-                  <button className="px-6 py-2 border border-gray-200 text-gray-600 text-sm font-medium rounded-sm hover:bg-white transition-all">
-                    Contact Seller
-                  </button>
                 </div>
               </div>
             ))}
           </div>
         )}
-      </main>
+      </div>
+    </div>
+  </main>
     </div>
   );
 };
