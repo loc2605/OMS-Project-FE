@@ -5,20 +5,20 @@ import { useAuth } from '../../contexts/AuthContext';
 import authApi from '../../api/authApi';
 
 const LoginForm = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [passwordError, setPasswordError] = useState('Cannot be empty');
+  const [passwordError, setPasswordError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (email && password) {
+    if (username && password) {
       try {
         setPasswordError('');
-        const response = await authApi.login({ username: email, password });
+        const response = await authApi.login({ username, password });
         if (response.success) {
           // Pass token and refreshToken to login context
           login(response.result, response.result.token, response.result.refreshToken);
@@ -60,15 +60,18 @@ const LoginForm = () => {
         <p className="text-[#8a7260] dark:text-stone-400 font-medium">Please enter your details to sign in to your account.</p>
       </div>
       <form onSubmit={handleSubmit} className="space-y-5">
-        {/* Email Field */}
+        {/* Username Field */}
         <div className="flex flex-col gap-1.5">
-          <label className="text-[#181411] dark:text-stone-200 text-sm font-semibold leading-normal">Username or Email</label>
+          <label className="text-[#181411] dark:text-stone-200 text-sm font-semibold leading-normal">Username</label>
           <input
-            className="form-input block w-full rounded-lg border border-[#e6dfdb] dark:border-stone-700 bg-white dark:bg-stone-800 px-4 py-3.5 text-[#181411] dark:text-white placeholder:text-[#8a7260] focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
-            placeholder="Enter your username or email"
+            className={`form-input block w-full rounded-lg border ${passwordError && !username ? 'border-red-500 focus:ring-red-200' : 'border-[#e6dfdb] dark:border-stone-700 focus:border-primary focus:ring-primary/20'} bg-white dark:bg-stone-800 px-4 py-3.5 text-[#181411] dark:text-white placeholder:text-[#8a7260] transition-all`}
+            placeholder="Enter your username"
             type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={username}
+            onChange={(e) => {
+              setUsername(e.target.value);
+              if (passwordError) setPasswordError('');
+            }}
           />
         </div>
         {/* Password Field with Validation Error */}
@@ -79,17 +82,13 @@ const LoginForm = () => {
           </div>
           <div className="relative">
             <input
-              className="form-input block w-full rounded-lg border border-red-500 bg-white dark:bg-stone-800 px-4 py-3.5 text-[#181411] dark:text-white placeholder:text-[#8a7260] focus:ring-2 focus:ring-red-200 transition-all pr-12"
+              className={`form-input block w-full rounded-lg border ${passwordError ? 'border-red-500 focus:ring-red-200' : 'border-[#e6dfdb] dark:border-stone-700 focus:border-primary focus:ring-primary/20'} bg-white dark:bg-stone-800 px-4 py-3.5 text-[#181411] dark:text-white placeholder:text-[#8a7260] transition-all pr-12`}
               placeholder="Enter your password"
               type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => {
                 setPassword(e.target.value);
-                if (e.target.value.trim() === '') {
-                  setPasswordError('Cannot be empty');
-                } else {
-                  setPasswordError('');
-                }
+                if (passwordError) setPasswordError('');
               }}
             />
             <button

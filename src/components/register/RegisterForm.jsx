@@ -4,6 +4,7 @@ import authApi from '../../api/authApi';
 
 const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
   const [username, setUsername] = useState('');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -21,6 +22,7 @@ const RegisterForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitted(true);
     if (!isPasswordValid) {
       alert("Password does not meet the minimum requirements");
       return;
@@ -57,7 +59,13 @@ const RegisterForm = () => {
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Username</label>
           <div className="relative">
-            <input className="w-full h-11 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" placeholder="johndoe123" type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+            <input 
+              className="w-full h-11 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" 
+              placeholder="johndoe123" 
+              type="text" 
+              value={username} 
+              onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))} 
+            />
           </div>
         </div>
 
@@ -78,14 +86,7 @@ const RegisterForm = () => {
 
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Phone Number</label>
-          <div className="flex gap-2">
-            <select className="w-[85px] h-11 px-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none dark:text-white">
-              <option>+1</option>
-              <option>+44</option>
-              <option>+33</option>
-            </select>
-            <input className="flex-1 h-11 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" placeholder="(555) 000-0000" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
-          </div>
+          <input className="w-full h-11 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" placeholder="0123 456 789" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
         </div>
       </div>
 
@@ -103,8 +104,14 @@ const RegisterForm = () => {
           
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Confirm Password</label>
-            <input className={`w-full h-11 px-4 rounded-lg border bg-white dark:bg-gray-900 focus:ring-2 outline-none transition-all dark:text-white ${confirmPassword && password !== confirmPassword ? 'border-red-400 focus:ring-red-200 focus:border-red-500' : 'border-gray-200 dark:border-gray-700 focus:ring-primary/20 focus:border-primary'}`} placeholder="••••••••" type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
-            {confirmPassword && password !== confirmPassword && (
+            <input 
+              className={`w-full h-11 px-4 rounded-lg border bg-white dark:bg-gray-900 focus:ring-2 outline-none transition-all dark:text-white ${isSubmitted && confirmPassword && password !== confirmPassword ? 'border-red-400 focus:ring-red-200 focus:border-red-500' : 'border-gray-200 dark:border-gray-700 focus:ring-primary/20 focus:border-primary'}`} 
+              placeholder="••••••••" 
+              type="password" 
+              value={confirmPassword} 
+              onChange={(e) => setConfirmPassword(e.target.value)} 
+            />
+            {isSubmitted && confirmPassword && password !== confirmPassword && (
               <p className="text-[11px] text-red-500 font-medium absolute mt-12">Passwords do not match</p>
             )}
           </div>

@@ -51,14 +51,7 @@ const ProductCard = ({ product, isSkeleton = false }) => {
         <div className="flex items-center gap-2">
           <span className="text-primary font-medium text-base">{formattedPrice}</span>
         </div>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center text-[#ffce3d]">
-            {[...Array(5)].map((_, i) => (
-              <span key={i} className={`material-symbols-outlined text-xs ${i < (product.rating || 5) ? 'fill-current' : 'text-gray-200'}`}>star</span>
-            ))}
-          </div>
-          <div className="text-xs text-body-text">{product.sold || '0'} Sold</div>
-        </div>
+
         <button onClick={(e) => { e.stopPropagation(); handleAddToCart(); }} className="w-full bg-primary text-white text-sm font-medium py-2 rounded hover:bg-primary/90 transition-colors">
           Add to Cart
         </button>

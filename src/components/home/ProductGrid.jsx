@@ -6,7 +6,7 @@ const ProductGrid = ({ filters }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({ page: 0, size: 10, totalPages: 1 });
-  const [sortOption, setSortOption] = useState('priceAsc');
+  const [sortOption, setSortOption] = useState('newest');
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -62,7 +62,7 @@ const ProductGrid = ({ filters }) => {
   return (
     <div className="flex-1">
       <div className="flex items-center justify-between mb-2 bg-white/50 p-2 rounded">
-        <h2 className="text-base font-medium text-heading">Recommended for You</h2>
+        <div></div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-body-text">Sort by:</span>
           <select 
