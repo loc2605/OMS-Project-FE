@@ -54,6 +54,15 @@ const ProductDetailPage = () => {
     addToCart(product);
   };
 
+  const handleBuyNow = () => {
+    if (!isAuthenticated) {
+      navigate('/login');
+      return;
+    }
+    addToCart(product);
+    navigate('/cart');
+  };
+
   if (loading) {
     return (
       <div className="bg-background-light min-h-screen">
@@ -121,42 +130,14 @@ const ProductDetailPage = () => {
                 <span className="text-gray-400 text-xs font-medium">SKU: {product.sku || 'N/A'}</span>
               </div>
               <h1 className="text-2xl font-bold tracking-tight text-heading-text">{product.name}</h1>
-              <div className="flex items-center gap-4 text-sm">
-                <div className="flex items-center text-primary">
-                  <span className="material-symbols-outlined text-[16px]">star</span>
-                  <span className="material-symbols-outlined text-[16px]">star</span>
-                  <span className="material-symbols-outlined text-[16px]">star</span>
-                  <span className="material-symbols-outlined text-[16px]">star</span>
-                  <span className="material-symbols-outlined text-[16px]">star_half</span>
-                  <span className="ml-1 font-bold underline">4.8</span>
-                </div>
-                <span className="text-gray-300">|</span>
-                <span className="underline cursor-pointer">1.2k Reviews</span>
-                <span className="text-gray-300">|</span>
-                <span>2.5k Sold</span>
-              </div>
+
             </div>
-            <div className="p-5 bg-[#fafafa] rounded space-y-4">
+            <div className="p-5 bg-[#fafafa] rounded">
               <div className="flex items-center gap-4">
                 {product.oldPrice && <span className="text-gray-400 line-through text-sm">{formatCurrency(product.oldPrice)}</span>}
                 <span className="text-3xl font-bold text-primary">{formatCurrency(product.price)}</span>
                 {product.discount && <span className="pastel-badge-primary text-[11px] font-bold px-1.5 py-0.5 rounded">{product.discount}</span>}
               </div>
-              {/* Inventory Urgency */}
-              {inventory && (
-                <div className="space-y-1.5">
-                  <div className="flex justify-between items-center text-xs">
-                    <span className="text-primary font-medium flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[14px]">local_fire_department</span>
-                      Hurry! Only {inventory.availableQuantity} items left in stock
-                    </span>
-                    <span className="text-gray-500">{Math.round((inventory.reservedQuantity / inventory.totalQuantity) * 100) || 0}% Sold</span>
-                  </div>
-                  <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                    <div className="h-full bg-primary" style={{ width: `${(inventory.reservedQuantity / inventory.totalQuantity) * 100}%` }}></div>
-                  </div>
-                </div>
-              )}
             </div>
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row gap-3">
@@ -168,7 +149,10 @@ const ProductDetailPage = () => {
                   <span className="material-symbols-outlined">add_shopping_cart</span>
                   Add to Cart
                 </button>
-                <button className="flex-1 bg-primary text-white font-bold py-3.5 rounded-sm flex items-center justify-center gap-2 transition-all hover:bg-primary/90">
+                <button 
+                  onClick={handleBuyNow}
+                  className="flex-1 bg-primary text-white font-bold py-3.5 rounded-sm flex items-center justify-center gap-2 transition-all hover:bg-primary/90"
+                >
                   Buy Now
                 </button>
               </div>
@@ -187,34 +171,18 @@ const ProductDetailPage = () => {
                 </div>
               </div>
             </div>
-            {/* Promotion */}
-            <div className="p-3 bg-[#fffaf5] border border-primary/20 rounded flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="text-primary">
-                  <span className="material-symbols-outlined">confirmation_number</span>
-                </div>
-                <div>
-                  <p className="text-sm font-bold text-heading-text">Claim {formatCurrency(100000)} Voucher</p>
-                  <p className="text-[11px] text-gray-500">For new customers only</p>
-                </div>
+            {/* Product Description Moved Up */}
+            <div className="pt-6 border-t border-gray-100">
+              <h3 className="font-bold text-heading-text uppercase tracking-wider text-xs mb-3">Product Description</h3>
+              <div className="prose prose-sm max-w-none text-body-text">
+                <p className="text-sm leading-relaxed text-gray-600">
+                  {product.description}
+                </p>
               </div>
-              <button className="text-primary font-bold text-sm px-4 py-1 hover:bg-primary/5 rounded">Claim</button>
             </div>
           </div>
         </div>
-        {/* Product Details & Seller Section */}
-        <div className="bg-card-white shadow-soft rounded overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100">
-            <h3 className="font-bold text-heading-text uppercase tracking-wider text-sm">Product Description</h3>
-          </div>
-          <div className="p-6">
-            <div className="prose prose-sm max-w-none text-body-text">
-              <p className="text-base leading-relaxed">
-                {product.description}
-              </p>
-            </div>
-          </div>
-        </div>
+
       </main>
       {/* Footer */}
       <footer className="bg-card-white border-t border-gray-200 mt-12 py-10">
