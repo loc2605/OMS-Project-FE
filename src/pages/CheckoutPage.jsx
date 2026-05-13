@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext.jsx';
 import Header from '../components/home/Header';
@@ -32,6 +32,8 @@ const CheckoutPage = () => {
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [addressError, setAddressError] = useState('');
+  const addressRef = useRef(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -63,7 +65,32 @@ const CheckoutPage = () => {
   const [pollStatus, setPollStatus] = useState('PENDING'); // PENDING, CONFIRMED, CANCELLED
   const [pollMessage, setPollMessage] = useState('We are processing your order, please wait a moment.');
   const [showAddressModal, setShowAddressModal] = useState(false);
+  const [showAddAddressModal, setShowAddAddressModal] = useState(false);
+  const [provinces, setProvinces] = useState([]);
+  const [districts, setDistricts] = useState([]);
+  const [wards, setWards] = useState([]);
+  const [activeDropdown, setActiveDropdown] = useState(null);
+  const [addressForm, setAddressForm] = useState({
+    street: '',
+    ward: '',
+    district: '',
+    city: '',
+    isDefault: false
+  });
   const [activeOrderId, setActiveOrderId] = useState(null);
+
+  useEffect(() => {
+    const fetchProvinces = async () => {
+      try {
+        const res = await fetch('https://provinces.open-api.vn/api/p/');
+        const data = await res.json();
+        setProvinces(data);
+      } catch (e) {
+        console.error('Failed to fetch provinces', e);
+      }
+    };
+    fetchProvinces();
+  }, []);
 
   const startPolling = (orderId) => {
     setIsPolling(true);
@@ -78,14 +105,14 @@ const CheckoutPage = () => {
       try {
         pollCount++;
         console.log(`Polling attempt ${pollCount} for Order: ${orderId}`);
-        
+
         // 1. Check Notifications (Non-blocking)
         try {
           const notiRes = await notificationApi.getMyNotifications({ size: 5 });
           if (notiRes.success && notiRes.result.content) {
             // Tìm thông báo chứa orderId HOẶC là thông báo cập nhật đơn hàng mới nhất
-            const relevantNoti = notiRes.result.content.find(noti => 
-              (noti.content && noti.content.includes(orderId)) || 
+            const relevantNoti = notiRes.result.content.find(noti =>
+              (noti.content && noti.content.includes(orderId)) ||
               (noti.title === 'Cập nhật đơn hàng' && pollCount < 5)
             );
             if (relevantNoti) {
@@ -100,12 +127,12 @@ const CheckoutPage = () => {
         const response = await orderApi.get(orderId);
         const result = response.result;
         console.log('Order Status:', result.status);
-        
+
         if (result.status === 'CONFIRMED') {
           clearInterval(pollInterval);
           setPollStatus('CONFIRMED');
           setPollMessage(result.message || 'Payment confirmed! Your order has been placed successfully.');
-          clearCart(); 
+          clearCart();
         } else if (result.status === 'CANCELLED') {
           clearInterval(pollInterval);
           setPollStatus('CANCELLED');
@@ -126,13 +153,129 @@ const CheckoutPage = () => {
     }, 2000);
   };
 
+  const handleProvinceChange = async (e) => {
+    const provinceCode = e.target.value;
+    const provinceName = provinces.find(p => p.code === parseInt(provinceCode))?.name || '';
+    setAddressForm({ ...addressForm, city: provinceName, district: '', ward: '' });
+    setWards([]);
+
+    if (provinceCode) {
+      try {
+        const res = await fetch(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`);
+        const data = await res.json();
+        setDistricts(data.districts || []);
+      } catch (e) {
+        console.error('Failed to fetch districts', e);
+      }
+    } else {
+      setDistricts([]);
+    }
+  };
+
+  const handleDistrictChange = async (e) => {
+    const districtCode = e.target.value;
+    const districtName = districts.find(d => d.code === parseInt(districtCode))?.name || '';
+    setAddressForm({ ...addressForm, district: districtName, ward: '' });
+
+    if (districtCode) {
+      try {
+        const res = await fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
+        const data = await res.json();
+        setWards(data.wards || []);
+      } catch (e) {
+        console.error('Failed to fetch wards', e);
+      }
+    } else {
+      setWards([]);
+    }
+  };
+
+  const handleAddNewAddress = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const res = await profileApi.addAddress(addressForm);
+      if (res.success) {
+        // Fetch addresses again
+        const profileRes = await profileApi.getProfile();
+        if (profileRes.success && profileRes.result.addresses) {
+          const updatedAddresses = profileRes.result.addresses;
+          setAddresses(updatedAddresses);
+          // Find the newly added address (usually the last one or by some logic)
+          // Or if it's default, it will be the new selected address
+          const newAddr = updatedAddresses.find(a => a.street === addressForm.street && a.city === addressForm.city) || updatedAddresses[updatedAddresses.length - 1];
+          setSelectedAddress(newAddr);
+          setAddressError('');
+        }
+        setShowAddAddressModal(false);
+        setAddressForm({ street: '', ward: '', district: '', city: '', isDefault: false });
+      }
+    } catch (error) {
+      alert("Add address failed!");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const CustomSelect = ({ label, options, value, onChange, disabled, placeholder }) => {
+    const isOpen = activeDropdown === label;
+    return (
+      <div className="space-y-1 relative">
+        <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">{label}</label>
+        <div className="relative">
+          <button
+            type="button"
+            disabled={disabled}
+            onClick={() => setActiveDropdown(isOpen ? null : label)}
+            className={`w-full px-4 py-3 rounded-sm border border-gray-200 focus:border-primary outline-none transition-all text-sm bg-white flex justify-between items-center disabled:bg-gray-50 disabled:opacity-60 cursor-pointer ${isOpen ? 'border-primary shadow-sm' : ''}`}
+          >
+            <span className={!value ? 'text-gray-400' : 'text-gray-700 font-medium'}>
+              {value || placeholder}
+            </span>
+            <span className={`material-symbols-outlined text-gray-400 text-[20px] transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
+              expand_more
+            </span>
+          </button>
+
+          {isOpen && (
+            <div className="absolute top-full left-0 w-full mt-1 bg-white border border-gray-100 rounded-sm shadow-xl z-[210] max-h-48 overflow-y-auto">
+              {options.length === 0 ? (
+                <div className="px-3 py-2 text-xs text-gray-400 italic">No options</div>
+              ) : (
+                options.map((opt) => {
+                  const name = opt.name || opt;
+                  const code = opt.code || opt;
+                  return (
+                    <button
+                      key={code}
+                      type="button"
+                      onClick={() => {
+                        onChange({ target: { value: code } });
+                        setActiveDropdown(null);
+                      }}
+                      className={`w-full px-3 py-2 text-left text-sm hover:bg-gray-50 transition-colors flex items-center justify-between ${value === name ? 'text-primary font-medium bg-primary/5' : 'text-gray-700'}`}
+                    >
+                      {name}
+                      {value === name && <span className="material-symbols-outlined text-sm">check</span>}
+                    </button>
+                  );
+                })
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   const handlePlaceOrder = async () => {
     if (cartItems.length === 0) {
       alert('Your cart is empty.');
       return;
     }
     if (!selectedAddress) {
-      alert('Please select or add a shipping address.');
+      setAddressError('Please provide a delivery address to complete your order.');
+      addressRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
       return;
     }
 
@@ -180,7 +323,7 @@ const CheckoutPage = () => {
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
           <div className="bg-white rounded-sm shadow-2xl w-full max-w-[450px] relative z-10 p-10 text-center animate-in fade-in zoom-in duration-300">
-            
+
             {pollStatus === 'PENDING' && (
               <div className="flex flex-col items-center">
                 <div className="size-20 border-4 border-gray-100 border-t-primary rounded-full animate-spin mb-6"></div>
@@ -202,13 +345,13 @@ const CheckoutPage = () => {
                 <h3 className="text-xl font-bold text-gray-800 mb-2">Order Confirmed!</h3>
                 <p className="text-gray-500 leading-relaxed mb-8">{pollMessage}</p>
                 <div className="flex flex-col gap-3 w-full">
-                  <button 
+                  <button
                     onClick={() => navigate(`/order-tracking/${activeOrderId}`)}
                     className="w-full bg-primary text-white py-3 rounded-sm font-medium hover:bg-primary/90 transition-all shadow-sm"
                   >
                     View Order Details
                   </button>
-                  <button 
+                  <button
                     onClick={() => navigate('/')}
                     className="w-full bg-white text-gray-600 py-3 rounded-sm font-medium border border-gray-200 hover:bg-gray-50 transition-all"
                   >
@@ -226,7 +369,7 @@ const CheckoutPage = () => {
                 <h3 className="text-xl font-bold text-gray-800 mb-2">Order Failed</h3>
                 <p className="text-red-500 leading-relaxed font-medium mb-2">{pollMessage}</p>
                 <p className="text-gray-400 text-sm mb-8">Please check your information and try again.</p>
-                <button 
+                <button
                   onClick={() => setIsPolling(false)}
                   className="w-full bg-gray-800 text-white py-3 rounded-sm font-medium hover:bg-black transition-all"
                 >
@@ -242,13 +385,13 @@ const CheckoutPage = () => {
       {showAddressModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40" onClick={() => setShowAddressModal(false)}></div>
-          <div className="bg-white rounded-sm shadow-xl w-full max-w-[500px] relative z-10 overflow-hidden animate-in fade-in zoom-in duration-200">
-            <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-              <h3 className="text-lg font-medium">My Addresses</h3>
+          <div className="bg-white rounded-sm shadow-xl w-full max-w-[700px] relative z-10 overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="p-8 border-b border-gray-100 flex justify-between items-center">
+              <h3 className="text-xl font-medium">My Addresses</h3>
               <button onClick={() => setShowAddressModal(false)} className="material-symbols-outlined text-gray-400 hover:text-gray-600 transition-colors">close</button>
             </div>
 
-            <div className="p-6 max-h-[400px] overflow-y-auto space-y-4">
+            <div className="p-8 max-h-[500px] overflow-y-auto space-y-5">
               {addresses.map((addr, index) => (
                 <label
                   key={addr.id || index}
@@ -261,7 +404,10 @@ const CheckoutPage = () => {
                       name="modal-address"
                       className="mt-1 text-primary focus:ring-primary"
                       checked={selectedAddress?.id === addr.id}
-                      onChange={() => setSelectedAddress(addr)}
+                      onChange={() => {
+                        setSelectedAddress(addr);
+                        setAddressError('');
+                      }}
                     />
                     <div className="flex-1 text-sm">
                       <div className="flex items-center gap-3 mb-1">
@@ -282,10 +428,16 @@ const CheckoutPage = () => {
                 </label>
               ))}
 
-              <Link to="/profile" className="flex items-center gap-2 text-gray-500 hover:text-primary transition-colors text-sm font-medium py-2">
+              <button
+                onClick={() => {
+                  setShowAddressModal(false);
+                  setShowAddAddressModal(true);
+                }}
+                className="flex items-center gap-2 text-gray-500 hover:text-primary transition-colors text-sm font-medium py-2 w-full text-left"
+              >
                 <span className="material-symbols-outlined text-[18px]">add</span>
                 Add New Address
-              </Link>
+              </button>
             </div>
 
             <div className="p-6 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
@@ -306,6 +458,86 @@ const CheckoutPage = () => {
         </div>
       )}
 
+      {/* Add New Address Modal */}
+      {showAddAddressModal && (
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40" onClick={() => setShowAddAddressModal(false)}></div>
+          <div className="bg-white rounded-sm shadow-xl w-full max-w-[850px] relative z-10 overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="p-8 border-b border-gray-100 flex justify-between items-center">
+              <h3 className="text-xl font-medium">New Address</h3>
+              <button onClick={() => setShowAddAddressModal(false)} className="material-symbols-outlined text-gray-400 hover:text-gray-600 transition-colors">close</button>
+            </div>
+
+            <form onSubmit={handleAddNewAddress} className="p-8 space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <CustomSelect
+                  label="Province / City"
+                  placeholder="Select Province"
+                  options={provinces}
+                  value={addressForm.city}
+                  onChange={handleProvinceChange}
+                />
+                <CustomSelect
+                  label="District"
+                  placeholder="Select District"
+                  disabled={!addressForm.city}
+                  options={districts}
+                  value={addressForm.district}
+                  onChange={handleDistrictChange}
+                />
+                <CustomSelect
+                  label="Ward"
+                  placeholder="Select Ward"
+                  disabled={!addressForm.district}
+                  options={wards}
+                  value={addressForm.ward}
+                  onChange={(e) => setAddressForm({ ...addressForm, ward: wards.find(w => w.code === parseInt(e.target.value))?.name || '' })}
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Street Address</label>
+                <input
+                  required
+                  className="w-full px-4 py-3 rounded-sm border border-gray-200 focus:border-primary outline-none transition-all text-sm font-medium"
+                  placeholder="House number, street name..."
+                  value={addressForm.street}
+                  onChange={(e) => setAddressForm({ ...addressForm, street: e.target.value })}
+                />
+              </div>
+
+              <div className="flex items-center gap-3">
+                <input
+                  id="checkout-default-addr"
+                  type="checkbox"
+                  className="size-5 rounded-sm text-primary focus:ring-primary border-gray-300 cursor-pointer"
+                  checked={addressForm.isDefault}
+                  onChange={(e) => setAddressForm({ ...addressForm, isDefault: e.target.checked })}
+                />
+                <label htmlFor="checkout-default-addr" className="text-base text-gray-600 cursor-pointer select-none">Set as default address</label>
+              </div>
+
+              <div className="flex justify-end gap-4 pt-6">
+                <button
+                  type="button"
+                  onClick={() => setShowAddAddressModal(false)}
+                  className="px-10 py-3 text-sm font-medium border border-gray-200 hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="px-10 py-3 text-sm font-medium bg-primary text-white hover:bg-primary/90 transition-colors shadow-md disabled:opacity-50"
+                >
+                  {loading ? 'Saving...' : 'Submit'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       <main className="max-w-[1400px] mx-auto px-4 pt-4">
         {/* Step Indicator (Shopee Style) */}
         <div className="flex items-center gap-2 mb-4 text-sm text-gray-500">
@@ -317,7 +549,10 @@ const CheckoutPage = () => {
         </div>
 
         {/* 1. Shipping Address Section (Shopee Style) */}
-        <section className="bg-white rounded-sm shadow-sm mb-4 relative overflow-hidden">
+        <section
+          ref={addressRef}
+          className={`bg-white rounded-sm shadow-sm mb-4 relative overflow-hidden transition-all duration-300 ${addressError ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+        >
           {/* Decorative Top Border */}
           <div className="h-[3px] w-full bg-[repeating-linear-gradient(45deg,#ee4d2d,#ee4d2d_33px,#fff_33px,#fff_46px,#405cbf_46px,#405cbf_79px,#fff_79px,#fff_92px)]"></div>
 
@@ -342,14 +577,22 @@ const CheckoutPage = () => {
                   </div>
                 </div>
               ) : (
-                <div className="text-gray-400 italic">Please select a shipping address</div>
+                <div className="flex flex-col">
+                  <div className="text-gray-400 italic">Please select a shipping address</div>
+                  {addressError && (
+                    <div className="mt-2 text-primary text-sm font-medium flex items-center gap-1 animate-pulse">
+                      <span className="material-symbols-outlined text-[18px]">error</span>
+                      {addressError}
+                    </div>
+                  )}
+                </div>
               )}
 
               <button
                 onClick={() => setShowAddressModal(true)}
-                className="text-[#4080ee] hover:opacity-80 text-sm font-medium"
+                className="text-[#4080ee] hover:opacity-80 text-sm font-medium whitespace-nowrap"
               >
-                Change
+                {selectedAddress ? 'Change' : 'Select Address'}
               </button>
             </div>
           </div>
@@ -433,7 +676,7 @@ const CheckoutPage = () => {
               <div className="w-full md:w-[400px] mt-8 border-t border-gray-100 pt-6">
                 <button
                   type="button"
-                  disabled={loading || cartItems.length === 0 || !selectedAddress}
+                  disabled={loading || cartItems.length === 0}
                   onClick={handlePlaceOrder}
                   className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 rounded-sm text-lg shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
