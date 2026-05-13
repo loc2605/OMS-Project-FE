@@ -14,6 +14,12 @@ import ProfilePage from '../pages/ProfilePage';
 import MyOrdersPage from '../pages/MyOrdersPage';
 import TermsPage from '../pages/TermsPage';
 import PrivacyPage from '../pages/PrivacyPage';
+import AboutPage from '../pages/AboutPage';
+import HelpPage from '../pages/HelpPage';
+import ShippingPage from '../pages/ShippingPage';
+import ReturnsPage from '../pages/ReturnsPage';
+import HowToBuyPage from '../pages/HowToBuyPage';
+import SellerCenterPage from '../pages/SellerCenterPage';
 import { useAuth } from '../contexts/AuthContext';
 
 const ProtectedRoute = ({ children }) => {
@@ -34,6 +40,12 @@ const AppRoutes = () => {
       <Route path="/cart" element={<CartPage />} />
       <Route path="/terms" element={<TermsPage />} />
       <Route path="/privacy" element={<PrivacyPage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/help" element={<HelpPage />} />
+      <Route path="/shipping" element={<ShippingPage />} />
+      <Route path="/returns" element={<ReturnsPage />} />
+      <Route path="/how-to-buy" element={<HowToBuyPage />} />
+      <Route path="/seller-center" element={<SellerCenterPage />} />
       <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
       <Route path="/order/:orderId" element={<OrderTrackingPage />} />
       <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
