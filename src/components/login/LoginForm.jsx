@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import SocialLoginButtons from './SocialLoginButtons';
 import { useAuth } from '../../contexts/AuthContext';
 import authApi from '../../api/authApi';
 
@@ -113,22 +112,17 @@ const LoginForm = () => {
         >
           Sign In
         </button>
-        {/* Divider */}
-        <div className="relative my-8">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-[#e6dfdb] dark:border-stone-700"></span>
-          </div>
-          <div className="relative flex justify-center text-sm uppercase">
-            <span className="bg-white dark:bg-background-dark px-4 text-[#8a7260] font-bold tracking-widest text-[10px]">Or continue with</span>
-          </div>
-        </div>
-        {/* Social Logins */}
-        <SocialLoginButtons />
       </form>
       <p className="mt-10 text-center text-sm font-medium text-[#8a7260] dark:text-stone-400">
         Don't have an account?
         <Link className="font-bold text-primary hover:text-orange-600 underline-offset-4 hover:underline ml-1" to="/register">Register now</Link>
       </p>
+
+      {/* Trust Badge */}
+      <div className="mt-8 flex items-center justify-center gap-2 text-[#8a7260]/50 dark:text-stone-500/50">
+        <span className="material-symbols-outlined text-sm">lock</span>
+        <span className="text-[10px] uppercase tracking-[0.2em] font-bold">Secure SSL Encryption</span>
+      </div>
     </>
   );
 };

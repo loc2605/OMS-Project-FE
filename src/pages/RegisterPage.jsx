@@ -1,16 +1,19 @@
 import React from 'react';
 import MarketingBanner from '../components/login/MarketingBanner';
 import RegisterForm from '../components/register/RegisterForm';
-import FooterLinks from '../components/common/FooterLinks';
 
 const RegisterPage = () => {
   return (
     <div className="bg-background-light dark:bg-background-dark h-screen overflow-hidden">
       <div className="flex h-full flex-col lg:flex-row">
         <MarketingBanner />
-        <div className="h-full flex flex-1 flex-col justify-center px-6 py-12 sm:px-12 lg:px-24 bg-white dark:bg-background-dark overflow-hidden">
-          <div className="mx-auto w-full max-w-md h-full flex flex-col justify-between">
-            <div>
+        <div className="flex-1 flex flex-col justify-center items-center px-6 py-12 sm:px-12 lg:px-24 bg-[#fdfcfb] dark:bg-background-dark overflow-hidden h-full relative">
+          {/* Decorative background elements */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
+          <div className="absolute bottom-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -ml-32 -mb-32"></div>
+
+          <div className="w-full max-w-2xl flex flex-col justify-center relative z-10">
+            <div className="bg-white dark:bg-stone-900/50 p-16 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.05)] border border-gray-100 dark:border-stone-800 backdrop-blur-sm">
               <div className="flex lg:hidden items-center gap-3 text-primary mb-8">
                 <div className="size-8">
                   <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
@@ -21,11 +24,10 @@ const RegisterPage = () => {
               </div>
               <div className="mb-10">
                 <h1 className="text-3xl font-black text-gray-900 dark:text-white mb-2">Create Your Account</h1>
-                <p className="text-gray-500 dark:text-gray-400 text-sm">Join our Identity Service for a seamless shopping experience.</p>
+                <p className="text-gray-500 dark:text-gray-400 text-sm font-medium">Join our Identity Service for a seamless shopping experience.</p>
               </div>
               <RegisterForm />
             </div>
-            <FooterLinks />
           </div>
         </div>
       </div>

@@ -143,7 +143,7 @@ const RegisterForm = () => {
             <input className="peer h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary mt-0.5" type="checkbox" />
           </div>
           <span className="text-xs text-gray-600 dark:text-gray-400 leading-tight">
-            I agree to the <a className="text-primary hover:underline" href="#">Terms & Conditions</a> and <a className="text-primary hover:underline" href="#">Privacy Policy</a>.
+            I agree to the <Link className="text-primary font-bold hover:underline" to="/terms">Terms & Conditions</Link> and <Link className="text-primary font-bold hover:underline" to="/privacy">Privacy Policy</Link>.
           </span>
         </label>
       </div>
@@ -155,6 +155,12 @@ const RegisterForm = () => {
       <p className="text-center text-sm text-gray-600 dark:text-gray-400 pt-2">
         Already have an account? <Link to="/login" className="text-primary font-bold hover:underline">Log In</Link>
       </p>
+
+      {/* Trust Badge */}
+      <div className="mt-6 flex items-center justify-center gap-2 text-gray-400/60 dark:text-gray-600/50">
+        <span className="material-symbols-outlined text-sm">lock</span>
+        <span className="text-[10px] uppercase tracking-[0.2em] font-bold">Secure SSL Encryption</span>
+      </div>
     </form>
   );
 };
