@@ -112,7 +112,9 @@ const RegisterForm = () => {
               onChange={(e) => setConfirmPassword(e.target.value)} 
             />
             {isSubmitted && confirmPassword && password !== confirmPassword && (
-              <p className="text-[11px] text-red-500 font-medium absolute mt-12">Passwords do not match</p>
+              <p className="text-[11px] text-red-500 font-bold mt-1.5">
+                Passwords do not match
+              </p>
             )}
           </div>
         </div>
