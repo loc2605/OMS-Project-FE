@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import ProductCard from './ProductCard';
 import productApi from '../../api/productApi';
 
-const ProductGrid = ({ filters }) => {
+const ProductGrid = ({ filters, onCategoriesFetched }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState({ page: 0, size: 10, totalPages: 1 });
@@ -32,14 +32,27 @@ const ProductGrid = ({ filters }) => {
         const response = await productApi.getAll(params);
 
         if (response.success) {
+          let fetchedProducts = [];
           if (Array.isArray(response.result)) {
-            setProducts(response.result);
+            fetchedProducts = response.result;
           } else if (response.result?.content) {
-            setProducts(response.result.content);
+            fetchedProducts = response.result.content;
             setPagination(prev => ({
               ...prev,
               totalPages: response.result.totalPages || 1
             }));
+          }
+          setProducts(fetchedProducts);
+
+          // Extract unique categories and notify parent
+          if (onCategoriesFetched) {
+            const uniqueCategories = [...new Set(fetchedProducts.map(p => p.categoryName).filter(Boolean))];
+            if (uniqueCategories.length > 0) {
+              onCategoriesFetched(prev => {
+                const combined = [...new Set([...prev, ...uniqueCategories])];
+                return JSON.stringify(combined) === JSON.stringify(prev) ? prev : combined;
+              });
+            }
           }
         }
       } catch (error) {

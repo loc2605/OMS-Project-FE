@@ -128,6 +128,9 @@ const ProductDetailPage = () => {
               <div className="flex items-center gap-2">
                 <span className="pastel-badge-primary text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm">Top Seller</span>
                 <span className="text-gray-400 text-xs font-medium">SKU: {product.sku || 'N/A'}</span>
+                <span className={`text-xs font-medium px-2 py-0.5 rounded-sm ${product.stockQuantity > 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                  {product.stockQuantity > 0 ? `In Stock: ${product.stockQuantity}` : 'Out of Stock'}
+                </span>
               </div>
               <h1 className="text-2xl font-bold tracking-tight text-heading-text">{product.name}</h1>
 
@@ -143,7 +146,8 @@ const ProductDetailPage = () => {
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handleAddToCart}
-                  className="flex-1 border border-primary text-primary bg-[#ffeeea] font-bold py-3.5 rounded-sm flex items-center justify-center gap-2 transition-all hover:bg-primary/10"
+                  disabled={product.stockQuantity === 0}
+                  className={`flex-1 border border-primary text-primary bg-[#ffeeea] font-bold py-3.5 rounded-sm flex items-center justify-center gap-2 transition-all ${product.stockQuantity === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/10'}`}
                   type="button"
                 >
                   <span className="material-symbols-outlined">add_shopping_cart</span>
@@ -151,7 +155,8 @@ const ProductDetailPage = () => {
                 </button>
                 <button 
                   onClick={handleBuyNow}
-                  className="flex-1 bg-primary text-white font-bold py-3.5 rounded-sm flex items-center justify-center gap-2 transition-all hover:bg-primary/90"
+                  disabled={product.stockQuantity === 0}
+                  className={`flex-1 bg-primary text-white font-bold py-3.5 rounded-sm flex items-center justify-center gap-2 transition-all ${product.stockQuantity === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/90'}`}
                 >
                   Buy Now
                 </button>

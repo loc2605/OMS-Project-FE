@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Sidebar = ({ activeCategory, onCategoryChange, onPriceChange }) => {
+const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange }) => {
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
 
@@ -24,6 +24,8 @@ const Sidebar = ({ activeCategory, onCategoryChange, onPriceChange }) => {
     }
   };
 
+  const displayCategories = categories && categories.length > 0 ? categories : ['Women', 'Men', 'Kids'];
+
   return (
     <aside className="w-48 shrink-0 hidden md:block">
       <div className="sticky top-24 space-y-6">
@@ -42,7 +44,7 @@ const Sidebar = ({ activeCategory, onCategoryChange, onPriceChange }) => {
             </button>
           </div>
           <div className="space-y-1">
-            {['Women', 'Men', 'Kids'].map((cat) => (
+            {displayCategories.map((cat) => (
               <button 
                 key={cat}
                 onClick={() => onCategoryChange(activeCategory === cat ? '' : cat)}
