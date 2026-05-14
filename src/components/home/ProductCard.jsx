@@ -39,7 +39,10 @@ const ProductCard = ({ product, isSkeleton = false }) => {
     : product.price;
 
   return (
-    <div className="group bg-card-white rounded soft-shadow overflow-hidden border border-transparent hover:border-primary transition-all duration-200 cursor-pointer" onClick={handleCardClick}>
+    <div 
+      className="group bg-card-white rounded-2xl shadow-soft hover:shadow-xl border border-transparent hover:border-primary/20 transition-all duration-300 cursor-pointer overflow-hidden transform hover:-translate-y-1" 
+      onClick={handleCardClick}
+    >
       <div className="relative aspect-square overflow-hidden bg-gray-50">
         <img className="w-full h-full object-cover" src={productImage} alt={product.name} />
         {product.discount && (

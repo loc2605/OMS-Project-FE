@@ -8,12 +8,13 @@ import Footer from '../components/home/Footer';
 const ProductsPage = () => {
   const [searchParams] = useSearchParams();
   const search = searchParams.get('search') || '';
-  const [filters, setFilters] = useState({ category: '', search });
+  const category = searchParams.get('category') || '';
+  const [filters, setFilters] = useState({ category, search });
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    setFilters(prev => ({ ...prev, search }));
-  }, [search]);
+    setFilters(prev => ({ ...prev, search, category }));
+  }, [search, category]);
 
   return (
     <div className="bg-background-light text-body-text min-h-screen">

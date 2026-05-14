@@ -44,12 +44,25 @@ const ProductGrid = ({ filters, onCategoriesFetched }) => {
           }
           setProducts(fetchedProducts);
 
-          // Extract unique categories and notify parent
+          // Extract unique categories with representative images and notify parent
           if (onCategoriesFetched) {
-            const uniqueCategories = [...new Set(fetchedProducts.map(p => p.categoryName).filter(Boolean))];
-            if (uniqueCategories.length > 0) {
+            const categoryMap = {};
+            fetchedProducts.forEach(p => {
+              if (p.categoryName && !categoryMap[p.categoryName]) {
+                categoryMap[p.categoryName] = p.imageUrl?.[0] || p.image;
+              }
+            });
+            
+            const categoryList = Object.entries(categoryMap).map(([name, image]) => ({ name, image }));
+            
+            if (categoryList.length > 0) {
               onCategoriesFetched(prev => {
-                const combined = [...new Set([...prev, ...uniqueCategories])];
+                // Merge and avoid duplicates by name, preferring new images if available
+                const combinedMap = {};
+                prev.forEach(c => combinedMap[c.name || c] = c.image || null);
+                categoryList.forEach(c => combinedMap[c.name] = c.image);
+                
+                const combined = Object.entries(combinedMap).map(([name, image]) => ({ name, image }));
                 return JSON.stringify(combined) === JSON.stringify(prev) ? prev : combined;
               });
             }

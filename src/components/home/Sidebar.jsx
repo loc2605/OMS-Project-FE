@@ -44,17 +44,20 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange }
             </button>
           </div>
           <div className="space-y-1">
-            {displayCategories.map((cat) => (
-              <button 
-                key={cat}
-                onClick={() => onCategoryChange(activeCategory === cat ? '' : cat)}
-                className={`w-full text-left px-2 py-2 text-base transition-colors rounded ${
-                  activeCategory === cat ? 'text-primary bg-black/5 font-semibold' : 'text-heading hover:text-primary'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+            {displayCategories.map((cat) => {
+              const name = typeof cat === 'string' ? cat : cat.name;
+              return (
+                <button 
+                  key={name}
+                  onClick={() => onCategoryChange(activeCategory === name ? '' : name)}
+                  className={`w-full text-left px-2 py-2 text-base transition-colors rounded ${
+                    activeCategory === name ? 'text-primary bg-black/5 font-semibold' : 'text-heading hover:text-primary'
+                  }`}
+                >
+                  {name}
+                </button>
+              );
+            })}
           </div>
         </div>
 
