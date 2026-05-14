@@ -45,18 +45,34 @@ const CategoryShowcase = ({ categories }) => {
   };
 
   // Merge dynamic categories with meta or use defaults
-  const displayCategories = categories && categories.length > 0 
-    ? categories.map(cat => ({
-        name: cat.name,
-        image: cat.image || categoryMeta[cat.name]?.image || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80',
-        count: categoryMeta[cat.name]?.count || 'Check out our collection',
-        color: categoryMeta[cat.name]?.color || 'bg-primary/5'
-      }))
-    : [
-        { name: 'Women', ...categoryMeta['Women'] },
-        { name: 'Men', ...categoryMeta['Men'] },
-        { name: 'Kids', ...categoryMeta['Kids'] }
-      ];
+  const mainCategories = ['Women', 'Men', 'Kids'];
+  
+  const displayCategories = mainCategories.map(name => {
+    const dynamicCat = categories?.find(c => (c.name || c) === name);
+    const meta = categoryMeta[name];
+    
+    return {
+      name,
+      image: dynamicCat?.image || meta.image,
+      count: meta.count,
+      color: meta.color
+    };
+  });
+
+  // Add any other dynamic categories found that aren't in the main list
+  if (categories && categories.length > 0) {
+    categories.forEach(cat => {
+      const name = cat.name || cat;
+      if (!mainCategories.includes(name)) {
+        displayCategories.push({
+          name,
+          image: cat.image || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80',
+          count: 'Check out our collection',
+          color: 'bg-primary/5'
+        });
+      }
+    });
+  }
 
   return (
     <section className="space-y-6 mb-16">
@@ -77,7 +93,7 @@ const CategoryShowcase = ({ categories }) => {
         {displayCategories.map((cat, index) => (
           <div 
             key={index}
-            onClick={() => navigate(`/products?category=${cat.name}`)}
+            onClick={() => navigate(`/products?categoryName=${cat.name}`)}
             className="group relative h-[400px] rounded-3xl overflow-hidden cursor-pointer shadow-soft hover:shadow-xl transition-all"
           >
             <img 

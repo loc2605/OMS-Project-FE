@@ -6,15 +6,34 @@ import ProductGrid from '../components/home/ProductGrid';
 import Footer from '../components/home/Footer';
 
 const ProductsPage = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const search = searchParams.get('search') || '';
-  const category = searchParams.get('category') || '';
-  const [filters, setFilters] = useState({ category, search });
+  const categoryName = searchParams.get('categoryName') || '';
+  const minPrice = searchParams.get('minPrice') || '';
+  const maxPrice = searchParams.get('maxPrice') || '';
+
+  const filters = {
+    category: categoryName,
+    search,
+    minPrice: minPrice ? Number(minPrice) : undefined,
+    maxPrice: maxPrice ? Number(maxPrice) : undefined,
+  };
+
   const [categories, setCategories] = useState([]);
 
-  useEffect(() => {
-    setFilters(prev => ({ ...prev, search, category }));
-  }, [search, category]);
+  const updateFilters = (newFilters) => {
+    const params = new URLSearchParams(searchParams);
+    Object.entries(newFilters).forEach(([key, value]) => {
+      // Map 'category' to 'categoryName' for the URL
+      const urlKey = key === 'category' ? 'categoryName' : key;
+      if (value) {
+        params.set(urlKey, value);
+      } else {
+        params.delete(urlKey);
+      }
+    });
+    setSearchParams(params);
+  };
 
   return (
     <div className="bg-background-light text-body-text min-h-screen">
@@ -22,10 +41,12 @@ const ProductsPage = () => {
       <main className="max-w-full mx-auto px-4 md:px-8 lg:px-12 py-8">
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
           <Sidebar 
-            activeCategory={filters.category} 
+            activeCategory={categoryName} 
             categories={categories}
-            onCategoryChange={(cat) => setFilters(prev => ({ ...prev, category: cat }))} 
-            onPriceChange={({ minPrice, maxPrice }) => setFilters(prev => ({ ...prev, minPrice, maxPrice }))}
+            initialMinPrice={minPrice}
+            initialMaxPrice={maxPrice}
+            onCategoryChange={(cat) => updateFilters({ category: cat })} 
+            onPriceChange={({ minPrice, maxPrice }) => updateFilters({ minPrice, maxPrice })}
           />
           <ProductGrid 
             filters={filters} 

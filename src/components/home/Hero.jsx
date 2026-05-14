@@ -45,18 +45,6 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Stats/Badge */}
-      <div className="absolute bottom-8 right-8 hidden md:flex items-center gap-6 animate-fade-in">
-        <div className="flex flex-col text-right">
-          <span className="text-3xl font-bold text-white">50k+</span>
-          <span className="text-xs text-white/60 uppercase tracking-widest">Happy Customers</span>
-        </div>
-        <div className="w-px h-10 bg-white/20"></div>
-        <div className="flex flex-col text-right">
-          <span className="text-3xl font-bold text-white">4.9/5</span>
-          <span className="text-xs text-white/60 uppercase tracking-widest">Store Rating</span>
-        </div>
-      </div>
     </section>
   );
 };

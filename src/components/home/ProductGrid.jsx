@@ -14,12 +14,15 @@ const ProductGrid = ({ filters, onCategoriesFetched }) => {
         setLoading(true);
         const params = {
           page: pagination.page,
-          size: pagination.size,
+          size: filters?.size || pagination.size,
+          categoryName: filters?.category || undefined,
           category: filters?.category || undefined,
           name: filters?.search || undefined,
           minPrice: filters?.minPrice || undefined,
           maxPrice: filters?.maxPrice || undefined,
         };
+        
+        console.log('Fetching products with params:', params);
         
         if (sortOption === 'priceAsc') {
           params.sort = 'price,asc';
@@ -39,7 +42,8 @@ const ProductGrid = ({ filters, onCategoriesFetched }) => {
             fetchedProducts = response.result.content;
             setPagination(prev => ({
               ...prev,
-              totalPages: response.result.totalPages || 1
+              totalPages: response.result.totalPages || 1,
+              totalElements: response.result.totalElements || 0
             }));
           }
           setProducts(fetchedProducts);
@@ -77,9 +81,18 @@ const ProductGrid = ({ filters, onCategoriesFetched }) => {
     fetchProducts();
   }, [pagination.page, pagination.size, filters, sortOption]);
 
+  // Only reset to page 0 when "real" filters change, not on every render
+  const filterDeps = JSON.stringify({
+    category: filters?.category,
+    search: filters?.search,
+    minPrice: filters?.minPrice,
+    maxPrice: filters?.maxPrice,
+    sortOption
+  });
+
   useEffect(() => {
     setPagination(prev => ({ ...prev, page: 0 }));
-  }, [filters, sortOption]);
+  }, [filterDeps]);
 
   const handlePageChange = (newPage) => {
     setPagination(prev => ({ ...prev, page: newPage }));

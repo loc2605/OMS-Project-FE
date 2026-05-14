@@ -97,7 +97,7 @@ const ProductDetailPage = () => {
           <span className="material-symbols-outlined text-[14px]">chevron_right</span>
           {product.categoryName && (
             <>
-              <Link className="hover:text-primary transition-colors" to={`/products?category=${encodeURIComponent(product.categoryName)}`}>
+              <Link className="hover:text-primary transition-colors" to={`/products?categoryName=${encodeURIComponent(product.categoryName)}`}>
                 {product.categoryName}
               </Link>
               <span className="material-symbols-outlined text-[14px]">chevron_right</span>

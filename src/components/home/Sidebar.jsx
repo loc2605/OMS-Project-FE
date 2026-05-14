@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 
-const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange }) => {
-  const [minPrice, setMinPrice] = useState('');
-  const [maxPrice, setMaxPrice] = useState('');
+const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, initialMinPrice, initialMaxPrice }) => {
+  const [minPrice, setMinPrice] = useState(initialMinPrice || '');
+  const [maxPrice, setMaxPrice] = useState(initialMaxPrice || '');
+
+  React.useEffect(() => {
+    setMinPrice(initialMinPrice || '');
+    setMaxPrice(initialMaxPrice || '');
+  }, [initialMinPrice, initialMaxPrice]);
 
   const handleApplyPrice = () => {
     if (onPriceChange) {
       onPriceChange({
-        minPrice: minPrice ? Number(minPrice) : undefined,
-        maxPrice: maxPrice ? Number(maxPrice) : undefined,
+        minPrice: minPrice || '',
+        maxPrice: maxPrice || '',
       });
     }
   };
@@ -17,7 +22,7 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange }
     setMinPrice('');
     setMaxPrice('');
     if (onPriceChange) {
-      onPriceChange({ minPrice: undefined, maxPrice: undefined });
+      onPriceChange({ minPrice: '', maxPrice: '' });
     }
     if (onCategoryChange) {
       onCategoryChange('');
