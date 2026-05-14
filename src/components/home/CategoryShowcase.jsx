@@ -104,9 +104,6 @@ const CategoryShowcase = ({ categories }) => {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
             
             <div className="absolute bottom-0 left-0 p-8 w-full transform translate-y-2 group-hover:translate-y-0 transition-transform">
-              <span className={`inline-block px-3 py-1 ${cat.color} backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-widest rounded-full mb-3`}>
-                {cat.count}
-              </span>
               <h3 className="text-2xl font-bold text-white mb-2">{cat.name}</h3>
               <div className="flex items-center gap-2 text-white/80 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
                 Discover More <span className="material-symbols-outlined text-sm">arrow_forward</span>
