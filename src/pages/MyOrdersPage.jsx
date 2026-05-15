@@ -175,8 +175,12 @@ const MyOrdersPage = () => {
                   {order.orderItems && order.orderItems.length > 0 ? (
                     <div className="flex justify-between items-center">
                       <div className="flex gap-4">
-                        <div className="size-20 bg-gray-50 rounded-sm flex items-center justify-center border border-gray-100 flex-shrink-0">
-                          <span className="material-symbols-outlined text-gray-300 text-4xl">inventory_2</span>
+                        <div className="size-20 bg-gray-50 rounded-sm flex items-center justify-center border border-gray-100 flex-shrink-0 overflow-hidden">
+                          {order.orderItems[0].imageUrl ? (
+                            <img src={order.orderItems[0].imageUrl} alt={order.orderItems[0].productName} className="w-full h-full object-cover" />
+                          ) : (
+                            <span className="material-symbols-outlined text-gray-300 text-4xl">inventory_2</span>
+                          )}
                         </div>
                         <div className="flex flex-col justify-center">
                           <h4 className="text-sm font-medium text-gray-800 line-clamp-2">

@@ -15,8 +15,7 @@ const ProductGrid = ({ filters, onCategoriesFetched }) => {
         const params = {
           page: pagination.page,
           size: filters?.size || pagination.size,
-          categoryName: filters?.category || undefined,
-          category: filters?.category || undefined,
+          categoryId: filters?.category || undefined,
           name: filters?.search || undefined,
           minPrice: filters?.minPrice || undefined,
           maxPrice: filters?.maxPrice || undefined,

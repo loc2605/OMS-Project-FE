@@ -109,8 +109,12 @@ const OrderTrackingPage = () => {
                 <div className="divide-y divide-gray-50">
                   {order?.orderItems?.map((item, idx) => (
                     <div key={idx} className="py-5 flex gap-4 first:pt-0 last:pb-0 group">
-                      <div className="size-20 bg-gray-50 rounded-sm border border-gray-100 flex items-center justify-center flex-shrink-0 group-hover:border-primary/30 transition-all">
-                        <span className="material-symbols-outlined text-gray-300 text-3xl">inventory_2</span>
+                      <div className="size-20 bg-gray-50 rounded-sm border border-gray-100 flex items-center justify-center flex-shrink-0 group-hover:border-primary/30 transition-all overflow-hidden">
+                        {item.imageUrl ? (
+                          <img src={item.imageUrl} alt={item.productName} className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="material-symbols-outlined text-gray-300 text-3xl">inventory_2</span>
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="text-sm font-medium text-gray-800 line-clamp-2 hover:text-primary cursor-pointer transition-colors">

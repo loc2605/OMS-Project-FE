@@ -6,6 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 import orderApi from '../api/orderApi';
 import paymentApi from '../api/paymentApi';
 import profileApi from '../api/profileApi';
+import notificationApi from '../api/notificationApi';
 
 const formatCurrency = (value) => {
   const amount = Number(String(value).replace(/[^0-9.-]+/g, ''));
@@ -281,8 +282,8 @@ const CheckoutPage = () => {
 
     try {
       setLoading(true);
-      const apiPaymentMethod = selectedPayment.toUpperCase();
-
+      const apiPaymentMethod = selectedPayment === 'transfer' ? 'BANK_TRANSFER' : selectedPayment.toUpperCase();
+      
       const orderData = {
         paymentMethod: apiPaymentMethod,
         orderItems: cartItems.map(item => ({
@@ -294,8 +295,8 @@ const CheckoutPage = () => {
           ward: selectedAddress.ward,
           district: selectedAddress.district,
           city: selectedAddress.city,
-          receiverName: profile?.fullname || user?.fullName || '',
-          receiverPhone: profile?.phone || user?.phone || ''
+          receiverName: profile?.fullname || profile?.fullName || user?.fullName || user?.username || 'Guest',
+          receiverPhone: profile?.phone || user?.phone || '0000000000'
         }
       };
 
