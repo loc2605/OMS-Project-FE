@@ -31,6 +31,7 @@ const CheckoutPage = () => {
 
   const [addresses, setAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
+  const [tempSelectedAddress, setTempSelectedAddress] = useState(null);
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [addressError, setAddressError] = useState('');
@@ -393,41 +394,47 @@ const CheckoutPage = () => {
             </div>
 
             <div className="p-8 max-h-[500px] overflow-y-auto space-y-5">
-              {addresses.map((addr, index) => (
-                <label
-                  key={addr.id || index}
-                  className={`block p-4 border rounded-sm cursor-pointer transition-all hover:bg-gray-50 ${selectedAddress?.id === addr.id ? 'border-primary bg-primary/[0.02]' : 'border-gray-100'
-                    }`}
-                >
-                  <div className="flex gap-3">
-                    <input
-                      type="radio"
-                      name="modal-address"
-                      className="mt-1 text-primary focus:ring-primary"
-                      checked={selectedAddress?.id === addr.id}
-                      onChange={() => {
-                        setSelectedAddress(addr);
-                        setAddressError('');
-                      }}
-                    />
-                    <div className="flex-1 text-sm">
-                      <div className="flex items-center gap-3 mb-1">
-                        <span className="font-bold text-gray-800">{profile?.fullname || user?.fullName}</span>
-                        <span className="text-gray-500">{profile?.phone || user?.phone}</span>
+              {addresses.map((addr, index) => {
+                const isSelected = tempSelectedAddress 
+                  ? (tempSelectedAddress.id === addr.id && addr.id) || 
+                    (tempSelectedAddress.street === addr.street && tempSelectedAddress.city === addr.city && tempSelectedAddress.ward === addr.ward)
+                  : false;
+
+                return (
+                  <label
+                    key={addr.id || index}
+                    className={`block p-4 border rounded-sm cursor-pointer transition-all hover:bg-gray-50 ${isSelected ? 'border-primary bg-primary/[0.02]' : 'border-gray-100'
+                      }`}
+                  >
+                    <div className="flex gap-3">
+                      <input
+                        type="radio"
+                        name="modal-address"
+                        className="mt-1 text-primary focus:ring-primary"
+                        checked={isSelected}
+                        onChange={() => {
+                          setTempSelectedAddress(addr);
+                        }}
+                      />
+                      <div className="flex-1 text-sm">
+                        <div className="flex items-center gap-3 mb-1">
+                          <span className="font-bold text-gray-800">{profile?.fullname || user?.fullName}</span>
+                          <span className="text-gray-500">{profile?.phone || user?.phone}</span>
+                        </div>
+                        <div className="text-gray-600 mb-1">
+                          {addr.street}
+                        </div>
+                        <div className="text-gray-600">
+                          {addr.ward}, {addr.district}, {addr.city}
+                        </div>
+                        {addr.isDefault && (
+                          <span className="inline-block mt-2 border border-primary text-primary text-[10px] px-1 py-0.5 rounded-sm">Default</span>
+                        )}
                       </div>
-                      <div className="text-gray-600 mb-1">
-                        {addr.street}
-                      </div>
-                      <div className="text-gray-600">
-                        {addr.ward}, {addr.district}, {addr.city}
-                      </div>
-                      {addr.isDefault && (
-                        <span className="inline-block mt-2 border border-primary text-primary text-[10px] px-1 py-0.5 rounded-sm">Default</span>
-                      )}
                     </div>
-                  </div>
-                </label>
-              ))}
+                  </label>
+                );
+              })}
 
               <button
                 onClick={() => {
@@ -449,7 +456,11 @@ const CheckoutPage = () => {
                 Cancel
               </button>
               <button
-                onClick={() => setShowAddressModal(false)}
+                onClick={() => {
+                  setSelectedAddress(tempSelectedAddress);
+                  setAddressError('');
+                  setShowAddressModal(false);
+                }}
                 className="px-8 py-2 text-sm bg-primary text-white hover:bg-primary/90 transition-colors shadow-sm"
               >
                 Confirm
@@ -590,7 +601,10 @@ const CheckoutPage = () => {
               )}
 
               <button
-                onClick={() => setShowAddressModal(true)}
+                onClick={() => {
+                  setTempSelectedAddress(selectedAddress);
+                  setShowAddressModal(true);
+                }}
                 className="text-[#4080ee] hover:opacity-80 text-sm font-medium whitespace-nowrap"
               >
                 {selectedAddress ? 'Change' : 'Select Address'}
