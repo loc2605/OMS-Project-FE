@@ -21,6 +21,7 @@ const Header = () => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
+  const [expandedNotificationId, setExpandedNotificationId] = useState(null);
   const notificationRef = useRef(null);
 
   useEffect(() => {
@@ -48,6 +49,26 @@ const Header = () => {
     clearCart();
     setOpenMenu(false);
     navigate('/login');
+  };
+
+  const handleNotificationClick = async (noti) => {
+    // Toggle expansion inline
+    if (expandedNotificationId === noti.id) {
+      setExpandedNotificationId(null);
+    } else {
+      setExpandedNotificationId(noti.id);
+      
+      // Mark as read if not already read
+      if (!noti.read) {
+        try {
+          await notificationApi.markAsRead(noti.id);
+          setNotifications(prev => prev.map(n => n.id === noti.id ? { ...n, read: true } : n));
+          setUnreadCount(prev => Math.max(0, prev - 1));
+        } catch (error) {
+          console.error('Failed to mark notification as read:', error);
+        }
+      }
+    }
   };
 
   useEffect(() => {
@@ -194,15 +215,40 @@ const Header = () => {
                         </div>
                       ) : notifications.length > 0 ? (
                         <div className="divide-y divide-gray-50">
-                          {notifications.map((noti) => (
-                            <div key={noti.id} className={`p-4 hover:bg-gray-50 transition-colors cursor-pointer ${!noti.read ? 'bg-primary/5' : ''}`}>
-                              <h4 className="text-sm font-medium text-gray-800 mb-1">{noti.title}</h4>
-                              <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">{noti.content}</p>
-                              <span className="text-[10px] text-gray-400 mt-2 block">
-                                {new Date(noti.createdAt).toLocaleString('vi-VN')}
-                              </span>
-                            </div>
-                          ))}
+                          {notifications.map((noti) => {
+                            const isExpanded = expandedNotificationId === noti.id;
+                            const orderMatch = noti.content.match(/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i);
+                            return (
+                              <div 
+                                key={noti.id} 
+                                onClick={() => handleNotificationClick(noti)}
+                                className={`p-4 hover:bg-gray-50 transition-colors cursor-pointer ${!noti.read ? 'bg-primary/5' : ''}`}
+                              >
+                                <h4 className="text-sm font-medium text-gray-800 mb-1">{noti.title}</h4>
+                                <p className={`text-xs text-gray-600 leading-relaxed ${isExpanded ? 'whitespace-pre-wrap' : 'line-clamp-2'}`}>
+                                  {noti.content}
+                                </p>
+                                <span className="text-[10px] text-gray-400 mt-2 block">
+                                  {new Date(noti.createdAt).toLocaleString('vi-VN')}
+                                </span>
+                                
+                                {isExpanded && orderMatch && (
+                                  <div className="mt-3 pt-3 border-t border-gray-100 flex justify-end">
+                                    <button 
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setOpenNotification(false);
+                                        navigate(`/order/${orderMatch[0]}`);
+                                      }}
+                                      className="px-4 py-1.5 bg-primary text-white text-xs font-medium rounded-sm hover:bg-primary/90 transition-all shadow-sm"
+                                    >
+                                      View Order Details
+                                    </button>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
                         </div>
                       ) : (
                         <div className="py-12 text-center flex flex-col items-center">
@@ -210,9 +256,6 @@ const Header = () => {
                           <p className="text-sm text-gray-500">No notifications yet</p>
                         </div>
                       )}
-                    </div>
-                    <div className="px-4 py-2 bg-gray-50 border-t border-gray-100 text-center">
-                      <button className="text-xs text-primary font-medium hover:underline">View All</button>
                     </div>
                   </div>
                 )}

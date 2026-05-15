@@ -23,7 +23,7 @@ const OrderTrackingPage = () => {
         if (res.success) {
           setOrder(res.result);
           // Stop polling if order is in a final state
-          if (['CONFIRMED', 'CANCELLED', 'SHIPPED', 'DELIVERED'].includes(res.result.status)) {
+          if (['COMPLETED', 'CANCELLED'].includes(res.result.status)) {
             if (interval) clearInterval(interval);
           }
         }
@@ -57,7 +57,7 @@ const OrderTrackingPage = () => {
 
   const getStatusDisplay = (status) => {
     switch (status) {
-      case 'PENDING': return { text: 'Pending', color: 'bg-orange-50 text-orange-600 border-orange-200' };
+      case 'PAYMENT_PENDING': return { text: 'Payment Pending', color: 'bg-orange-50 text-orange-600 border-orange-200' };
       case 'CONFIRMED': return { text: 'Confirmed', color: 'bg-cyan-50 text-cyan-600 border-cyan-200' };
       case 'SHIPPING': return { text: 'Shipping', color: 'bg-blue-50 text-blue-600 border-blue-200' };
       case 'COMPLETED': return { text: 'Completed', color: 'bg-emerald-50 text-emerald-600 border-emerald-200' };
@@ -102,44 +102,50 @@ const OrderTrackingPage = () => {
                     <div 
                       className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#2dc258] rounded-full z-0 transition-all duration-500"
                       style={{ 
-                        width: ['PENDING'].includes(order?.status) ? '0%' : 
+                        width: ['PAYMENT_PENDING'].includes(order?.status) ? '0%' : 
                                ['CONFIRMED'].includes(order?.status) ? '33.33%' : 
                                ['SHIPPING'].includes(order?.status) ? '66.66%' : 
-                               ['DELIVERED', 'COMPLETED'].includes(order?.status) ? '100%' : '0%'
+                               ['COMPLETED'].includes(order?.status) ? '100%' : '0%'
                       }}
                     ></div>
                     
                     <div className="relative z-10 flex justify-between">
                       {/* Step 1 */}
                       <div className="flex flex-col items-center gap-3 w-24">
-                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white ${['PENDING', 'CONFIRMED', 'SHIPPING', 'DELIVERED', 'COMPLETED'].includes(order?.status) ? 'bg-[#2dc258] text-white shadow-md shadow-[#2dc258]/30' : 'bg-gray-200 text-gray-400'}`}>
+                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white ${['PAYMENT_PENDING', 'CONFIRMED', 'SHIPPING', 'COMPLETED'].includes(order?.status) ? 'bg-[#2dc258] text-white shadow-md shadow-[#2dc258]/30' : 'bg-gray-200 text-gray-400'}`}>
                           <span className="material-symbols-outlined text-2xl">receipt_long</span>
                         </div>
-                        <span className="text-xs font-bold text-gray-700 text-center">Order Placed</span>
+                        <span className="text-xs font-bold text-gray-700 text-center">
+                          {order?.paymentMethod === 'COD' ? 'Order Placed' : 'Payment Pending'}
+                        </span>
                       </div>
 
                       {/* Step 2 */}
                       <div className="flex flex-col items-center gap-3 w-24">
-                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white ${['CONFIRMED', 'SHIPPING', 'DELIVERED', 'COMPLETED'].includes(order?.status) ? 'bg-[#2dc258] text-white shadow-md shadow-[#2dc258]/30' : 'bg-gray-200 text-gray-400'}`}>
+                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white ${['CONFIRMED', 'SHIPPING', 'COMPLETED'].includes(order?.status) ? 'bg-[#2dc258] text-white shadow-md shadow-[#2dc258]/30' : 'bg-gray-200 text-gray-400'}`}>
                           <span className="material-symbols-outlined text-2xl">payments</span>
                         </div>
-                        <span className="text-xs font-bold text-gray-700 text-center">Order Paid</span>
+                        <span className="text-xs font-bold text-gray-700 text-center">
+                          {order?.paymentMethod === 'COD' ? 'Confirmed' : 'Paid & Confirmed'}
+                        </span>
                       </div>
 
                       {/* Step 3 */}
                       <div className="flex flex-col items-center gap-3 w-24">
-                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white ${['SHIPPING', 'DELIVERED', 'COMPLETED'].includes(order?.status) ? 'bg-[#2dc258] text-white shadow-md shadow-[#2dc258]/30' : 'bg-gray-200 text-gray-400'}`}>
+                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white ${['SHIPPING', 'COMPLETED'].includes(order?.status) ? 'bg-[#2dc258] text-white shadow-md shadow-[#2dc258]/30' : 'bg-gray-200 text-gray-400'}`}>
                           <span className="material-symbols-outlined text-2xl">local_shipping</span>
                         </div>
-                        <span className="text-xs font-bold text-gray-700 text-center">Shipped</span>
+                        <span className="text-xs font-bold text-gray-700 text-center">Shipping</span>
                       </div>
 
                       {/* Step 4 */}
                       <div className="flex flex-col items-center gap-3 w-24">
-                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white ${['DELIVERED', 'COMPLETED'].includes(order?.status) ? 'bg-[#2dc258] text-white shadow-md shadow-[#2dc258]/30' : 'bg-gray-200 text-gray-400'}`}>
+                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white ${['COMPLETED'].includes(order?.status) ? 'bg-[#2dc258] text-white shadow-md shadow-[#2dc258]/30' : 'bg-gray-200 text-gray-400'}`}>
                           <span className="material-symbols-outlined text-2xl">star</span>
                         </div>
-                        <span className="text-xs font-bold text-gray-700 text-center">Order Received</span>
+                        <span className="text-xs font-bold text-gray-700 text-center">
+                          {order?.paymentMethod === 'COD' ? 'Received & Paid' : 'Completed'}
+                        </span>
                       </div>
                     </div>
                   </div>
