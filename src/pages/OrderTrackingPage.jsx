@@ -77,22 +77,86 @@ const OrderTrackingPage = () => {
           
           {/* Order Header Card */}
           <div className="bg-white p-8 rounded-sm shadow-sm border-b-2 border-primary/10">
-            <div className="flex flex-wrap justify-between items-start gap-6">
-              <div className="space-y-2">
-                <div className="flex items-center gap-3">
-                  <h1 className="text-2xl font-bold text-gray-800 tracking-tight">Order Details</h1>
+            <div className="flex flex-col gap-8">
+              <div className="flex justify-between items-center border-b border-gray-100 pb-4">
+                <div className="flex items-center gap-4">
+                  <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-gray-500 hover:text-primary transition-colors uppercase text-sm font-medium tracking-wider">
+                    <span className="material-symbols-outlined text-[18px]">arrow_back_ios</span>
+                    Back
+                  </button>
+                  <div className="h-4 w-px bg-gray-300"></div>
+                  <span className="text-sm font-bold text-gray-800 tracking-tight uppercase">Order ID: {orderId}</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <span className="text-gray-500 uppercase font-medium">Status:</span>
                   <span className={`px-3 py-1 ${statusInfo.color} text-[11px] font-bold rounded-sm uppercase tracking-wider border`}>
                     {statusInfo.text}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <span className="font-medium">Order ID: {orderId}</span>
-                  <span>•</span>
-                  <span>Placed on {new Date(order?.createdAt).toLocaleDateString('vi-VN')}</span>
+              </div>
+
+              {order?.status !== 'CANCELLED' ? (
+                <div className="py-6 px-4">
+                  <div className="relative">
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-100 rounded-full z-0"></div>
+                    <div 
+                      className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#2dc258] rounded-full z-0 transition-all duration-500"
+                      style={{ 
+                        width: ['PENDING'].includes(order?.status) ? '0%' : 
+                               ['CONFIRMED'].includes(order?.status) ? '33.33%' : 
+                               ['SHIPPING'].includes(order?.status) ? '66.66%' : 
+                               ['DELIVERED', 'COMPLETED'].includes(order?.status) ? '100%' : '0%'
+                      }}
+                    ></div>
+                    
+                    <div className="relative z-10 flex justify-between">
+                      {/* Step 1 */}
+                      <div className="flex flex-col items-center gap-3 w-24">
+                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white ${['PENDING', 'CONFIRMED', 'SHIPPING', 'DELIVERED', 'COMPLETED'].includes(order?.status) ? 'bg-[#2dc258] text-white shadow-md shadow-[#2dc258]/30' : 'bg-gray-200 text-gray-400'}`}>
+                          <span className="material-symbols-outlined text-2xl">receipt_long</span>
+                        </div>
+                        <span className="text-xs font-bold text-gray-700 text-center">Order Placed</span>
+                      </div>
+
+                      {/* Step 2 */}
+                      <div className="flex flex-col items-center gap-3 w-24">
+                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white ${['CONFIRMED', 'SHIPPING', 'DELIVERED', 'COMPLETED'].includes(order?.status) ? 'bg-[#2dc258] text-white shadow-md shadow-[#2dc258]/30' : 'bg-gray-200 text-gray-400'}`}>
+                          <span className="material-symbols-outlined text-2xl">payments</span>
+                        </div>
+                        <span className="text-xs font-bold text-gray-700 text-center">Order Paid</span>
+                      </div>
+
+                      {/* Step 3 */}
+                      <div className="flex flex-col items-center gap-3 w-24">
+                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white ${['SHIPPING', 'DELIVERED', 'COMPLETED'].includes(order?.status) ? 'bg-[#2dc258] text-white shadow-md shadow-[#2dc258]/30' : 'bg-gray-200 text-gray-400'}`}>
+                          <span className="material-symbols-outlined text-2xl">local_shipping</span>
+                        </div>
+                        <span className="text-xs font-bold text-gray-700 text-center">Shipped</span>
+                      </div>
+
+                      {/* Step 4 */}
+                      <div className="flex flex-col items-center gap-3 w-24">
+                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white ${['DELIVERED', 'COMPLETED'].includes(order?.status) ? 'bg-[#2dc258] text-white shadow-md shadow-[#2dc258]/30' : 'bg-gray-200 text-gray-400'}`}>
+                          <span className="material-symbols-outlined text-2xl">star</span>
+                        </div>
+                        <span className="text-xs font-bold text-gray-700 text-center">Order Received</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div className="flex gap-3">
-              </div>
+              ) : (
+                <div className="py-6 px-4">
+                  <div className="bg-red-50 p-6 rounded-sm border border-red-100 flex items-center gap-4">
+                    <div className="size-12 bg-red-100 rounded-full flex items-center justify-center text-red-500">
+                      <span className="material-symbols-outlined text-3xl">cancel</span>
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-red-600 mb-1">Order Cancelled</h3>
+                      <p className="text-sm text-red-500/80">This order has been cancelled and cannot be processed.</p>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 

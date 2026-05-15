@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext.jsx';
+import notificationApi from '../../api/notificationApi';
 
 const Header = () => {
   const { isAuthenticated, logout, user } = useAuth();
@@ -14,6 +15,13 @@ const Header = () => {
   const searchParamValue = searchParams.get('search') || '';
   const [searchValue, setSearchValue] = useState(searchParamValue);
   const menuRef = useRef(null);
+  
+  // Notifications state
+  const [openNotification, setOpenNotification] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
+  const notificationRef = useRef(null);
 
   useEffect(() => {
     setSearchValue(searchParamValue);
@@ -43,9 +51,33 @@ const Header = () => {
   };
 
   useEffect(() => {
+    if (isAuthenticated) {
+      const fetchNotifications = async () => {
+        try {
+          setLoadingNotifications(true);
+          const response = await notificationApi.getMyNotifications({ size: 20 });
+          if (response.success) {
+            const notifs = response.result?.content || [];
+            setNotifications(notifs);
+            setUnreadCount(notifs.filter(n => !n.read).length);
+          }
+        } catch (error) {
+          console.error('Failed to fetch notifications:', error);
+        } finally {
+          setLoadingNotifications(false);
+        }
+      };
+      fetchNotifications();
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setOpenMenu(false);
+      }
+      if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+        setOpenNotification(false);
       }
     };
 
@@ -130,6 +162,63 @@ const Header = () => {
           <div className="h-6 w-px bg-black/5"></div>
 
           <div className="flex items-center gap-3">
+            {isAuthenticated && (
+              <div className="relative" ref={notificationRef}>
+                <button
+                  onClick={() => {
+                    setOpenNotification(!openNotification);
+                    if (!openNotification && unreadCount > 0) {
+                      setUnreadCount(0);
+                    }
+                  }}
+                  type="button"
+                  className="relative p-2 text-heading hover:text-primary transition-colors"
+                >
+                  <span className="material-symbols-outlined">notifications</span>
+                  {unreadCount > 0 && (
+                    <span className="absolute top-0 right-0 size-4 bg-primary text-white text-[9px] font-bold rounded-full flex items-center justify-center border border-white">
+                      {unreadCount}
+                    </span>
+                  )}
+                </button>
+
+                {openNotification && (
+                  <div className="absolute right-0 mt-2 w-[400px] bg-white border border-black/10 rounded-sm shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+                      <h3 className="text-sm font-bold text-gray-800">Recently Received Notifications</h3>
+                    </div>
+                    <div className="max-h-[400px] overflow-y-auto">
+                      {loadingNotifications ? (
+                        <div className="flex justify-center items-center py-8">
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                        </div>
+                      ) : notifications.length > 0 ? (
+                        <div className="divide-y divide-gray-50">
+                          {notifications.map((noti) => (
+                            <div key={noti.id} className={`p-4 hover:bg-gray-50 transition-colors cursor-pointer ${!noti.read ? 'bg-primary/5' : ''}`}>
+                              <h4 className="text-sm font-medium text-gray-800 mb-1">{noti.title}</h4>
+                              <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">{noti.content}</p>
+                              <span className="text-[10px] text-gray-400 mt-2 block">
+                                {new Date(noti.createdAt).toLocaleString('vi-VN')}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="py-12 text-center flex flex-col items-center">
+                          <span className="material-symbols-outlined text-gray-300 text-4xl mb-2">notifications_off</span>
+                          <p className="text-sm text-gray-500">No notifications yet</p>
+                        </div>
+                      )}
+                    </div>
+                    <div className="px-4 py-2 bg-gray-50 border-t border-gray-100 text-center">
+                      <button className="text-xs text-primary font-medium hover:underline">View All</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             <button
               onClick={() => navigate('/cart')}
               type="button"
