@@ -347,7 +347,7 @@ const CheckoutPage = () => {
                 <p className="text-gray-500 leading-relaxed mb-8">{pollMessage}</p>
                 <div className="flex flex-col gap-3 w-full">
                   <button
-                    onClick={() => navigate(`/order-tracking/${activeOrderId}`)}
+                    onClick={() => navigate(`/order/${activeOrderId}`)}
                     className="w-full bg-primary text-white py-3 rounded-sm font-medium hover:bg-primary/90 transition-all shadow-sm"
                   >
                     View Order Details

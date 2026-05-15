@@ -1,37 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import ProductCard from './ProductCard';
 import productApi from '../../api/productApi';
 
 const ProductGrid = ({ filters, onCategoriesFetched }) => {
-  const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [pagination, setPagination] = useState({ page: 0, size: 10, totalPages: 1 });
+  const [pagination, setPagination] = useState({ page: 0, size: 10 });
   const [sortOption, setSortOption] = useState('newest');
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchAllProducts = async () => {
       try {
         setLoading(true);
-        const params = {
-          page: pagination.page,
-          size: filters?.size || pagination.size,
-          categoryId: filters?.category || undefined,
-          name: filters?.search || undefined,
-          minPrice: filters?.minPrice || undefined,
-          maxPrice: filters?.maxPrice || undefined,
-        };
-        
-        console.log('Fetching products with params:', params);
-        
-        if (sortOption === 'priceAsc') {
-          params.sort = 'price,asc';
-        } else if (sortOption === 'priceDesc') {
-          params.sort = 'price,desc';
-        } else if (sortOption === 'newest') {
-          params.sort = 'createdAt,desc';
-        }
-
-        const response = await productApi.getAll(params);
+        // Fetch a large number of products to filter locally 
+        // since the backend does not fully support categoryName filtering
+        const response = await productApi.getAll({ size: 1000 });
 
         if (response.success) {
           let fetchedProducts = [];
@@ -39,15 +22,10 @@ const ProductGrid = ({ filters, onCategoriesFetched }) => {
             fetchedProducts = response.result;
           } else if (response.result?.content) {
             fetchedProducts = response.result.content;
-            setPagination(prev => ({
-              ...prev,
-              totalPages: response.result.totalPages || 1,
-              totalElements: response.result.totalElements || 0
-            }));
           }
-          setProducts(fetchedProducts);
+          setAllProducts(fetchedProducts);
 
-          // Extract unique categories with representative images and notify parent
+          // Extract unique categories
           if (onCategoriesFetched) {
             const categoryMap = {};
             fetchedProducts.forEach(p => {
@@ -60,7 +38,6 @@ const ProductGrid = ({ filters, onCategoriesFetched }) => {
             
             if (categoryList.length > 0) {
               onCategoriesFetched(prev => {
-                // Merge and avoid duplicates by name, preferring new images if available
                 const combinedMap = {};
                 prev.forEach(c => combinedMap[c.name || c] = c.image || null);
                 categoryList.forEach(c => combinedMap[c.name] = c.image);
@@ -77,21 +54,57 @@ const ProductGrid = ({ filters, onCategoriesFetched }) => {
         setLoading(false);
       }
     };
-    fetchProducts();
-  }, [pagination.page, pagination.size, filters, sortOption]);
+    fetchAllProducts();
+  }, []);
 
-  // Only reset to page 0 when "real" filters change, not on every render
-  const filterDeps = JSON.stringify({
-    category: filters?.category,
-    search: filters?.search,
-    minPrice: filters?.minPrice,
-    maxPrice: filters?.maxPrice,
-    sortOption
-  });
+  // Filter and sort products locally
+  const filteredProducts = useMemo(() => {
+    let result = [...allProducts];
 
+    // Filter by Category
+    if (filters?.category) {
+      result = result.filter(p => p.categoryName === filters.category);
+    }
+    
+    // Filter by Search Name
+    if (filters?.search) {
+      const searchLower = filters.search.toLowerCase();
+      result = result.filter(p => 
+        p.name?.toLowerCase().includes(searchLower) || 
+        p.description?.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    // Filter by Price
+    if (filters?.minPrice !== undefined && filters?.minPrice !== '') {
+      result = result.filter(p => p.price >= Number(filters.minPrice));
+    }
+    if (filters?.maxPrice !== undefined && filters?.maxPrice !== '') {
+      result = result.filter(p => p.price <= Number(filters.maxPrice));
+    }
+
+    // Sort
+    if (sortOption === 'priceAsc') {
+      result.sort((a, b) => a.price - b.price);
+    } else if (sortOption === 'priceDesc') {
+      result.sort((a, b) => b.price - a.price);
+    } else if (sortOption === 'newest') {
+      result.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    }
+
+    return result;
+  }, [allProducts, filters, sortOption]);
+
+  const totalPages = Math.ceil(filteredProducts.length / pagination.size) || 1;
+  const currentProducts = filteredProducts.slice(
+    pagination.page * pagination.size,
+    (pagination.page + 1) * pagination.size
+  );
+
+  // Reset to page 0 when filters or sort change
   useEffect(() => {
     setPagination(prev => ({ ...prev, page: 0 }));
-  }, [filterDeps]);
+  }, [filters, sortOption]);
 
   const handlePageChange = (newPage) => {
     setPagination(prev => ({ ...prev, page: newPage }));
@@ -124,12 +137,12 @@ const ProductGrid = ({ filters, onCategoriesFetched }) => {
             <ProductCard isSkeleton />
           </>
         ) : (
-          products.map(product => (
+          currentProducts.map(product => (
             <ProductCard key={product.id} product={product} />
           ))
         )}
       </div>
-      {!loading && products.length > 0 && (
+      {!loading && filteredProducts.length > 0 && (
         <div className="mt-6 flex justify-center">
           <div className="flex items-center gap-1 text-sm">
             <button
@@ -139,7 +152,7 @@ const ProductGrid = ({ filters, onCategoriesFetched }) => {
             >
               <span className="material-symbols-outlined">chevron_left</span>
             </button>
-            {[...Array(pagination.totalPages)].map((_, idx) => (
+            {[...Array(totalPages)].map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => handlePageChange(idx)}
@@ -149,7 +162,7 @@ const ProductGrid = ({ filters, onCategoriesFetched }) => {
               </button>
             ))}
             <button
-              disabled={pagination.page === pagination.totalPages - 1}
+              disabled={pagination.page === totalPages - 1}
               onClick={() => handlePageChange(pagination.page + 1)}
               className="px-4 py-2 text-body-text hover:text-primary transition-colors disabled:opacity-30"
             >
@@ -158,7 +171,7 @@ const ProductGrid = ({ filters, onCategoriesFetched }) => {
           </div>
         </div>
       )}
-      {!loading && products.length === 0 && (
+      {!loading && filteredProducts.length === 0 && (
         <div className="mt-10 text-center text-gray-500">No products found.</div>
       )}
     </div>
