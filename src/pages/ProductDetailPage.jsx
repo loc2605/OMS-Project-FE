@@ -3,6 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext.jsx';
 import { useAuth } from '../contexts/AuthContext';
 import Header from '../components/home/Header';
+import Footer from '../components/home/Footer';
 import productApi from '../api/productApi';
 import inventoryApi from '../api/inventoryApi';
 const formatCurrency = (value) => {
@@ -230,70 +231,7 @@ const ProductDetailPage = () => {
         </div>
 
       </main>
-      {/* Footer */}
-      <footer className="bg-card-white border-t border-gray-200 mt-12 py-10">
-        <div className="max-w-full mx-auto px-4 md:px-8 lg:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 text-primary">
-                <div className="size-6">
-                  <svg fill="none" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M24 45.8096C19.6865 45.8096 15.4698 44.5305 11.8832 42.134C8.29667 39.7376 5.50128 36.3314 3.85056 32.3462C2.19985 28.361 1.76794 23.9758 2.60947 19.7452C3.451 15.5145 5.52816 11.6284 8.57829 8.5783C11.6284 5.52817 15.5145 3.45101 19.7452 2.60948C23.9758 1.76795 28.361 2.19986 32.3462 3.85057C36.3314 5.50129 39.7376 8.29668 42.134 11.8833C44.5305 15.4698 45.8096 19.6865 45.8096 24L24 24L24 45.8096Z" fill="currentColor"></path>
-                  </svg>
-                </div>
-                <h2 className="text-heading-text text-lg font-bold leading-tight">Shop<span className="text-primary">Modern</span></h2>
-              </div>
-              <p className="text-xs text-gray-500 leading-relaxed">ShopModern is a leading global e-commerce platform dedicated to providing quality tech gadgets and accessories at competitive prices.</p>
-            </div>
-            <div>
-              <h4 className="font-bold text-sm mb-4 uppercase tracking-wider">Customer Service</h4>
-              <ul className="text-xs text-gray-500 space-y-2">
-                <li><a className="hover:text-primary" href="#">Help Centre</a></li>
-                <li><a className="hover:text-primary" href="#">ShopModern Reward</a></li>
-                <li><a className="hover:text-primary" href="#">Shipping &amp; Delivery</a></li>
-                <li><a className="hover:text-primary" href="#">Return &amp; Refund</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-bold text-sm mb-4 uppercase tracking-wider">Payment Methods</h4>
-              <div className="flex flex-wrap gap-2">
-                <div className="w-10 h-6 bg-white rounded-sm border border-gray-200 flex items-center justify-center">
-                  <svg className="w-6 h-4" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="24" height="16" rx="2" fill="#1A1F71"/>
-                    <path d="M9.5 4H14.5L13 12H8L9.5 4Z" fill="white"/>
-                    <path d="M6 4H9.5L8 12H4.5C4 12 3.5 11.5 3.5 11V5C3.5 4.5 4 4 4.5 4H6Z" fill="white"/>
-                    <path d="M15.5 4H18.5C19 4 19.5 4.5 19.5 5V11C19.5 11.5 19 12 18.5 12H15.5L17 4Z" fill="white"/>
-                  </svg>
-                </div>
-                <div className="w-10 h-6 bg-white rounded-sm border border-gray-200 flex items-center justify-center">
-                  <svg className="w-6 h-4" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="24" height="16" rx="2" fill="#EB001B"/>
-                    <rect x="6" width="12" height="16" fill="#F79E1B"/>
-                    <circle cx="12" cy="8" r="4" fill="#FF5F00"/>
-                  </svg>
-                </div>
-                <div className="w-10 h-6 bg-white rounded-sm border border-gray-200 flex items-center justify-center">
-                  <svg className="w-6 h-4" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="24" height="16" rx="2" fill="#003087"/>
-                    <path d="M6 4H18V12H6V4Z" fill="white"/>
-                    <path d="M9 7H15V9H9V7Z" fill="#003087"/>
-                  </svg>
-                </div>
-                <div className="w-10 h-6 bg-white rounded-sm border border-gray-200 flex items-center justify-center">
-                  <svg className="w-6 h-4" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="24" height="16" rx="2" fill="#000000"/>
-                    <path d="M6 4H18V12H6V4Z" fill="white"/>
-                    <path d="M9 7H15V9H9V7Z" fill="#000000"/>
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="border-t border-gray-100 mt-10 pt-6 text-center text-[11px] text-gray-400">
-            © 2026 ShopModern. All Rights Reserved.
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
