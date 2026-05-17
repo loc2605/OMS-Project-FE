@@ -143,7 +143,7 @@ const ProductGrid = ({ filters, onCategoriesFetched }) => {
         )}
       </div>
       {!loading && filteredProducts.length > 0 && (
-        <div className="mt-6 flex justify-center">
+        <div className="mt-4 flex justify-center">
           <div className="flex items-center gap-1 text-sm">
             <button
               disabled={pagination.page === 0}

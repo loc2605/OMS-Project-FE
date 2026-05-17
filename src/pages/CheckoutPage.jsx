@@ -130,10 +130,10 @@ const CheckoutPage = () => {
         const result = response.result;
         console.log('Order Status:', result.status);
 
-        if (result.status === 'CONFIRMED') {
+        if (['PENDING_VALIDATION', 'PAYMENT_PENDING', 'PENDING', 'CONFIRMED'].includes(result.status)) {
           clearInterval(pollInterval);
           setPollStatus('CONFIRMED');
-          setPollMessage(result.message || 'Payment confirmed! Your order has been placed successfully.');
+          setPollMessage(result.message || 'Your order has been placed successfully.');
           clearCart();
         } else if (result.status === 'CANCELLED') {
           clearInterval(pollInterval);
