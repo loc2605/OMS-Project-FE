@@ -14,7 +14,7 @@ const Footer = () => {
           </div>
           <p className="text-sm leading-relaxed text-gray-500">The world's leading microservices-driven e-commerce platform for a seamless shopping experience.</p>
         </div>
-        
+
         <div className="flex flex-col sm:flex-row gap-12 md:gap-24 lg:gap-32">
           <div>
             <h4 className="text-sm font-bold text-gray-900 uppercase tracking-wider mb-5">Customer Care</h4>
@@ -36,7 +36,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      <div className="max-w-[1400px] mx-auto px-4 md:px-8 lg:px-12 mt-12 pt-8 border-t border-gray-100 text-center text-xs text-gray-400 uppercase tracking-widest">
+      <div className="max-w-[1400px] mx-auto px-4 md:px-8 lg:px-8 mt-8 pt-8 border-t border-gray-100 text-center text-xs text-gray-400 uppercase tracking-widest">
         <p>© 2026 ShopModern E-Commerce. All rights reserved.</p>
       </div>
     </footer>
