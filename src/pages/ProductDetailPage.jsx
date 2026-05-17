@@ -19,6 +19,7 @@ const ProductDetailPage = () => {
   const [product, setProduct] = useState(null);
   const [inventory, setInventory] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -51,7 +52,7 @@ const ProductDetailPage = () => {
       navigate('/login');
       return;
     }
-    addToCart(product);
+    addToCart(product, quantity);
   };
 
   const handleBuyNow = () => {
@@ -59,7 +60,7 @@ const ProductDetailPage = () => {
       navigate('/login');
       return;
     }
-    addToCart(product);
+    addToCart(product, quantity);
     navigate('/cart');
   };
 
@@ -128,9 +129,6 @@ const ProductDetailPage = () => {
               <div className="flex items-center gap-2">
                 <span className="pastel-badge-primary text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm">Top Seller</span>
                 <span className="text-gray-400 text-xs font-medium">SKU: {product.sku || 'N/A'}</span>
-                <span className={`text-xs font-medium px-2 py-0.5 rounded-sm ${product.stockQuantity > 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
-                  {product.stockQuantity > 0 ? `In Stock: ${product.stockQuantity}` : 'Out of Stock'}
-                </span>
               </div>
               <h1 className="text-2xl font-bold tracking-tight text-heading-text">{product.name}</h1>
 
@@ -142,6 +140,49 @@ const ProductDetailPage = () => {
                 {product.discount && <span className="pastel-badge-primary text-[11px] font-bold px-1.5 py-0.5 rounded">{product.discount}</span>}
               </div>
             </div>
+            
+            {/* Quantity Selector */}
+            <div className="flex items-center gap-6 py-2">
+              <span className="text-sm font-medium text-gray-600">Quantity</span>
+              <div className="flex items-center border border-gray-200 rounded-sm">
+                <button 
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  disabled={quantity <= 1 || product.stockQuantity === 0}
+                  className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-50 border-r border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[16px]">remove</span>
+                </button>
+                <input 
+                  type="number"
+                  value={quantity}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value);
+                    if (!isNaN(val) && val >= 1 && val <= product.stockQuantity) {
+                      setQuantity(val);
+                    } else if (e.target.value === '') {
+                      setQuantity('');
+                    }
+                  }}
+                  onBlur={() => {
+                    if (!quantity || quantity < 1) setQuantity(1);
+                  }}
+                  disabled={product.stockQuantity === 0}
+                  className="w-12 h-8 text-center outline-none text-sm font-medium bg-transparent disabled:bg-gray-50 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none m-0"
+                  style={{ MozAppearance: 'textfield' }}
+                  min="1"
+                  max={product.stockQuantity || 1}
+                />
+                <button 
+                  onClick={() => setQuantity(Math.min(product.stockQuantity, quantity + 1))}
+                  disabled={quantity >= product.stockQuantity || product.stockQuantity === 0}
+                  className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-50 border-l border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[16px]">add</span>
+                </button>
+              </div>
+              <span className="text-sm text-gray-500">{product.stockQuantity} pieces available</span>
+            </div>
+
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
