@@ -37,12 +37,12 @@ const MyOrdersPage = () => {
     fetchOrders();
   }, []);
 
-  const filteredOrders = Array.isArray(orders) 
+  const filteredOrders = Array.isArray(orders)
     ? orders.filter(order => {
-        const matchesTab = activeTab === 'ALL' || order.status === activeTab;
-        const matchesSearch = order.orderId.toLowerCase().includes(searchTerm.toLowerCase());
-        return matchesTab && matchesSearch;
-      })
+      const matchesTab = activeTab === 'ALL' || order.status === activeTab;
+      const matchesSearch = order.orderId.toLowerCase().includes(searchTerm.toLowerCase());
+      return matchesTab && matchesSearch;
+    })
     : [];
 
   const formatCurrency = (amount) => {
@@ -75,7 +75,7 @@ const MyOrdersPage = () => {
 
       <main className="max-w-[1400px] mx-auto px-4 pt-8">
         <div className="flex flex-col lg:flex-row gap-8 items-start">
-          
+
           {/* Sidebar - Search & Filter */}
           <aside className="w-full lg:w-[320px] sticky top-[80px] space-y-6">
             <div className="bg-white rounded-sm shadow-sm p-6 space-y-8">
@@ -85,14 +85,28 @@ const MyOrdersPage = () => {
                   <span className="material-symbols-outlined text-primary text-[20px]">search</span>
                   SEARCH ORDER
                 </h3>
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Enter Order ID..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full bg-[#f8f8f8] border border-gray-100 rounded-sm py-2.5 px-4 text-sm outline-none focus:border-primary focus:bg-white transition-all"
-                  />
+                <div className="flex shadow-sm">
+                  <div className="relative flex-1">
+                    <input
+                      type="text"
+                      placeholder="Enter order ID"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full h-full bg-[#f8f8f8] border border-gray-200 border-r-0 rounded-l-sm py-2.5 pl-4 pr-10 text-sm outline-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary focus:bg-white transition-all relative z-10"
+                    />
+                    {searchTerm && (
+                      <button
+                        onClick={() => setSearchTerm('')}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center outline-none z-20 w-6 h-6 rounded-full hover:bg-gray-200"
+                        title="Clear search"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">close</span>
+                      </button>
+                    )}
+                  </div>
+                  <button className="bg-primary hover:opacity-90 text-white px-4 py-2.5 rounded-r-sm flex items-center justify-center transition-all border border-primary z-10 shadow-sm shadow-primary/20">
+                    <span className="material-symbols-outlined text-[20px]">search</span>
+                  </button>
                 </div>
               </div>
 
@@ -107,11 +121,10 @@ const MyOrdersPage = () => {
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`w-full flex items-center justify-between px-4 py-2.5 rounded-sm text-sm transition-all ${
-                        activeTab === tab.id
+                      className={`w-full flex items-center justify-between px-4 py-2.5 rounded-sm text-sm transition-all ${activeTab === tab.id
                           ? 'bg-primary text-white font-medium shadow-md shadow-primary/20'
                           : 'text-gray-600 hover:bg-gray-50'
-                      }`}
+                        }`}
                     >
                       <span>{tab.label}</span>
                       {activeTab === tab.id && (
@@ -146,7 +159,7 @@ const MyOrdersPage = () => {
                 <h3 className="text-lg font-medium text-gray-800">No orders found</h3>
                 <p className="text-gray-400 text-sm mt-2">Try adjusting your filters or search terms.</p>
                 {activeTab !== 'ALL' || searchTerm !== '' ? (
-                  <button 
+                  <button
                     onClick={() => { setActiveTab('ALL'); setSearchTerm(''); }}
                     className="mt-6 text-primary text-sm font-medium hover:underline"
                   >
@@ -170,68 +183,68 @@ const MyOrdersPage = () => {
                       </span>
                     </div>
 
-                {/* Order Content */}
-                <div className="p-6 bg-white border-b border-gray-50/50">
-                  {order.orderItems && order.orderItems.length > 0 ? (
-                    <div className="flex justify-between items-center">
-                      <div className="flex gap-4">
-                        <div className="size-20 bg-gray-50 rounded-sm flex items-center justify-center border border-gray-100 flex-shrink-0 overflow-hidden">
-                          {order.orderItems[0].imageUrl ? (
-                            <img src={order.orderItems[0].imageUrl} alt={order.orderItems[0].productName} className="w-full h-full object-cover" />
-                          ) : (
+                    {/* Order Content */}
+                    <div className="p-6 bg-white border-b border-gray-50/50">
+                      {order.orderItems && order.orderItems.length > 0 ? (
+                        <div className="flex justify-between items-center">
+                          <div className="flex gap-4">
+                            <div className="size-20 bg-gray-50 rounded-sm flex items-center justify-center border border-gray-100 flex-shrink-0 overflow-hidden">
+                              {order.orderItems[0].imageUrl ? (
+                                <img src={order.orderItems[0].imageUrl} alt={order.orderItems[0].productName} className="w-full h-full object-cover" />
+                              ) : (
+                                <span className="material-symbols-outlined text-gray-300 text-4xl">inventory_2</span>
+                              )}
+                            </div>
+                            <div className="flex flex-col justify-center">
+                              <h4 className="text-sm font-medium text-gray-800 line-clamp-2">
+                                {order.orderItems[0].productName}
+                              </h4>
+                              <p className="text-sm text-gray-400 mt-1">
+                                Quantity: {order.orderItems[0].quantity}
+                              </p>
+                              {order.orderItems.length > 1 && (
+                                <p className="text-sm text-primary/70 mt-1 font-medium">
+                                  + {order.orderItems.length - 1} other items
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-sm text-primary font-medium">{formatCurrency(order.orderItems[0].price)}</div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-4">
+                          <div className="size-20 bg-gray-50 rounded-sm flex items-center justify-center border border-gray-100">
                             <span className="material-symbols-outlined text-gray-300 text-4xl">inventory_2</span>
-                          )}
+                          </div>
+                          <p className="text-sm text-gray-500 italic">No items information</p>
                         </div>
-                        <div className="flex flex-col justify-center">
-                          <h4 className="text-sm font-medium text-gray-800 line-clamp-2">
-                            {order.orderItems[0].productName}
-                          </h4>
-                          <p className="text-sm text-gray-400 mt-1">
-                            Quantity: {order.orderItems[0].quantity}
-                          </p>
-                          {order.orderItems.length > 1 && (
-                            <p className="text-sm text-primary/70 mt-1 font-medium">
-                              + {order.orderItems.length - 1} other items
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                      <div className="text-right">
-                        <div className="text-sm text-primary font-medium">{formatCurrency(order.orderItems[0].price)}</div>
-                      </div>
+                      )}
                     </div>
-                  ) : (
-                    <div className="flex items-center gap-4">
-                      <div className="size-20 bg-gray-50 rounded-sm flex items-center justify-center border border-gray-100">
-                        <span className="material-symbols-outlined text-gray-300 text-4xl">inventory_2</span>
-                      </div>
-                      <p className="text-sm text-gray-500 italic">No items information</p>
+
+                    <div className="px-6 py-4 flex justify-end items-center gap-2 bg-[#fdfdfd]">
+                      <span className="material-symbols-outlined text-primary text-[20px]">verified</span>
+                      <span className="text-sm text-gray-600">Order Total:</span>
+                      <span className="text-xl font-bold text-primary ml-2">{formatCurrency(order.totalAmount)}</span>
                     </div>
-                  )}
-                </div>
 
-                <div className="px-6 py-4 flex justify-end items-center gap-2 bg-[#fdfdfd]">
-                  <span className="material-symbols-outlined text-primary text-[20px]">verified</span>
-                  <span className="text-sm text-gray-600">Order Total:</span>
-                  <span className="text-xl font-bold text-primary ml-2">{formatCurrency(order.totalAmount)}</span>
-                </div>
-
-                {/* Order Footer */}
-                <div className="px-6 py-4 bg-[#fffcf5] border-t border-gray-50 flex justify-end gap-3">
-                  <button
-                    onClick={() => navigate(`/order/${order.orderId}`)}
-                    className="px-6 py-2 bg-primary text-white text-sm font-medium rounded-sm hover:bg-primary/90 transition-all shadow-sm"
-                  >
-                    View Details
-                  </button>
-                </div>
+                    {/* Order Footer */}
+                    <div className="px-6 py-4 bg-[#fffcf5] border-t border-gray-50 flex justify-end gap-3">
+                      <button
+                        onClick={() => navigate(`/order/${order.orderId}`)}
+                        className="px-6 py-2 bg-primary text-white text-sm font-medium rounded-sm hover:bg-primary/90 transition-all shadow-sm"
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
-        )}
-      </div>
-    </div>
-  </main>
+        </div>
+      </main>
     </div>
   );
 };
