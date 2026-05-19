@@ -91,13 +91,13 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
       <div ref={sidebarRef} style={sidebarStyle} className="space-y-4">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-bold text-heading uppercase flex items-center gap-1.5 tracking-wider">
-              <span className="material-symbols-outlined text-[18px]">list</span>
+            <h3 className="text-[15px] font-bold text-heading uppercase flex items-center gap-1.5 tracking-wider">
+              <span className="material-symbols-outlined text-[20px] text-primary">list</span>
               Categories
             </h3>
             <button
               onClick={handleReset}
-              className="size-6 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-primary transition-colors"
+              className="size-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-primary transition-colors"
               title="Reset Filters"
             >
               <span className="material-symbols-outlined text-[14px]">filter_alt_off</span>
@@ -110,7 +110,7 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
                 <button
                   key={name}
                   onClick={() => onCategoryChange(activeCategory === name ? '' : name)}
-                  className={`w-full text-left px-2 py-1.5 text-[15px] transition-colors rounded ${activeCategory === name ? 'text-primary bg-black/5 font-semibold' : 'text-heading hover:text-primary'
+                  className={`w-full text-left px-2 py-1.5 text-base transition-colors rounded ${activeCategory === name ? 'text-primary bg-black/5 font-semibold' : 'text-heading hover:text-primary'
                     }`}
                 >
                   {name}
@@ -121,7 +121,7 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
         </div>
 
         <div className="space-y-3 pt-3 border-t border-black/5">
-          <h3 className="text-sm font-bold text-heading uppercase tracking-wider">Price Range</h3>
+          <h3 className="text-[15px] font-bold text-heading uppercase tracking-wider">Price Range</h3>
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-1.5">
               <input
@@ -140,7 +140,7 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
                 onChange={(e) => setMaxPrice(e.target.value)}
               />
             </div>
-            <button onClick={handleApplyPrice} className="w-full py-1.5 bg-primary text-sm font-bold text-white rounded uppercase mt-1 hover:bg-primary/90 transition-colors">Apply</button>
+            <button onClick={handleApplyPrice} className="w-full py-1.5 bg-primary text-[15px] font-bold text-white rounded uppercase mt-1 hover:bg-primary/90 transition-colors">Apply</button>
           </div>
         </div>
       </div>

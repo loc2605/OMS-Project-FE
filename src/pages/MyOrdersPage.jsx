@@ -10,6 +10,12 @@ const MyOrdersPage = () => {
   const [activeTab, setActiveTab] = useState('ALL');
   const [showDropdown, setShowDropdown] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, searchTerm]);
 
   const tabs = [
     { id: 'ALL', label: 'All' },
@@ -51,10 +57,13 @@ const MyOrdersPage = () => {
       );
       const matchesReceiver = order.shippingAddress && order.shippingAddress.receiverName && 
         order.shippingAddress.receiverName.toLowerCase().includes(searchLower);
-
       return matchesTab && (matchesId || matchesProduct || matchesReceiver);
     })
     : [];
+
+  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const pagedOrders = filteredOrders.slice(startIndex, startIndex + itemsPerPage);
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount).replace('₫', 'đ');
@@ -182,7 +191,7 @@ const MyOrdersPage = () => {
               </div>
             ) : (
               <div className="space-y-4">
-                {filteredOrders.map((order) => (
+                {pagedOrders.map((order) => (
                   <div key={order.orderId} className="bg-white rounded-sm shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 hover:shadow-md transition-shadow">
                     {/* Order Header */}
                     <div className="px-6 py-4 border-b border-gray-50 flex justify-between items-center bg-[#fcfcfc]">
@@ -253,6 +262,44 @@ const MyOrdersPage = () => {
                     </div>
                   </div>
                 ))}
+
+                {/* Pagination Controls */}
+                {totalPages > 1 && (
+                  <div className="mt-8 flex justify-center">
+                    <div className="flex items-center gap-1 text-sm">
+                      <button
+                        disabled={currentPage === 1}
+                        onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                        className="px-4 py-2 text-body-text hover:text-primary transition-colors disabled:opacity-30 disabled:hover:text-body-text cursor-pointer disabled:cursor-not-allowed"
+                      >
+                        <span className="material-symbols-outlined">chevron_left</span>
+                      </button>
+                      {[...Array(totalPages)].map((_, idx) => {
+                        const pageNum = idx + 1;
+                        return (
+                          <button
+                            key={pageNum}
+                            onClick={() => setCurrentPage(pageNum)}
+                            className={`w-8 h-8 flex items-center justify-center rounded transition-colors cursor-pointer ${
+                              currentPage === pageNum 
+                                ? 'bg-primary text-white font-medium shadow-sm' 
+                                : 'hover:bg-primary/10 text-body-text'
+                            }`}
+                          >
+                            {pageNum}
+                          </button>
+                        );
+                      })}
+                      <button
+                        disabled={currentPage === totalPages}
+                        onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                        className="px-4 py-2 text-body-text hover:text-primary transition-colors disabled:opacity-30 disabled:hover:text-body-text cursor-pointer disabled:cursor-not-allowed"
+                      >
+                        <span className="material-symbols-outlined">chevron_right</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
