@@ -48,8 +48,7 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
 
     window.addEventListener('scroll', handleScroll);
     window.addEventListener('resize', handleScroll);
-    
-    // Add multiple delays to ensure everything is mounted and calculated
+
     const timeoutId1 = setTimeout(handleScroll, 100);
     const timeoutId2 = setTimeout(handleScroll, 500);
 
@@ -96,8 +95,8 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
               <span className="material-symbols-outlined text-[18px]">list</span>
               Categories
             </h3>
-            <button 
-              onClick={handleReset} 
+            <button
+              onClick={handleReset}
               className="size-6 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-primary transition-colors"
               title="Reset Filters"
             >
@@ -108,12 +107,11 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
             {displayCategories.map((cat) => {
               const name = typeof cat === 'string' ? cat : cat.name;
               return (
-                <button 
+                <button
                   key={name}
                   onClick={() => onCategoryChange(activeCategory === name ? '' : name)}
-                  className={`w-full text-left px-2 py-1.5 text-[15px] transition-colors rounded ${
-                    activeCategory === name ? 'text-primary bg-black/5 font-semibold' : 'text-heading hover:text-primary'
-                  }`}
+                  className={`w-full text-left px-2 py-1.5 text-[15px] transition-colors rounded ${activeCategory === name ? 'text-primary bg-black/5 font-semibold' : 'text-heading hover:text-primary'
+                    }`}
                 >
                   {name}
                 </button>
@@ -126,18 +124,18 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
           <h3 className="text-sm font-bold text-heading uppercase tracking-wider">Price Range</h3>
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-1.5">
-              <input 
-                className="w-full text-sm p-1.5 rounded border border-black/10 focus:ring-1 focus:ring-primary focus:border-primary" 
-                placeholder="Min" 
-                type="number" 
+              <input
+                className="w-full text-sm p-1.5 rounded border border-black/10 focus:ring-1 focus:ring-primary focus:border-primary"
+                placeholder="Min"
+                type="number"
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
               />
               <span className="text-gray-400 text-xs">-</span>
-              <input 
-                className="w-full text-sm p-1.5 rounded border border-black/10 focus:ring-1 focus:ring-primary focus:border-primary" 
-                placeholder="Max" 
-                type="number" 
+              <input
+                className="w-full text-sm p-1.5 rounded border border-black/10 focus:ring-1 focus:ring-primary focus:border-primary"
+                placeholder="Max"
+                type="number"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
               />
