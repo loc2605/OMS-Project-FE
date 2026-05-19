@@ -85,7 +85,7 @@ const CategoryShowcase = ({ categories }) => {
           onClick={() => navigate('/products')}
           className="text-primary font-bold text-sm hover:underline flex items-center gap-1"
         >
-          View All <span className="material-symbols-outlined text-sm">arrow_forward</span>
+          View All
         </button>
       </div>
 
