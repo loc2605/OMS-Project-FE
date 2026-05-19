@@ -66,26 +66,33 @@ const OrderTrackingPage = () => {
     switch (status) {
       case 'PENDING_VALIDATION':
       case 'PENDING':
-      case 'PAYMENT_PENDING': return { text: rawText, color: 'bg-orange-50 text-orange-600 border-orange-200' };
-      case 'CONFIRMED': return { text: rawText, color: 'bg-cyan-50 text-cyan-600 border-cyan-200' };
-      case 'SHIPPING': return { text: rawText, color: 'bg-blue-50 text-blue-600 border-blue-200' };
+      case 'PAYMENT_PENDING': return { text: rawText, color: 'bg-amber-50 text-amber-600 border-amber-200' };
+      case 'CONFIRMED': return { text: rawText, color: 'bg-blue-50 text-blue-600 border-blue-200' };
+      case 'SHIPPING': return { text: rawText, color: 'bg-indigo-50 text-indigo-600 border-indigo-200' };
       case 'COMPLETED': return { text: rawText, color: 'bg-emerald-50 text-emerald-600 border-emerald-200' };
-      case 'CANCELLED': return { text: rawText, color: 'bg-red-50 text-red-600 border-red-200' };
+      case 'CANCELLED': return { text: rawText, color: 'bg-rose-50 text-rose-600 border-rose-200' };
       default: return { text: rawText, color: 'bg-gray-50 text-gray-600 border-gray-200' };
     }
   };
 
   const statusInfo = getStatusDisplay(order?.status);
 
+  // Active steps calculation for the timeline
+  const isStep1Active = ['PENDING_VALIDATION', 'PENDING', 'PAYMENT_PENDING', 'CONFIRMED', 'SHIPPING', 'COMPLETED'].includes(order?.status);
+  const isStep2Active = ['CONFIRMED', 'SHIPPING', 'COMPLETED'].includes(order?.status);
+  const isStep3Active = ['SHIPPING', 'COMPLETED'].includes(order?.status);
+  const isStep4Active = ['COMPLETED'].includes(order?.status);
+
   return (
     <div className="bg-[#f5f5f5] text-body-text min-h-screen">
       <Header />
 
-      <main className="max-w-[1200px] mx-auto px-4 py-10">
+      <main className="max-w-[1200px] mx-auto px-4 pt-6 pb-0">
         <div className="flex flex-col gap-6">
           
           {/* Order Header Card */}
-          <div className="bg-white p-8 rounded-sm shadow-sm border-b-2 border-primary/10">
+          <div className="bg-white p-8 rounded-sm shadow-sm relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-primary"></div>
             <div className="flex flex-col gap-8">
               <div className="flex justify-between items-center border-b border-gray-100 pb-4">
                 <div className="flex items-center gap-4">
@@ -98,7 +105,7 @@ const OrderTrackingPage = () => {
                 </div>
                 <div className="flex items-center gap-3 text-sm">
                   <span className="text-gray-500 uppercase font-medium">Status:</span>
-                  <span className={`px-3 py-1 ${statusInfo.color} text-[11px] font-bold rounded-sm uppercase tracking-wider border`}>
+                  <span className={`px-3.5 py-1 ${statusInfo.color} text-[11px] font-bold rounded-sm uppercase tracking-wider border transition-all`}>
                     {statusInfo.text}
                   </span>
                 </div>
@@ -107,52 +114,54 @@ const OrderTrackingPage = () => {
               {order?.status !== 'CANCELLED' ? (
                 <div className="py-6 px-4">
                   <div className="relative">
-                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1 bg-gray-100 rounded-full z-0"></div>
+                    <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1.5 bg-gray-100 rounded-full z-0"></div>
                     <div 
-                      className="absolute left-0 top-1/2 -translate-y-1/2 h-1 bg-[#2dc258] rounded-full z-0 transition-all duration-500"
+                      className="absolute left-0 top-1/2 -translate-y-1/2 h-1.5 bg-primary rounded-full z-0 transition-all duration-500"
                       style={{ 
-                        width: ['PENDING_VALIDATION', 'PENDING', 'PAYMENT_PENDING'].includes(order?.status) ? '0%' : 
-                               ['CONFIRMED'].includes(order?.status) ? '33.33%' : 
-                               ['SHIPPING'].includes(order?.status) ? '66.66%' : 
-                               ['COMPLETED'].includes(order?.status) ? '100%' : '0%'
+                        width: !isStep1Active ? '0%' : 
+                               !isStep2Active ? '0%' : 
+                               !isStep3Active ? '33.33%' : 
+                               !isStep4Active ? '66.66%' : '100%'
                       }}
                     ></div>
                     
                     <div className="relative z-10 flex justify-between">
                       {/* Step 1 */}
                       <div className="flex flex-col items-center gap-3 w-24">
-                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white ${['PENDING_VALIDATION', 'PENDING', 'PAYMENT_PENDING', 'CONFIRMED', 'SHIPPING', 'COMPLETED'].includes(order?.status) ? 'bg-[#2dc258] text-white shadow-md shadow-[#2dc258]/30' : 'bg-gray-200 text-gray-400'}`}>
+                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white transition-all duration-300 ${isStep1Active ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105' : 'bg-gray-200 text-gray-400'}`}>
                           <span className="material-symbols-outlined text-2xl">receipt_long</span>
                         </div>
-                        <span className="text-xs font-bold text-gray-700 text-center">
+                        <span className={`text-xs text-center transition-colors duration-300 ${isStep1Active ? 'text-primary font-bold' : 'text-gray-400 font-medium'}`}>
                           {order?.paymentMethod === 'COD' ? 'Order Placed' : 'Payment Pending'}
                         </span>
                       </div>
 
                       {/* Step 2 */}
                       <div className="flex flex-col items-center gap-3 w-24">
-                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white ${['CONFIRMED', 'SHIPPING', 'COMPLETED'].includes(order?.status) ? 'bg-[#2dc258] text-white shadow-md shadow-[#2dc258]/30' : 'bg-gray-200 text-gray-400'}`}>
+                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white transition-all duration-300 ${isStep2Active ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105' : 'bg-gray-200 text-gray-400'}`}>
                           <span className="material-symbols-outlined text-2xl">payments</span>
                         </div>
-                        <span className="text-xs font-bold text-gray-700 text-center">
+                        <span className={`text-xs text-center transition-colors duration-300 ${isStep2Active ? 'text-primary font-bold' : 'text-gray-400 font-medium'}`}>
                           {order?.paymentMethod === 'COD' ? 'Confirmed' : 'Paid & Confirmed'}
                         </span>
                       </div>
 
                       {/* Step 3 */}
                       <div className="flex flex-col items-center gap-3 w-24">
-                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white ${['SHIPPING', 'COMPLETED'].includes(order?.status) ? 'bg-[#2dc258] text-white shadow-md shadow-[#2dc258]/30' : 'bg-gray-200 text-gray-400'}`}>
+                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white transition-all duration-300 ${isStep3Active ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105' : 'bg-gray-200 text-gray-400'}`}>
                           <span className="material-symbols-outlined text-2xl">local_shipping</span>
                         </div>
-                        <span className="text-xs font-bold text-gray-700 text-center">Shipping</span>
+                        <span className={`text-xs text-center transition-colors duration-300 ${isStep3Active ? 'text-primary font-bold' : 'text-gray-400 font-medium'}`}>
+                          Shipping
+                        </span>
                       </div>
 
                       {/* Step 4 */}
                       <div className="flex flex-col items-center gap-3 w-24">
-                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white ${['COMPLETED'].includes(order?.status) ? 'bg-[#2dc258] text-white shadow-md shadow-[#2dc258]/30' : 'bg-gray-200 text-gray-400'}`}>
+                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white transition-all duration-300 ${isStep4Active ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105' : 'bg-gray-200 text-gray-400'}`}>
                           <span className="material-symbols-outlined text-2xl">star</span>
                         </div>
-                        <span className="text-xs font-bold text-gray-700 text-center">
+                        <span className={`text-xs text-center transition-colors duration-300 ${isStep4Active ? 'text-primary font-bold' : 'text-gray-400 font-medium'}`}>
                           {order?.paymentMethod === 'COD' ? 'Received & Paid' : 'Completed'}
                         </span>
                       </div>
@@ -180,8 +189,9 @@ const OrderTrackingPage = () => {
             <div className="lg:col-span-2 space-y-6">
               
               {/* Order Items List */}
-              <div className="bg-white p-6 rounded-sm shadow-sm">
-                <h2 className="text-base font-bold text-gray-800 mb-6 flex items-center gap-2">
+              <div className="bg-white p-6 rounded-sm shadow-sm relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-primary"></div>
+                <h2 className="text-base font-bold text-gray-800 mb-6 flex items-center gap-2 mt-2">
                   <span className="material-symbols-outlined text-primary text-[20px]">shopping_bag</span>
                   ORDER ITEMS ({order?.orderItems?.length || 0})
                 </h2>
@@ -300,21 +310,8 @@ const OrderTrackingPage = () => {
         </div>
       </main>
 
-      <footer className="mt-8 py-8 px-4 md:px-6 bg-white border-t border-gray-100 text-center shadow-sm">
-        <div className="max-w-6xl mx-auto">
-          <p className="text-body text-sm font-semibold">© 2026 ShopModern E-commerce Inc. All rights reserved.</p>
-          <div className="flex justify-center gap-10 mt-6">
-            <a className="text-xs text-body font-bold hover:text-primary transition-colors uppercase tracking-widest" href="#">
-              Privacy Policy
-            </a>
-            <a className="text-xs text-body font-bold hover:text-primary transition-colors uppercase tracking-widest" href="#">
-              Terms of Service
-            </a>
-            <a className="text-xs text-body font-bold hover:text-primary transition-colors uppercase tracking-widest" href="#">
-              Cookie Settings
-            </a>
-          </div>
-        </div>
+      <footer className="mt-0 py-6 text-center text-xs text-gray-400">
+        <p>© 2026 ShopModern E-commerce Inc. All rights reserved.</p>
       </footer>
     </div>
   );

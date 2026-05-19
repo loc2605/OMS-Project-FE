@@ -71,13 +71,13 @@ const MyOrdersPage = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'COMPLETED': return 'text-emerald-500 bg-emerald-50 border-emerald-100';
-      case 'SHIPPING': return 'text-blue-500 bg-blue-50 border-blue-100';
-      case 'CONFIRMED': return 'text-cyan-500 bg-cyan-50 border-cyan-100';
-      case 'CANCELLED': return 'text-red-500 bg-red-50 border-red-100';
+      case 'COMPLETED': return 'text-emerald-600 bg-emerald-50 border-emerald-100';
+      case 'SHIPPING': return 'text-indigo-600 bg-indigo-50 border-indigo-100';
+      case 'CONFIRMED': return 'text-blue-600 bg-blue-50 border-blue-100';
+      case 'CANCELLED': return 'text-rose-600 bg-rose-50 border-rose-100';
       case 'PENDING':
       case 'PENDING_VALIDATION':
-      case 'PAYMENT_PENDING': return 'text-orange-500 bg-orange-50 border-orange-100';
+      case 'PAYMENT_PENDING': return 'text-amber-600 bg-amber-50 border-amber-100';
       default: return 'text-gray-500 bg-gray-50 border-gray-100';
     }
   };
@@ -86,7 +86,7 @@ const MyOrdersPage = () => {
     <div className="bg-[#f5f5f5] min-h-screen pb-20">
       <Header />
 
-      <main className="max-w-[1400px] mx-auto px-4 pt-8">
+      <main className="max-w-[1400px] mx-auto px-4 pt-6">
         <div className="flex flex-col lg:flex-row gap-8 items-start">
 
           {/* Sidebar - Search & Filter */}
