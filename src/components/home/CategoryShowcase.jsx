@@ -75,7 +75,7 @@ const CategoryShowcase = ({ categories }) => {
   }
 
   return (
-    <section className="space-y-6 mb-16">
+    <section className="space-y-6 mb-8">
       <div className="flex items-end justify-between">
         <div className="space-y-1">
           <h2 className="text-3xl font-bold text-heading-text">Curated Categories</h2>

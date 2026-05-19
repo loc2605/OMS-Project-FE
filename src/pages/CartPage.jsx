@@ -13,13 +13,6 @@ const CartPage = () => {
   const { cartItems, cartCount, cartTotal, updateQuantity, removeFromCart } = useCart();
   const navigate = useNavigate();
 
-  const groupedByStore = cartItems.reduce((groups, item) => {
-    const storeName = item.store || 'ShopModern Official Store';
-    if (!groups[storeName]) groups[storeName] = [];
-    groups[storeName].push(item);
-    return groups;
-  }, {});
-
   return (
     <div className="bg-[#f5f5f5] text-body-text min-h-screen pb-32">
       <Header />
@@ -32,7 +25,7 @@ const CartPage = () => {
           <span className="text-primary font-medium">Cart</span>
         </div>
 
-        {/* Cart Items grouped by Store */}
+        {/* Cart Items */}
         {cartItems.length === 0 ? (
           <div className="bg-white rounded-sm shadow-sm p-20 text-center">
             <div className="size-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -47,68 +40,60 @@ const CartPage = () => {
             </button>
           </div>
         ) : (
-          Object.keys(groupedByStore).map((storeName) => (
-            <div key={storeName} className="bg-white rounded-sm shadow-sm mb-4 overflow-hidden">
-              {/* Store Header */}
-              <div className="px-6 py-3 border-b border-gray-50 flex items-center gap-2">
-                <span className="material-symbols-outlined text-gray-600 text-[20px]">store</span>
-                <span className="text-sm font-bold text-gray-800">{storeName}</span>
-              </div>
-
-              {/* Items in Store */}
-              <div className="divide-y divide-gray-50">
-                {groupedByStore[storeName].map((item) => (
-                  <div key={item.id} className="px-6 py-5 grid grid-cols-12 items-center hover:bg-gray-50/30 transition-colors">
-                    <div className="col-span-6 flex gap-4">
-                      <div
-                        className="size-20 bg-cover bg-center rounded-sm border border-gray-100 flex-shrink-0"
-                        style={{ backgroundImage: `url(${item.imageUrl?.[0] || item.image})` }}
-                      />
-                      <div className="flex flex-col justify-center">
-                        <h3 className="text-sm text-gray-800 line-clamp-2 mb-1">{item.name}</h3>
-                        <span className="text-xs text-gray-400">Variation: {item.variant || 'Default'}</span>
-                      </div>
+          <div className="bg-white rounded-sm shadow-sm mb-4 overflow-hidden">
+            {/* Items List */}
+            <div className="divide-y divide-gray-50">
+              {cartItems.map((item) => (
+                <div key={item.id} className="px-6 py-5 grid grid-cols-12 items-center hover:bg-gray-50/30 transition-colors">
+                  <div className="col-span-6 flex gap-4">
+                    <div
+                      className="size-20 bg-cover bg-center rounded-sm border border-gray-100 flex-shrink-0"
+                      style={{ backgroundImage: `url(${item.imageUrl?.[0] || item.image})` }}
+                    />
+                    <div className="flex flex-col justify-center">
+                      <h3 className="text-sm text-gray-800 line-clamp-2 mb-1">{item.name}</h3>
+                      <span className="text-xs text-gray-400">Variation: {item.variant || 'Default'}</span>
                     </div>
+                  </div>
 
-                    <div className="col-span-2 text-center text-sm text-gray-800">
-                      {formatCurrency(item.price)}
-                    </div>
+                  <div className="col-span-2 text-center text-sm text-gray-800">
+                    {formatCurrency(item.price)}
+                  </div>
 
-                    <div className="col-span-2 flex justify-center">
-                      <div className="flex items-center border border-gray-200 rounded-sm overflow-hidden">
-                        <button
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          className="size-8 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors border-r border-gray-200"
-                        >
-                          <span className="material-symbols-outlined text-[16px]">remove</span>
-                        </button>
-                        <span className="w-12 text-center text-sm text-gray-800 font-medium">{item.quantity}</span>
-                        <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          className="size-8 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors border-l border-gray-200"
-                        >
-                          <span className="material-symbols-outlined text-[16px]">add</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="col-span-1 text-center text-sm font-medium text-primary">
-                      {formatCurrency(item.price * item.quantity)}
-                    </div>
-
-                    <div className="col-span-1 text-center">
+                  <div className="col-span-2 flex justify-center">
+                    <div className="flex items-center border border-gray-200 rounded-sm overflow-hidden">
                       <button
-                        onClick={() => removeFromCart(item.id)}
-                        className="text-gray-500 hover:text-primary transition-colors text-sm font-medium"
+                        onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                        className="size-8 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors border-r border-gray-200"
                       >
-                        Delete
+                        <span className="material-symbols-outlined text-[16px]">remove</span>
+                      </button>
+                      <span className="w-12 text-center text-sm text-gray-800 font-medium">{item.quantity}</span>
+                      <button
+                        onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                        className="size-8 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors border-l border-gray-200"
+                      >
+                        <span className="material-symbols-outlined text-[16px]">add</span>
                       </button>
                     </div>
                   </div>
-                ))}
-              </div>
+
+                  <div className="col-span-1 text-center text-sm font-medium text-primary">
+                    {formatCurrency(item.price * item.quantity)}
+                  </div>
+
+                  <div className="col-span-1 text-center">
+                    <button
+                      onClick={() => removeFromCart(item.id)}
+                      className="text-gray-500 hover:text-primary transition-colors text-sm font-medium"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))
+          </div>
         )}
       </main>
 

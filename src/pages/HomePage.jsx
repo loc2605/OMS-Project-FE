@@ -24,16 +24,8 @@ const HomePage = () => {
         <section className="space-y-6 mb-2">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h2 className="text-3xl font-bold text-heading-text">Trending Now</h2>
-              <p className="text-gray-500">The most popular items from our recent collection</p>
-            </div>
-            <div className="flex gap-2">
-              <button className="size-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-primary hover:text-white hover:border-primary transition-all">
-                <span className="material-symbols-outlined text-xl">chevron_left</span>
-              </button>
-              <button className="size-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-primary hover:text-white hover:border-primary transition-all">
-                <span className="material-symbols-outlined text-xl">chevron_right</span>
-              </button>
+              <h2 className="text-3xl font-bold text-heading-text">New Arrivals</h2>
+              <p className="text-gray-500">Discover the latest additions to our premium collection</p>
             </div>
           </div>
 
