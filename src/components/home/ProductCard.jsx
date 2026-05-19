@@ -73,7 +73,7 @@ const ProductCard = ({ product, isSkeleton = false }) => {
         <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out bg-gradient-to-t from-black/60 via-black/20 to-transparent hidden lg:block">
           <button 
             onClick={(e) => { e.stopPropagation(); handleAddToCart(); }} 
-            className="w-full bg-white text-gray-900 text-sm font-bold py-3 rounded-xl hover:bg-primary hover:text-white transition-all shadow-lg flex items-center justify-center gap-2 transform active:scale-95"
+            className="w-full bg-primary text-white text-sm font-bold py-3 rounded-xl hover:bg-[#d63013] transition-all shadow-lg flex items-center justify-center gap-2 transform active:scale-95"
           >
             <span className="material-symbols-outlined text-[18px]">shopping_cart</span>
             Quick Add
@@ -104,7 +104,7 @@ const ProductCard = ({ product, isSkeleton = false }) => {
           {/* Mobile/Tablet Add Button */}
           <button 
             onClick={(e) => { e.stopPropagation(); handleAddToCart(); }} 
-            className="lg:hidden size-10 bg-gray-50 hover:bg-primary text-gray-600 hover:text-white rounded-full flex items-center justify-center transition-all shadow-sm active:scale-95 border border-gray-100 hover:border-primary"
+            className="lg:hidden size-10 bg-primary hover:bg-[#d63013] text-white rounded-full flex items-center justify-center transition-all shadow-sm active:scale-95 border border-primary hover:border-[#d63013]"
             aria-label="Add to cart"
           >
             <span className="material-symbols-outlined text-[18px]">add_shopping_cart</span>

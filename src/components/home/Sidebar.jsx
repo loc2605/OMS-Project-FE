@@ -140,7 +140,7 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
                 onChange={(e) => setMaxPrice(e.target.value)}
               />
             </div>
-            <button onClick={handleApplyPrice} className="w-full py-1.5 bg-primary text-[15px] font-bold text-white rounded uppercase mt-1 hover:bg-primary/90 transition-colors">Apply</button>
+            <button onClick={handleApplyPrice} className="w-full py-1.5 bg-primary text-[15px] font-bold text-white rounded uppercase mt-1 hover:bg-[#d63013] transition-colors">Apply</button>
           </div>
         </div>
       </div>
