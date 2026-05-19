@@ -80,6 +80,7 @@ const CheckoutPage = () => {
     isDefault: false
   });
   const [activeOrderId, setActiveOrderId] = useState(null);
+  const openedPaymentUrlRef = useRef(null);
 
   useEffect(() => {
     const fetchProvinces = async () => {
@@ -99,15 +100,23 @@ const CheckoutPage = () => {
     setActiveOrderId(orderId);
     setPollStatus('PENDING');
     setPollMessage('We are processing your order, please wait a moment...');
+    openedPaymentUrlRef.current = null;
 
     let pollCount = 0;
     const maxPolls = 15; // Tối đa 30 giây (15 lần x 2 giây)
 
     const pollInterval = setInterval(async () => {
-      try {
-        pollCount++;
-        console.log(`Polling attempt ${pollCount} for Order: ${orderId}`);
+      pollCount++;
+      console.log(`Polling attempt ${pollCount} for Order: ${orderId}`);
 
+      if (pollCount >= maxPolls) {
+        clearInterval(pollInterval);
+        setPollStatus('CANCELLED');
+        setPollMessage('Order processing timed out. Please check your order history later.');
+        return;
+      }
+
+      try {
         // 1. Check Notifications (Non-blocking)
         try {
           const notiRes = await notificationApi.getMyNotifications({ size: 5 });
@@ -130,7 +139,7 @@ const CheckoutPage = () => {
         const result = response.result;
         console.log('Order Status:', result.status);
 
-        if (['PENDING_VALIDATION', 'PAYMENT_PENDING', 'PENDING', 'CONFIRMED'].includes(result.status)) {
+        if (result.status === 'CONFIRMED') {
           clearInterval(pollInterval);
           setPollStatus('CONFIRMED');
           setPollMessage(result.message || 'Your order has been placed successfully.');
@@ -139,17 +148,26 @@ const CheckoutPage = () => {
           clearInterval(pollInterval);
           setPollStatus('CANCELLED');
           setPollMessage(result.message || 'Transaction failed. Your order has been cancelled.');
-        } else if (pollCount >= maxPolls) {
-          clearInterval(pollInterval);
-          setPollStatus('CANCELLED');
-          setPollMessage('Order processing timed out. Please check your order history later.');
+        } else if (result.status === 'PAYMENT_PENDING') {
+          setPollMessage('Order created. Redirecting to payment gateway...');
+          if (result.paymentUrl && openedPaymentUrlRef.current !== result.paymentUrl) {
+            openedPaymentUrlRef.current = result.paymentUrl;
+            window.open(result.paymentUrl, '_blank');
+            setPollMessage('Please complete your payment in the new tab. Checking payment status...');
+          }
+        } else {
+          setPollMessage('Validating your order details...');
         }
       } catch (error) {
         console.error('Polling error:', error);
-        if (error.response?.data?.result?.status === 'CANCELLED') {
+        // axiosClient rejects with error.response.data directly in interceptor
+        const errorResult = error?.result || error.response?.data?.result;
+        const errorMessage = error?.message || error.response?.data?.message || 'Transaction failed.';
+        
+        if (errorResult?.status === 'CANCELLED') {
           clearInterval(pollInterval);
           setPollStatus('CANCELLED');
-          setPollMessage(error.response.data.result.message || 'Order failed.');
+          setPollMessage(errorResult.message || errorMessage || 'Transaction failed. Your order has been cancelled.');
         }
       }
     }, 2000);

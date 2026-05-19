@@ -39,9 +39,20 @@ const MyOrdersPage = () => {
 
   const filteredOrders = Array.isArray(orders)
     ? orders.filter(order => {
-      const matchesTab = activeTab === 'ALL' || order.status === activeTab;
-      const matchesSearch = order.orderId.toLowerCase().includes(searchTerm.toLowerCase());
-      return matchesTab && matchesSearch;
+      // Group PENDING, PENDING_VALIDATION, and PAYMENT_PENDING under the 'PENDING' tab
+      const matchesTab = activeTab === 'ALL' || 
+        (activeTab === 'PENDING' && ['PENDING', 'PENDING_VALIDATION', 'PAYMENT_PENDING'].includes(order.status)) ||
+        order.status === activeTab;
+      
+      const searchLower = searchTerm.toLowerCase();
+      const matchesId = order.orderId.toLowerCase().includes(searchLower);
+      const matchesProduct = order.orderItems && order.orderItems.some(item => 
+        item.productName.toLowerCase().includes(searchLower)
+      );
+      const matchesReceiver = order.shippingAddress && order.shippingAddress.receiverName && 
+        order.shippingAddress.receiverName.toLowerCase().includes(searchLower);
+
+      return matchesTab && (matchesId || matchesProduct || matchesReceiver);
     })
     : [];
 
@@ -64,7 +75,9 @@ const MyOrdersPage = () => {
       case 'SHIPPING': return 'text-blue-500 bg-blue-50 border-blue-100';
       case 'CONFIRMED': return 'text-cyan-500 bg-cyan-50 border-cyan-100';
       case 'CANCELLED': return 'text-red-500 bg-red-50 border-red-100';
-      case 'PENDING': return 'text-orange-500 bg-orange-50 border-orange-100';
+      case 'PENDING':
+      case 'PENDING_VALIDATION':
+      case 'PAYMENT_PENDING': return 'text-orange-500 bg-orange-50 border-orange-100';
       default: return 'text-gray-500 bg-gray-50 border-gray-100';
     }
   };
@@ -179,7 +192,7 @@ const MyOrdersPage = () => {
                         <span className="text-xs text-gray-500">{formatDate(order.createdAt)}</span>
                       </div>
                       <span className={`text-[11px] font-bold uppercase px-3 py-1 rounded-full border ${getStatusColor(order.status)}`}>
-                        {order.status}
+                        {order.status ? order.status.replace(/_/g, ' ') : ''}
                       </span>
                     </div>
 

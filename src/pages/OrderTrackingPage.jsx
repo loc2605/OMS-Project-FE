@@ -29,6 +29,11 @@ const OrderTrackingPage = () => {
         }
       } catch (e) {
         console.error('Polling error:', e);
+        // axiosClient rejects with the intercepted error data directly
+        const errorResult = e?.result || e.response?.data?.result;
+        if (errorResult) {
+          setOrder(errorResult);
+        }
         if (interval) clearInterval(interval);
       } finally {
         if (isFirst) setLoading(false);
