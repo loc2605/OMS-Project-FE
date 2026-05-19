@@ -13,7 +13,7 @@ const HomePage = () => {
     <div className="bg-background-light text-body-text min-h-screen">
       <Header />
 
-      <main className="max-w-[1600px] mx-auto px-4 md:px-8 lg:px-12 py-6">
+      <main className="max-w-[1600px] mx-auto px-4 md:px-8 lg:px-12 pt-6 pb-2">
         {/* Hero Section */}
         <Hero />
 
@@ -21,7 +21,7 @@ const HomePage = () => {
         <CategoryShowcase categories={categories} />
 
         {/* Trending Products Section */}
-        <section className="space-y-6 mb-8">
+        <section className="space-y-6 mb-2">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
               <h2 className="text-3xl font-bold text-heading-text">Trending Now</h2>
