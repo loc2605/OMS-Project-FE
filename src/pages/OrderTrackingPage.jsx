@@ -231,28 +231,23 @@ const OrderTrackingPage = () => {
                       <p className="text-[10px] text-gray-400 mt-1 italic">Included VAT (if applicable)</p>
                     </div>
                   </div>
-                </div>
-              </div>
 
-              {/* Payment Method */}
-              <div className="bg-white p-6 rounded-sm shadow-sm">
-                <h2 className="text-base font-bold text-gray-800 mb-6 flex items-center gap-2">
-                  <span className="material-symbols-outlined text-primary text-[20px]">account_balance_wallet</span>
-                  PAYMENT METHOD
-                </h2>
-                <div className="flex items-center gap-4 p-4 bg-[#fcfcfc] border border-dashed border-gray-200 rounded-sm">
-                  <div className="size-10 bg-white rounded-full flex items-center justify-center text-primary shadow-sm border border-gray-50">
-                    <span className="material-symbols-outlined text-xl">
-                      {order?.paymentMethod === 'COD' ? 'payments' : 'account_balance'}
-                    </span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-gray-700">
-                      {order?.paymentMethod === 'COD' ? 'Cash on Delivery (COD)' : 'Bank Transfer'}
-                    </p>
-                    <p className="text-[11px] text-gray-400 mt-0.5 uppercase tracking-wide">
-                      Transaction ID: {order?.paymentId || 'N/A'}
-                    </p>
+                  {/* Integrated Payment Method */}
+                  <div className="pt-6 border-t border-gray-100 mt-6 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-primary text-[20px]">
+                        {order?.paymentMethod === 'COD' ? 'payments' : 'account_balance'}
+                      </span>
+                      <span className="text-sm font-semibold text-gray-500">Payment Method:</span>
+                      <span className="text-sm font-bold text-gray-800">
+                        {order?.paymentMethod === 'COD' ? 'Cash on Delivery (COD)' : 'Bank Transfer'}
+                      </span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-[11px] text-gray-400 font-bold uppercase tracking-wide bg-gray-50 px-2.5 py-1 rounded-sm border border-gray-100">
+                        ID: {order?.paymentId || 'N/A'}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -288,15 +283,7 @@ const OrderTrackingPage = () => {
                 ) : (
                   <p className="text-sm text-gray-400 italic">Address information not available</p>
                 )}
-                
-                <div className="mt-8 pt-6 border-t border-gray-50">
-                   <div className="bg-[#f0f9ff] p-4 rounded-sm border border-blue-50">
-                      <p className="text-[12px] text-blue-600 flex items-center gap-2">
-                        <span className="material-symbols-outlined text-[18px]">info</span>
-                        Our courier will contact you before delivery.
-                      </p>
-                   </div>
-                </div>
+
               </div>
 
               {/* Order Status Message */}
@@ -313,7 +300,7 @@ const OrderTrackingPage = () => {
         </div>
       </main>
 
-      <footer className="mt-20 py-12 px-4 md:px-6 bg-white border-t border-gray-100 text-center shadow-sm">
+      <footer className="mt-8 py-8 px-4 md:px-6 bg-white border-t border-gray-100 text-center shadow-sm">
         <div className="max-w-6xl mx-auto">
           <p className="text-body text-sm font-semibold">© 2026 ShopModern E-commerce Inc. All rights reserved.</p>
           <div className="flex justify-center gap-10 mt-6">
