@@ -83,7 +83,7 @@ const MyOrdersPage = () => {
   };
 
   return (
-    <div className="bg-[#f5f5f5] min-h-screen pb-20">
+    <div className="bg-[#f5f5f5] min-h-screen pb-10">
       <Header />
 
       <main className="max-w-[1400px] mx-auto px-4 pt-6">

@@ -335,7 +335,7 @@ const CheckoutPage = () => {
   };
 
   return (
-    <div className="bg-[#f5f5f5] text-body-text min-h-screen pb-20">
+    <div className="bg-[#f5f5f5] text-body-text min-h-screen pb-10">
       <Header />
 
       {/* Order Status Polling Overlay */}
