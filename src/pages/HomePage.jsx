@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import Header from '../components/home/Header';
 import Hero from '../components/home/Hero';
-import FeatureSection from '../components/home/FeatureSection';
 import CategoryShowcase from '../components/home/CategoryShowcase';
 import ProductGrid from '../components/home/ProductGrid';
 import Footer from '../components/home/Footer';
@@ -17,9 +16,6 @@ const HomePage = () => {
       <main className="max-w-[1600px] mx-auto px-4 md:px-8 lg:px-12 py-6">
         {/* Hero Section */}
         <Hero />
-
-        {/* Feature Section (Trust Signals) */}
-        <FeatureSection />
 
         {/* Category Showcase */}
         <CategoryShowcase categories={categories} />
