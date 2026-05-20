@@ -174,12 +174,7 @@ const MyOrdersPage = () => {
                 </div>
               </div>
 
-              {/* Helper Text */}
-              <div className="pt-4 border-t border-gray-50">
-                <p className="text-[11px] text-gray-400 leading-relaxed italic">
-                  * Select a status or use search to quickly find your orders.
-                </p>
-              </div>
+
             </div>
           </aside>
 

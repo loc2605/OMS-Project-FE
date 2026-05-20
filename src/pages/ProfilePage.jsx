@@ -312,10 +312,10 @@ const ProfilePage = () => {
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Mật khẩu bảo mật</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Account Security</p>
                   <Link to="/change-password" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/20 dark:hover:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200/60 dark:border-amber-900/30 rounded-xl text-xs font-bold transition-all shadow-sm">
                     <span className="material-symbols-outlined text-[16px]">lock_reset</span>
-                    Đổi mật khẩu
+                    Change Password
                   </Link>
                 </div>
               </div>
