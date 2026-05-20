@@ -172,12 +172,7 @@ const Header = () => {
               My Orders
             </Link>
 
-            <a className="text-sm font-medium text-heading hover:text-primary transition-colors" href="#">
-              Flash Sale
-            </a>
-            <a className="text-sm font-medium text-heading hover:text-primary transition-colors" href="#">
-              Vouchers
-            </a>
+
           </nav>
 
           <div className="h-6 w-px bg-black/5"></div>
