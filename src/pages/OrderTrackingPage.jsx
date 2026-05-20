@@ -130,7 +130,7 @@ const OrderTrackingPage = () => {
                     className="ml-2 px-4 py-1.5 bg-primary text-white text-sm font-medium rounded-sm hover:bg-primary/90 transition-all shadow-sm flex items-center gap-1"
                   >
                     <span className="material-symbols-outlined text-[16px]">replay</span>
-                    Reorder
+                    Buy Again
                   </button>
                 </div>
               </div>

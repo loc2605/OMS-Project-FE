@@ -275,7 +275,7 @@ const MyOrdersPage = () => {
                         className="px-6 py-2 bg-white text-primary border border-primary text-sm font-medium rounded-sm hover:bg-primary/5 transition-all shadow-sm flex items-center gap-2"
                       >
                         <span className="material-symbols-outlined text-[18px]">replay</span>
-                        Reorder
+                        Buy Again
                       </button>
                       <button
                         onClick={() => navigate(`/order/${order.orderId}`)}
