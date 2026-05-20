@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../contexts/CartContext.jsx';
 import Header from '../components/home/Header';
 import orderApi from '../api/orderApi';
 
 const MyOrdersPage = () => {
   const navigate = useNavigate();
+  const { addToCart } = useCart();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('ALL');
@@ -64,6 +66,21 @@ const MyOrdersPage = () => {
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const pagedOrders = filteredOrders.slice(startIndex, startIndex + itemsPerPage);
+
+  const handleReorder = (order) => {
+    if (order.orderItems && order.orderItems.length > 0) {
+      order.orderItems.forEach(item => {
+        const product = {
+          id: item.productId,
+          name: item.productName,
+          price: item.price,
+          image: item.imageUrl,
+        };
+        addToCart(product, item.quantity);
+      });
+      navigate('/cart');
+    }
+  };
 
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount).replace('₫', 'đ');
@@ -253,6 +270,13 @@ const MyOrdersPage = () => {
 
                     {/* Order Footer */}
                     <div className="px-6 py-4 bg-[#fffcf5] border-t border-gray-50 flex justify-end gap-3">
+                      <button
+                        onClick={() => handleReorder(order)}
+                        className="px-6 py-2 bg-white text-primary border border-primary text-sm font-medium rounded-sm hover:bg-primary/5 transition-all shadow-sm flex items-center gap-2"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">replay</span>
+                        Reorder
+                      </button>
                       <button
                         onClick={() => navigate(`/order/${order.orderId}`)}
                         className="px-6 py-2 bg-primary text-white text-sm font-medium rounded-sm hover:bg-primary/90 transition-all shadow-sm"

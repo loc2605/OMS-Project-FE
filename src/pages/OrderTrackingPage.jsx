@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useCart } from '../contexts/CartContext.jsx';
 import Header from '../components/home/Header';
 import orderApi from '../api/orderApi';
 const formatCurrency = (value) => {
@@ -11,6 +12,7 @@ const formatCurrency = (value) => {
 const OrderTrackingPage = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -60,6 +62,21 @@ const OrderTrackingPage = () => {
     );
   }
 
+  const handleReorder = () => {
+    if (order?.orderItems && order.orderItems.length > 0) {
+      order.orderItems.forEach(item => {
+        const product = {
+          id: item.productId,
+          name: item.productName,
+          price: item.price,
+          image: item.imageUrl,
+        };
+        addToCart(product, item.quantity);
+      });
+      navigate('/cart');
+    }
+  };
+
   const getStatusDisplay = (status) => {
     const rawText = status ? status.replace(/_/g, ' ') : 'UNKNOWN';
 
@@ -108,6 +125,13 @@ const OrderTrackingPage = () => {
                   <span className={`px-3.5 py-1 ${statusInfo.color} text-[11px] font-bold rounded-sm uppercase tracking-wider border transition-all`}>
                     {statusInfo.text}
                   </span>
+                  <button
+                    onClick={handleReorder}
+                    className="ml-2 px-4 py-1.5 bg-primary text-white text-sm font-medium rounded-sm hover:bg-primary/90 transition-all shadow-sm flex items-center gap-1"
+                  >
+                    <span className="material-symbols-outlined text-[16px]">replay</span>
+                    Reorder
+                  </button>
                 </div>
               </div>
 
