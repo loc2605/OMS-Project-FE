@@ -670,54 +670,54 @@ const CheckoutPage = () => {
         </section>
 
         {/* 3. Payment Method Section */}
-        <section className="bg-white rounded-sm shadow-sm mb-4">
-          <div className="p-6 border-b border-gray-50">
-            <h2 className="text-lg font-medium">Payment Method</h2>
-          </div>
-          <div className="p-6 flex flex-wrap gap-3">
-            {paymentOptions.map((option) => (
-              <button
-                key={option.id}
-                onClick={() => setSelectedPayment(option.id)}
-                className={`px-6 py-2.5 rounded-sm border text-sm transition-all relative ${selectedPayment === option.id
-                  ? 'border-primary text-primary'
-                  : 'border-gray-200 text-gray-600 hover:border-gray-400'
-                  }`}
-              >
-                {option.label}
-                {selectedPayment === option.id && (
-                  <div className="absolute bottom-0 right-0 size-0 border-[8px] border-transparent border-r-primary border-b-primary">
-                    <span className="material-symbols-outlined text-white text-[10px] absolute -right-[1px] -bottom-[1px]">check</span>
-                  </div>
-                )}
-              </button>
-            ))}
+        <section className="bg-white rounded-sm shadow-sm mb-4 flex flex-col lg:flex-row">
+          <div className="p-6 flex-1 border-b lg:border-b-0 lg:border-r border-gray-50 flex flex-col md:flex-row md:items-start gap-6">
+            <h2 className="text-lg font-medium whitespace-nowrap pt-1">Payment Method</h2>
+            <div className="flex flex-wrap items-start gap-3">
+              {paymentOptions.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => setSelectedPayment(option.id)}
+                  className={`px-6 py-2.5 rounded-sm border text-sm transition-all relative ${selectedPayment === option.id
+                    ? 'border-primary text-primary'
+                    : 'border-gray-200 text-gray-600 hover:border-gray-400'
+                    }`}
+                >
+                  {option.label}
+                  {selectedPayment === option.id && (
+                    <div className="absolute bottom-0 right-0 size-0 border-[8px] border-transparent border-r-primary border-b-primary">
+                      <span className="material-symbols-outlined text-white text-[10px] absolute -right-[1px] -bottom-[1px]">check</span>
+                    </div>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Final Summary & Checkout Button */}
-          <div className="bg-[#fffefb] border-t border-gray-50 p-8">
-            <div className="flex flex-col items-end gap-3 text-sm text-gray-600">
-              <div className="flex justify-between w-full md:w-[400px]">
+          <div className="bg-[#fffefb] p-6 lg:w-[380px]">
+            <div className="flex flex-col gap-3 text-sm text-gray-600">
+              <div className="flex justify-between items-center">
                 <span>Merchandise Subtotal:</span>
                 <span className="text-gray-800">{formatCurrency(cartTotal)}</span>
               </div>
-              <div className="flex justify-between w-full md:w-[400px]">
+              <div className="flex justify-between items-center">
                 <span>Shipping Total:</span>
                 <span className="text-gray-800">{formatCurrency(shippingFee)}</span>
               </div>
-              <div className="flex justify-between w-full md:w-[400px] mt-4 items-center">
+              <div className="flex justify-between items-center mt-2 pt-4 border-t border-gray-100">
                 <span className="text-base text-gray-800">Total Payment:</span>
-                <span className="text-3xl font-bold text-primary">{formatCurrency(totalAmount)}</span>
+                <span className="text-2xl font-bold text-primary">{formatCurrency(totalAmount)}</span>
               </div>
 
-              <div className="w-full md:w-[400px] mt-8 border-t border-gray-100 pt-6">
+              <div className="w-full mt-2">
                 <button
                   type="button"
                   disabled={loading || cartItems.length === 0}
                   onClick={handlePlaceOrder}
-                  className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 rounded-sm text-lg shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 rounded-sm text-base shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading ? 'Processing...' : 'Place Order'}
+                  {loading ? 'Processing...' : 'Confirm Order'}
                 </button>
               </div>
             </div>
