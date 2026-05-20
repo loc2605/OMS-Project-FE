@@ -135,11 +135,12 @@ const CheckoutPage = () => {
         }
 
         // 2. Check Order Status
-        const response = await orderApi.get(orderId);
+        const cleanOrderId = String(orderId).replace(/[^a-zA-Z0-9-]/g, '');
+        const response = await orderApi.get(cleanOrderId);
         const result = response.result;
         console.log('Order Status:', result.status);
 
-        if (result.status === 'CONFIRMED') {
+        if (['PENDING_VALIDATION', 'PENDING', 'PAYMENT_PENDING', 'CONFIRMED'].includes(result.status)) {
           clearInterval(pollInterval);
           setPollStatus('CONFIRMED');
           setPollMessage(result.message || 'Your order has been placed successfully.');
@@ -160,7 +161,7 @@ const CheckoutPage = () => {
         }
       } catch (error) {
         console.error('Polling error:', error);
-        // axiosClient rejects with error.response.data directly in interceptor
+        const errorStatus = error?.response?.status || error?.status;
         const errorResult = error?.result || error.response?.data?.result;
         const errorMessage = error?.message || error.response?.data?.message || 'Transaction failed.';
         
@@ -168,6 +169,9 @@ const CheckoutPage = () => {
           clearInterval(pollInterval);
           setPollStatus('CANCELLED');
           setPollMessage(errorResult.message || errorMessage || 'Transaction failed. Your order has been cancelled.');
+        } else if (errorStatus === 400 || errorStatus === 404) {
+          // In SAGA patterns, 400/404 might be returned briefly before the order is fully synced to the read database.
+          setPollMessage('Synchronizing order data with the system... Please wait.');
         }
       }
     }, 2000);

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Header from '../components/home/Header';
 import profileApi from '../api/profileApi';
 import { useAuth } from '../contexts/AuthContext';
@@ -227,7 +227,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="bg-background text-on-surface-variant min-h-screen">
+    <div className="bg-[#f5f5f5] text-on-surface-variant h-screen overflow-hidden">
       <Header />
 
       {/* Premium Header Banner */}
@@ -310,6 +310,13 @@ const ProfilePage = () => {
                     <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
                     Active
                   </div>
+                </div>
+                <div>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Mật khẩu bảo mật</p>
+                  <Link to="/change-password" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/20 dark:hover:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200/60 dark:border-amber-900/30 rounded-xl text-xs font-bold transition-all shadow-sm">
+                    <span className="material-symbols-outlined text-[16px]">lock_reset</span>
+                    Đổi mật khẩu
+                  </Link>
                 </div>
               </div>
             </div>
