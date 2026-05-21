@@ -10,6 +10,7 @@ import ProductDetailPage from '../pages/ProductDetailPage';
 import CartPage from '../pages/CartPage';
 import CheckoutPage from '../pages/CheckoutPage';
 import OrderTrackingPage from '../pages/OrderTrackingPage';
+import PaymentResultPage from '../pages/PaymentResultPage';
 import ProfilePage from '../pages/ProfilePage';
 import MyOrdersPage from '../pages/MyOrdersPage';
 import TermsPage from '../pages/TermsPage';
@@ -47,6 +48,7 @@ const AppRoutes = () => {
       <Route path="/how-to-buy" element={<HowToBuyPage />} />
       <Route path="/seller-center" element={<SellerCenterPage />} />
       <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>} />
+      <Route path="/payment-result" element={<ProtectedRoute><PaymentResultPage /></ProtectedRoute>} />
       <Route path="/order/:orderId" element={<OrderTrackingPage />} />
       <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
       <Route path="/orders" element={<ProtectedRoute><MyOrdersPage /></ProtectedRoute>} />

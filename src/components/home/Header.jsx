@@ -22,6 +22,7 @@ const Header = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
   const [expandedNotificationId, setExpandedNotificationId] = useState(null);
+  const [toastNoti, setToastNoti] = useState(null);
   const notificationRef = useRef(null);
 
   useEffect(() => {
@@ -75,20 +76,34 @@ const Header = () => {
     if (isAuthenticated) {
       const fetchNotifications = async () => {
         try {
-          setLoadingNotifications(true);
-          const response = await notificationApi.getMyNotifications({ size: 20 });
+          const response = await notificationApi.getMyNotifications({ size: 5 });
           if (response.success) {
             const notifs = response.result?.content || [];
-            setNotifications(notifs);
+            
+            setNotifications(prev => {
+              if (prev.length > 0) {
+                const newFirst = notifs[0];
+                const oldFirst = prev[0];
+                if (newFirst && oldFirst && newFirst.id !== oldFirst.id && !newFirst.read) {
+                  // Show toast for new notifications
+                  if (newFirst.title === 'Order Update' || newFirst.title === 'Delivery Update' || newFirst.title === 'Cập nhật đơn hàng' || newFirst.title === 'Cập nhật vận chuyển') {
+                    setToastNoti(newFirst);
+                    setTimeout(() => setToastNoti(null), 5000);
+                  }
+                }
+              }
+              return notifs;
+            });
             setUnreadCount(notifs.filter(n => !n.read).length);
           }
         } catch (error) {
           console.error('Failed to fetch notifications:', error);
-        } finally {
-          setLoadingNotifications(false);
         }
       };
+      
       fetchNotifications();
+      const intervalId = setInterval(fetchNotifications, 10000); // 10 seconds
+      return () => clearInterval(intervalId);
     }
   }, [isAuthenticated]);
 
@@ -318,6 +333,24 @@ const Header = () => {
           </div>
         </div>
       </div>
+      
+      {/* Toast Notification */}
+      {toastNoti && (
+        <div className="fixed bottom-6 right-6 bg-white border-l-4 border-primary rounded-sm shadow-2xl p-4 w-[350px] z-[9999] animate-in slide-in-from-right-8 fade-in duration-300">
+          <div className="flex justify-between items-start mb-1">
+            <h4 className="text-sm font-bold text-gray-800 flex items-center gap-2">
+              <span className="material-symbols-outlined text-primary text-[18px]">notifications_active</span>
+              {toastNoti.title}
+            </h4>
+            <button onClick={() => setToastNoti(null)} className="text-gray-400 hover:text-gray-600">
+              <span className="material-symbols-outlined text-[16px]">close</span>
+            </button>
+          </div>
+          <p className="text-xs text-gray-600 leading-relaxed mt-2 line-clamp-3">
+            {toastNoti.content}
+          </p>
+        </div>
+      )}
     </header>
   );
 };

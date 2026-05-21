@@ -3,6 +3,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext.jsx';
 import Header from '../components/home/Header';
 import orderApi from '../api/orderApi';
+import deliveryApi from '../api/deliveryApi';
 const formatCurrency = (value) => {
   const amount = Number(String(value).replace(/[^0-9.-]+/g, ''));
   if (Number.isNaN(amount)) return '0 ₫';
@@ -14,6 +15,7 @@ const OrderTrackingPage = () => {
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const [order, setOrder] = useState(null);
+  const [delivery, setDelivery] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,6 +26,18 @@ const OrderTrackingPage = () => {
         const res = await orderApi.get(orderId);
         if (res.success) {
           setOrder(res.result);
+          
+          if (['SHIPPING', 'COMPLETED'].includes(res.result.status)) {
+            try {
+              const delRes = await deliveryApi.getDeliveryByOrder(orderId);
+              if (delRes.success) {
+                setDelivery(delRes.result);
+              }
+            } catch (err) {
+              console.log('Error fetching delivery:', err);
+            }
+          }
+
           // Stop polling if order is in a final state
           if (['COMPLETED', 'CANCELLED'].includes(res.result.status)) {
             if (interval) clearInterval(interval);
@@ -97,8 +111,10 @@ const OrderTrackingPage = () => {
   // Active steps calculation for the timeline
   const isStep1Active = ['PENDING_VALIDATION', 'PENDING', 'PAYMENT_PENDING', 'CONFIRMED', 'SHIPPING', 'COMPLETED'].includes(order?.status);
   const isStep2Active = ['CONFIRMED', 'SHIPPING', 'COMPLETED'].includes(order?.status);
-  const isStep3Active = ['SHIPPING', 'COMPLETED'].includes(order?.status);
-  const isStep4Active = ['COMPLETED'].includes(order?.status);
+  const isStep3Active = ['SHIPPING', 'COMPLETED'].includes(order?.status) || delivery?.status === 'READY_TO_UP' || delivery?.status === 'ASSIGNING';
+  const isStep4Active = ['COMPLETED'].includes(order?.status) || delivery?.status === 'DELIVERING' || delivery?.status === 'DELIVERED';
+  const isStep5Active = ['COMPLETED'].includes(order?.status) || delivery?.status === 'DELIVERED';
+  const isReturned = delivery?.status === 'RETURNED';
 
   return (
     <div className="bg-[#f5f5f5] text-body-text min-h-screen">
@@ -140,12 +156,13 @@ const OrderTrackingPage = () => {
                   <div className="relative">
                     <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-1.5 bg-gray-100 rounded-full z-0"></div>
                     <div 
-                      className="absolute left-0 top-1/2 -translate-y-1/2 h-1.5 bg-primary rounded-full z-0 transition-all duration-500"
+                      className={`absolute left-0 top-1/2 -translate-y-1/2 h-1.5 rounded-full z-0 transition-all duration-500 ${isReturned ? 'bg-red-500' : 'bg-primary'}`}
                       style={{ 
                         width: !isStep1Active ? '0%' : 
                                !isStep2Active ? '0%' : 
-                               !isStep3Active ? '33.33%' : 
-                               !isStep4Active ? '66.66%' : '100%'
+                               !isStep3Active ? '25%' : 
+                               !isStep4Active ? '50%' : 
+                               !isStep5Active ? '75%' : '100%'
                       }}
                     ></div>
                     
@@ -172,25 +189,49 @@ const OrderTrackingPage = () => {
 
                       {/* Step 3 */}
                       <div className="flex flex-col items-center gap-3 w-24">
-                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white transition-all duration-300 ${isStep3Active ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105' : 'bg-gray-200 text-gray-400'}`}>
+                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white transition-all duration-300 ${isReturned ? 'bg-red-500 text-white' : isStep3Active ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105' : 'bg-gray-200 text-gray-400'}`}>
                           <span className="material-symbols-outlined text-2xl">local_shipping</span>
                         </div>
-                        <span className={`text-xs text-center transition-colors duration-300 ${isStep3Active ? 'text-primary font-bold' : 'text-gray-400 font-medium'}`}>
-                          Shipping
+                        <span className={`text-xs text-center transition-colors duration-300 ${isReturned ? 'text-red-500 font-bold' : isStep3Active ? 'text-primary font-bold' : 'text-gray-400 font-medium'}`}>
+                          Handing Over
                         </span>
                       </div>
 
                       {/* Step 4 */}
                       <div className="flex flex-col items-center gap-3 w-24">
-                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white transition-all duration-300 ${isStep4Active ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105' : 'bg-gray-200 text-gray-400'}`}>
+                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white transition-all duration-300 ${isReturned ? 'bg-red-500 text-white' : isStep4Active ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105' : 'bg-gray-200 text-gray-400'}`}>
+                          <span className="material-symbols-outlined text-2xl">directions_run</span>
+                        </div>
+                        <span className={`text-xs text-center transition-colors duration-300 ${isReturned ? 'text-red-500 font-bold' : isStep4Active ? 'text-primary font-bold' : 'text-gray-400 font-medium'}`}>
+                          Delivering
+                        </span>
+                      </div>
+
+                      {/* Step 5 */}
+                      <div className="flex flex-col items-center gap-3 w-24">
+                        <div className={`size-12 rounded-full flex items-center justify-center border-4 border-white transition-all duration-300 ${isReturned ? 'bg-red-500 text-white' : isStep5Active ? 'bg-primary text-white shadow-lg shadow-primary/30 scale-105' : 'bg-gray-200 text-gray-400'}`}>
                           <span className="material-symbols-outlined text-2xl">star</span>
                         </div>
-                        <span className={`text-xs text-center transition-colors duration-300 ${isStep4Active ? 'text-primary font-bold' : 'text-gray-400 font-medium'}`}>
-                          {order?.paymentMethod === 'COD' ? 'Received & Paid' : 'Completed'}
+                        <span className={`text-xs text-center transition-colors duration-300 ${isReturned ? 'text-red-500 font-bold' : isStep5Active ? 'text-primary font-bold' : 'text-gray-400 font-medium'}`}>
+                          {isReturned ? 'Failed' : 'Completed'}
                         </span>
                       </div>
                     </div>
                   </div>
+                  
+                  {delivery && (
+                    <div className="mt-10 bg-gray-50 border border-gray-100 p-4 rounded-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                       <div className="flex flex-col gap-1">
+                          <span className="text-sm font-bold text-gray-800">Tracking Number: <span className="text-primary">{delivery.trackingNumber}</span></span>
+                          {delivery.shipperName && (
+                            <span className="text-sm text-gray-600">Shipper: {delivery.shipperName} - {delivery.shipperPhone}</span>
+                          )}
+                          {isReturned && delivery.failReason && (
+                            <span className="text-sm text-red-500 font-medium mt-2">Failure Reason: {delivery.failReason}</span>
+                          )}
+                       </div>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="py-6 px-4">

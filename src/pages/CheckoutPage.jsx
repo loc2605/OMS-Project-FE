@@ -17,8 +17,8 @@ const formatCurrency = (value) => {
 
 
 const paymentOptions = [
-  { id: 'cod', label: 'Cash on Delivery (COD)', description: 'Pay when you receive the items', icon: 'payments' },
-  { id: 'transfer', label: 'Bank Transfer', description: 'Transfer via bank account or e-wallet', icon: 'account_balance' },
+  { id: 'COD', label: 'Cash on Delivery (COD)', description: 'Pay when you receive the items', icon: 'payments' },
+  { id: 'VNPAY', label: 'VNPay (ATM / Credit Card)', description: 'Pay securely via VNPay gateway', icon: 'account_balance' },
 ];
 
 const CheckoutPage = () => {
@@ -26,7 +26,7 @@ const CheckoutPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
-  const [selectedPayment, setSelectedPayment] = useState('cod');
+  const [selectedPayment, setSelectedPayment] = useState('COD');
 
 
   const [addresses, setAddresses] = useState([]);
@@ -99,82 +99,37 @@ const CheckoutPage = () => {
     setIsPolling(true);
     setActiveOrderId(orderId);
     setPollStatus('PENDING');
-    setPollMessage('We are processing your order, please wait a moment...');
-    openedPaymentUrlRef.current = null;
+    setPollMessage('We are setting up the payment gateway, please wait...');
 
     let pollCount = 0;
-    const maxPolls = 15; // Tối đa 30 giây (15 lần x 2 giây)
+    const maxPolls = 10; // Tối đa 15 giây (10 lần x 1.5 giây)
 
     const pollInterval = setInterval(async () => {
       pollCount++;
-      console.log(`Polling attempt ${pollCount} for Order: ${orderId}`);
-
+      
       if (pollCount >= maxPolls) {
         clearInterval(pollInterval);
         setPollStatus('CANCELLED');
-        setPollMessage('Order processing timed out. Please check your order history later.');
+        setPollMessage('Timeout getting payment link. Please check your order history.');
         return;
       }
 
       try {
-        // 1. Check Notifications (Non-blocking)
-        try {
-          const notiRes = await notificationApi.getMyNotifications({ size: 5 });
-          if (notiRes.success && notiRes.result.content) {
-            // Tìm thông báo chứa orderId HOẶC là thông báo cập nhật đơn hàng mới nhất
-            const relevantNoti = notiRes.result.content.find(noti =>
-              (noti.content && noti.content.includes(orderId)) ||
-              (noti.title === 'Cập nhật đơn hàng' && pollCount < 5)
-            );
-            if (relevantNoti) {
-              setPollMessage(relevantNoti.content);
-            }
-          }
-        } catch (notiErr) {
-          console.warn('Failed to fetch notifications during polling', notiErr);
-        }
+        const response = await orderApi.get(orderId);
+        const order = response.result;
 
-        // 2. Check Order Status
-        const cleanOrderId = String(orderId).replace(/[^a-zA-Z0-9-]/g, '');
-        const response = await orderApi.get(cleanOrderId);
-        const result = response.result;
-        console.log('Order Status:', result.status);
-
-        if (['PENDING_VALIDATION', 'PENDING', 'PAYMENT_PENDING', 'CONFIRMED'].includes(result.status)) {
+        if (order.status === 'PAYMENT_PENDING' && order.paymentUrl) {
           clearInterval(pollInterval);
-          setPollStatus('CONFIRMED');
-          setPollMessage(result.message || 'Your order has been placed successfully.');
-          clearCart();
-        } else if (result.status === 'CANCELLED') {
+          window.location.href = order.paymentUrl;
+        } else if (order.status === 'CANCELLED') {
           clearInterval(pollInterval);
           setPollStatus('CANCELLED');
-          setPollMessage(result.message || 'Transaction failed. Your order has been cancelled.');
-        } else if (result.status === 'PAYMENT_PENDING') {
-          setPollMessage('Order created. Redirecting to payment gateway...');
-          if (result.paymentUrl && openedPaymentUrlRef.current !== result.paymentUrl) {
-            openedPaymentUrlRef.current = result.paymentUrl;
-            window.open(result.paymentUrl, '_blank');
-            setPollMessage('Please complete your payment in the new tab. Checking payment status...');
-          }
-        } else {
-          setPollMessage('Validating your order details...');
+          setPollMessage(order.errorMessage || 'Failed to create order. Please try again.');
         }
-      } catch (error) {
-        console.error('Polling error:', error);
-        const errorStatus = error?.response?.status || error?.status;
-        const errorResult = error?.result || error.response?.data?.result;
-        const errorMessage = error?.message || error.response?.data?.message || 'Transaction failed.';
-        
-        if (errorResult?.status === 'CANCELLED') {
-          clearInterval(pollInterval);
-          setPollStatus('CANCELLED');
-          setPollMessage(errorResult.message || errorMessage || 'Transaction failed. Your order has been cancelled.');
-        } else if (errorStatus === 400 || errorStatus === 404) {
-          // In SAGA patterns, 400/404 might be returned briefly before the order is fully synced to the read database.
-          setPollMessage('Synchronizing order data with the system... Please wait.');
-        }
+      } catch (err) {
+        console.error('Error polling order:', err);
       }
-    }, 2000);
+    }, 1500); // Poll mỗi 1.5 giây
   };
 
   const handleProvinceChange = async (e) => {
@@ -305,10 +260,8 @@ const CheckoutPage = () => {
 
     try {
       setLoading(true);
-      const apiPaymentMethod = selectedPayment === 'transfer' ? 'BANK_TRANSFER' : selectedPayment.toUpperCase();
-      
       const orderData = {
-        paymentMethod: apiPaymentMethod,
+        paymentMethod: selectedPayment,
         orderItems: cartItems.map(item => ({
           productId: item.id,
           quantity: item.quantity
@@ -326,7 +279,15 @@ const CheckoutPage = () => {
       const orderRes = await orderApi.create(orderData);
       if (orderRes.success) {
         const orderId = orderRes.result.orderId;
-        // Thay vì chuyển hướng ngay, ta bắt đầu polling
+        
+        if (selectedPayment === 'COD') {
+          clearCart();
+          navigate(`/order/${orderId}`);
+          return;
+        }
+
+        // For VNPAY, save order id for payment-result page and start polling for URL
+        localStorage.setItem('pending_order_id', orderId);
         startPolling(orderId);
       }
     } catch (error) {
@@ -417,9 +378,9 @@ const CheckoutPage = () => {
 
             <div className="p-8 max-h-[500px] overflow-y-auto space-y-5">
               {addresses.map((addr, index) => {
-                const isSelected = tempSelectedAddress 
-                  ? (tempSelectedAddress.id === addr.id && addr.id) || 
-                    (tempSelectedAddress.street === addr.street && tempSelectedAddress.city === addr.city && tempSelectedAddress.ward === addr.ward)
+                const isSelected = tempSelectedAddress
+                  ? (tempSelectedAddress.id === addr.id && addr.id) ||
+                  (tempSelectedAddress.street === addr.street && tempSelectedAddress.city === addr.city && tempSelectedAddress.ward === addr.ward)
                   : false;
 
                 return (
