@@ -69,13 +69,11 @@ const CheckoutPage = () => {
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [showAddAddressModal, setShowAddAddressModal] = useState(false);
   const [provinces, setProvinces] = useState([]);
-  const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [addressForm, setAddressForm] = useState({
     street: '',
     ward: '',
-    district: '',
     city: '',
     isDefault: false
   });
@@ -85,7 +83,7 @@ const CheckoutPage = () => {
   useEffect(() => {
     const fetchProvinces = async () => {
       try {
-        const res = await fetch('https://provinces.open-api.vn/api/p/');
+        const res = await fetch('https://provinces.open-api.vn/api/v2/p/');
         const data = await res.json();
         setProvinces(data);
       } catch (e) {
@@ -102,7 +100,7 @@ const CheckoutPage = () => {
     setPollMessage('We are setting up the payment gateway, please wait...');
 
     let pollCount = 0;
-    const maxPolls = 10; // Tối đa 15 giây (10 lần x 1.5 giây)
+    const maxPolls = 20; // 30 seconds (20 attempts * 1.5s)
 
     const pollInterval = setInterval(async () => {
       pollCount++;
@@ -115,50 +113,41 @@ const CheckoutPage = () => {
       }
 
       try {
-        const response = await orderApi.get(orderId);
+        const cleanOrderId = String(orderId).replace(/[^a-zA-Z0-9-]/g, '');
+        const response = await orderApi.get(cleanOrderId);
         const order = response.result;
 
-        if (order.status === 'PAYMENT_PENDING' && order.paymentUrl) {
-          clearInterval(pollInterval);
-          window.location.href = order.paymentUrl;
-        } else if (order.status === 'CANCELLED') {
-          clearInterval(pollInterval);
-          setPollStatus('CANCELLED');
-          setPollMessage(order.errorMessage || 'Failed to create order. Please try again.');
+        if (order) {
+          if (order.status === 'PAYMENT_PENDING' && order.paymentUrl) {
+            clearInterval(pollInterval);
+            window.location.href = order.paymentUrl;
+          } else if (order.status === 'CANCELLED') {
+            clearInterval(pollInterval);
+            setPollStatus('CANCELLED');
+            setPollMessage(order.errorMessage || 'Failed to create order. Please try again.');
+          }
         }
       } catch (err) {
         console.error('Error polling order:', err);
+        const errorResult = err?.result || err?.response?.data?.result;
+        if (errorResult?.status === 'CANCELLED') {
+          clearInterval(pollInterval);
+          setPollStatus('CANCELLED');
+          setPollMessage(errorResult.errorMessage || 'Failed to create order due to inventory or validation issues.');
+        }
       }
-    }, 1500); // Poll mỗi 1.5 giây
+    }, 1500); // Poll every 1.5s
   };
 
   const handleProvinceChange = async (e) => {
     const provinceCode = e.target.value;
     const provinceName = provinces.find(p => p.code === parseInt(provinceCode))?.name || '';
-    setAddressForm({ ...addressForm, city: provinceName, district: '', ward: '' });
+    setAddressForm({ ...addressForm, city: provinceName, ward: '' });
     setWards([]);
 
     if (provinceCode) {
       try {
-        const res = await fetch(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`);
-        const data = await res.json();
-        setDistricts(data.districts || []);
-      } catch (e) {
-        console.error('Failed to fetch districts', e);
-      }
-    } else {
-      setDistricts([]);
-    }
-  };
-
-  const handleDistrictChange = async (e) => {
-    const districtCode = e.target.value;
-    const districtName = districts.find(d => d.code === parseInt(districtCode))?.name || '';
-    setAddressForm({ ...addressForm, district: districtName, ward: '' });
-
-    if (districtCode) {
-      try {
-        const res = await fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
+        const res = await fetch(`https://provinces.open-api.vn/api/v2/p/${provinceCode}?depth=2`);
         const data = await res.json();
         setWards(data.wards || []);
       } catch (e) {
@@ -187,7 +176,7 @@ const CheckoutPage = () => {
           setAddressError('');
         }
         setShowAddAddressModal(false);
-        setAddressForm({ street: '', ward: '', district: '', city: '', isDefault: false });
+        setAddressForm({ street: '', ward: '', city: '', isDefault: false });
       }
     } catch (error) {
       alert("Add address failed!");
@@ -464,7 +453,7 @@ const CheckoutPage = () => {
             </div>
 
             <form onSubmit={handleAddNewAddress} className="p-8 space-y-6">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <CustomSelect
                   label="Province / City"
                   placeholder="Select Province"
@@ -473,17 +462,9 @@ const CheckoutPage = () => {
                   onChange={handleProvinceChange}
                 />
                 <CustomSelect
-                  label="District"
-                  placeholder="Select District"
-                  disabled={!addressForm.city}
-                  options={districts}
-                  value={addressForm.district}
-                  onChange={handleDistrictChange}
-                />
-                <CustomSelect
                   label="Ward"
                   placeholder="Select Ward"
-                  disabled={!addressForm.district}
+                  disabled={!addressForm.city}
                   options={wards}
                   value={addressForm.ward}
                   onChange={(e) => setAddressForm({ ...addressForm, ward: wards.find(w => w.code === parseInt(e.target.value))?.name || '' })}
@@ -494,7 +475,7 @@ const CheckoutPage = () => {
                 <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Street Address</label>
                 <input
                   required
-                  className="w-full px-4 py-3 rounded-sm border border-gray-200 focus:border-primary outline-none transition-all text-sm font-medium"
+                  className="w-full px-4 py-3 rounded-sm border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm font-medium"
                   placeholder="House number, street name..."
                   value={addressForm.street}
                   onChange={(e) => setAddressForm({ ...addressForm, street: e.target.value })}
@@ -565,7 +546,7 @@ const CheckoutPage = () => {
                     <span className="font-bold text-gray-800">{profile?.phone || user?.phone}</span>
                   </div>
                   <div className="text-gray-600">
-                    {selectedAddress.street}, {selectedAddress.ward}, {selectedAddress.district}, {selectedAddress.city}
+                    {selectedAddress.street}, {selectedAddress.ward}, {selectedAddress.city}
                     {selectedAddress.isDefault && (
                       <span className="ml-3 border border-primary text-primary text-[10px] px-1 py-0.5 rounded-sm">Default</span>
                     )}

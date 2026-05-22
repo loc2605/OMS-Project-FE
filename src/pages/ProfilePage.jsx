@@ -15,13 +15,11 @@ const ProfilePage = () => {
 
   // Vietnam Provinces API state
   const [provinces, setProvinces] = useState([]);
-  const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
 
   const [addressForm, setAddressForm] = useState({
     street: '',
     ward: '',
-    district: '',
     city: '',
     isDefault: false
   });
@@ -33,7 +31,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const fetchProvinces = async () => {
       try {
-        const res = await fetch('https://provinces.open-api.vn/api/p/');
+        const res = await fetch('https://provinces.open-api.vn/api/v2/p/');
         const data = await res.json();
         setProvinces(data);
       } catch (e) {
@@ -62,8 +60,8 @@ const ProfilePage = () => {
   const handleAddAddress = async (e) => {
     e.preventDefault();
     try {
-      const { street, ward, district, city, isDefault } = addressForm;
-      const res = await profileApi.addAddress({ street, ward, district, city, isDefault });
+      const { street, ward, city, isDefault } = addressForm;
+      const res = await profileApi.addAddress({ street, ward, city, isDefault });
       if (res.success) {
         // Fetch lại toàn bộ profile để đảm bảo dữ liệu (bao gồm ID địa chỉ mới) đồng bộ với Server
         const profileRes = await profileApi.getProfile();
@@ -74,7 +72,6 @@ const ProfilePage = () => {
         setAddressForm({
           street: '',
           ward: '',
-          district: '',
           city: '',
           isDefault: false
         });
@@ -125,30 +122,12 @@ const ProfilePage = () => {
   const handleProvinceChange = async (e) => {
     const provinceCode = e.target.value;
     const provinceName = provinces.find(p => p.code === parseInt(provinceCode))?.name || '';
-    setAddressForm({ ...addressForm, city: provinceName, district: '', ward: '' });
+    setAddressForm({ ...addressForm, city: provinceName, ward: '' });
     setWards([]);
 
     if (provinceCode) {
       try {
-        const res = await fetch(`https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`);
-        const data = await res.json();
-        setDistricts(data.districts || []);
-      } catch (e) {
-        console.error('Failed to fetch districts', e);
-      }
-    } else {
-      setDistricts([]);
-    }
-  };
-
-  const handleDistrictChange = async (e) => {
-    const districtCode = e.target.value;
-    const districtName = districts.find(d => d.code === parseInt(districtCode))?.name || '';
-    setAddressForm({ ...addressForm, district: districtName, ward: '' });
-
-    if (districtCode) {
-      try {
-        const res = await fetch(`https://provinces.open-api.vn/api/d/${districtCode}?depth=2`);
+        const res = await fetch(`https://provinces.open-api.vn/api/v2/p/${provinceCode}?depth=2`);
         const data = await res.json();
         setWards(data.wards || []);
       } catch (e) {
@@ -163,11 +142,9 @@ const ProfilePage = () => {
     setAddressForm({
       street: '',
       ward: '',
-      district: '',
       city: '',
       isDefault: false
     });
-    setDistricts([]);
     setWards([]);
     setActiveDropdown(null);
   };
@@ -367,7 +344,7 @@ const ProfilePage = () => {
                     <p className="text-sm text-gray-600 leading-relaxed">
                       {(() => {
                         const defaultAddr = addresses.find(a => a.isDefault) || addresses[0];
-                        return defaultAddr ? `${defaultAddr.street}, ${defaultAddr.ward}, ${defaultAddr.district}, ${defaultAddr.city}` : '';
+                        return defaultAddr ? `${defaultAddr.street}, ${defaultAddr.ward}, ${defaultAddr.city}` : '';
                       })()}
                     </p>
                   </div>
@@ -411,11 +388,11 @@ const ProfilePage = () => {
             <div className="p-6 space-y-5">
               <div className="space-y-1">
                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Name</label>
-                <input className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm bg-white shadow-sm font-medium" defaultValue={profile?.fullname || user?.fullName} />
+                <input className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm bg-white shadow-sm font-medium" defaultValue={profile?.fullname || user?.fullName} />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Phone Number</label>
-                <input className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm bg-white shadow-sm font-medium" defaultValue={profile?.phone} />
+                <input className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm bg-white shadow-sm font-medium" defaultValue={profile?.phone} />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Gender</label>
@@ -436,7 +413,7 @@ const ProfilePage = () => {
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Date of Birth</label>
-                <input type="date" className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm bg-white shadow-sm font-medium" defaultValue={profile?.dateOfBirth} />
+                <input type="date" className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm bg-white shadow-sm font-medium" defaultValue={profile?.dateOfBirth} />
               </div>
             </div>
             <div className="p-5 border-t border-gray-100 flex gap-3 bg-gray-50/50">
@@ -471,7 +448,7 @@ const ProfilePage = () => {
                         )}
                       </div>
                       <div className="text-sm text-[#666666] leading-relaxed">
-                        {addr?.street}, {addr?.ward}, {addr?.district}, {addr?.city}
+                        {addr?.street}, {addr?.ward}, {addr?.city}
                       </div>
                     </div>
                     <div className="flex flex-col items-end justify-between gap-3">
@@ -523,7 +500,7 @@ const ProfilePage = () => {
 
 
               <div className="space-y-4 pt-2">
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 gap-3">
                   <CustomSelect
                     label="Province / City"
                     placeholder="Select Province"
@@ -533,18 +510,9 @@ const ProfilePage = () => {
                   />
 
                   <CustomSelect
-                    label="District"
-                    placeholder="Select District"
-                    disabled={!addressForm.city}
-                    options={districts}
-                    value={addressForm.district}
-                    onChange={handleDistrictChange}
-                  />
-
-                  <CustomSelect
                     label="Ward"
                     placeholder="Select Ward"
-                    disabled={!addressForm.district}
+                    disabled={!addressForm.city}
                     options={wards}
                     value={addressForm.ward}
                     onChange={(e) => setAddressForm({ ...addressForm, ward: wards.find(w => w.code === parseInt(e.target.value))?.name || '' })}
@@ -555,7 +523,7 @@ const ProfilePage = () => {
                   <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Street Address</label>
                   <input
                     required
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-base bg-white shadow-sm font-medium"
+                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-base bg-white shadow-sm font-medium"
                     placeholder="House number, street name..."
                     value={addressForm.street}
                     onChange={(e) => setAddressForm({ ...addressForm, street: e.target.value })}
