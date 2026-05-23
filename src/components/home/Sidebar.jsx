@@ -153,10 +153,10 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
               <div key={groupName} className="border-b border-black/5 pb-1 last:border-0">
                 <button
                   onClick={() => setExpandedGroups(prev => ({ ...prev, [groupName]: !prev[groupName] }))}
-                  className="w-full flex items-center justify-between px-2 py-2 text-[14px] font-bold text-heading hover:text-primary transition-colors"
+                  className="w-full flex items-center justify-between px-2 py-2 text-[15px] font-bold text-heading hover:text-primary transition-colors"
                 >
                   {groupName}
-                  <span className={`material-symbols-outlined text-[18px] transition-transform ${expandedGroups[groupName] ? 'rotate-180' : ''}`}>
+                  <span className={`material-symbols-outlined text-[15px] transition-transform ${expandedGroups[groupName] ? 'rotate-180' : ''}`}>
                     expand_more
                   </span>
                 </button>

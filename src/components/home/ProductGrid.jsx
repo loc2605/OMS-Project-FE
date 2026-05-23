@@ -75,19 +75,26 @@ const ProductGrid = ({ filters, onCategoriesFetched }) => {
       );
     }
     
+    const getNumericPrice = (price) => {
+      if (typeof price === 'number') return price;
+      if (!price) return 0;
+      const numericString = String(price).replace(/[^\d]/g, '');
+      return Number(numericString);
+    };
+
     // Filter by Price
     if (filters?.minPrice !== undefined && filters?.minPrice !== '') {
-      result = result.filter(p => p.price >= Number(filters.minPrice));
+      result = result.filter(p => getNumericPrice(p.price) >= Number(filters.minPrice));
     }
     if (filters?.maxPrice !== undefined && filters?.maxPrice !== '') {
-      result = result.filter(p => p.price <= Number(filters.maxPrice));
+      result = result.filter(p => getNumericPrice(p.price) <= Number(filters.maxPrice));
     }
 
     // Sort
     if (sortOption === 'priceAsc') {
-      result.sort((a, b) => a.price - b.price);
+      result.sort((a, b) => getNumericPrice(a.price) - getNumericPrice(b.price));
     } else if (sortOption === 'priceDesc') {
-      result.sort((a, b) => b.price - a.price);
+      result.sort((a, b) => getNumericPrice(b.price) - getNumericPrice(a.price));
     } else if (sortOption === 'newest') {
       result.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
     }
@@ -101,13 +108,15 @@ const ProductGrid = ({ filters, onCategoriesFetched }) => {
     (pagination.page + 1) * pagination.size
   );
 
-  // Reset to page 0 when filters or sort change
+  // Reset to page 0 and scroll up when filters or sort change
   useEffect(() => {
     setPagination(prev => ({ ...prev, page: 0 }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [filters, sortOption]);
 
   const handlePageChange = (newPage) => {
     setPagination(prev => ({ ...prev, page: newPage }));
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
