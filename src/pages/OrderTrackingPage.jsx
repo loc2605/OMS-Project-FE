@@ -57,10 +57,16 @@ const OrderTrackingPage = () => {
     };
 
     fetchOrder(true);
-    interval = setInterval(() => fetchOrder(false), 5000);
+    interval = setInterval(() => fetchOrder(false), 1500);
+    
+    const handleNotification = () => {
+      fetchOrder(false);
+    };
+    window.addEventListener('notification-received', handleNotification);
     
     return () => {
       if (interval) clearInterval(interval);
+      window.removeEventListener('notification-received', handleNotification);
     };
   }, [orderId]);
 
@@ -99,14 +105,22 @@ const OrderTrackingPage = () => {
       case 'PENDING':
       case 'PAYMENT_PENDING': return { text: rawText, color: 'bg-amber-50 text-amber-600 border-amber-200' };
       case 'CONFIRMED': return { text: rawText, color: 'bg-blue-50 text-blue-600 border-blue-200' };
-      case 'SHIPPING': return { text: rawText, color: 'bg-indigo-50 text-indigo-600 border-indigo-200' };
-      case 'COMPLETED': return { text: rawText, color: 'bg-emerald-50 text-emerald-600 border-emerald-200' };
-      case 'CANCELLED': return { text: rawText, color: 'bg-rose-50 text-rose-600 border-rose-200' };
+      case 'SHIPPING': 
+      case 'READY_TO_UP':
+      case 'ASSIGNING':
+      case 'DELIVERING':
+        return { text: rawText, color: 'bg-indigo-50 text-indigo-600 border-indigo-200' };
+      case 'COMPLETED': 
+      case 'DELIVERED':
+        return { text: 'COMPLETED', color: 'bg-emerald-50 text-emerald-600 border-emerald-200' };
+      case 'CANCELLED': 
+      case 'RETURNED':
+        return { text: rawText, color: 'bg-rose-50 text-rose-600 border-rose-200' };
       default: return { text: rawText, color: 'bg-gray-50 text-gray-600 border-gray-200' };
     }
   };
 
-  const statusInfo = getStatusDisplay(order?.status);
+  const statusInfo = getStatusDisplay(delivery?.status === 'DELIVERED' ? 'COMPLETED' : (delivery?.status || order?.status));
 
   // Active steps calculation for the timeline
   const isStep1Active = ['PENDING_VALIDATION', 'PENDING', 'PAYMENT_PENDING', 'CONFIRMED', 'SHIPPING', 'COMPLETED'].includes(order?.status);

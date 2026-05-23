@@ -88,6 +88,7 @@ const Header = () => {
                   // Show toast for new notifications
                   if (newFirst.title === 'Order Update' || newFirst.title === 'Delivery Update' || newFirst.title === 'Cập nhật đơn hàng' || newFirst.title === 'Cập nhật vận chuyển') {
                     setToastNoti(newFirst);
+                    window.dispatchEvent(new CustomEvent('notification-received', { detail: newFirst }));
                     setTimeout(() => setToastNoti(null), 5000);
                   }
                 }
@@ -102,7 +103,7 @@ const Header = () => {
       };
       
       fetchNotifications();
-      const intervalId = setInterval(fetchNotifications, 10000); // 10 seconds
+      const intervalId = setInterval(fetchNotifications, 2000); // 2 seconds
       return () => clearInterval(intervalId);
     }
   }, [isAuthenticated]);

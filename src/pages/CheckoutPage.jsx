@@ -93,11 +93,15 @@ const CheckoutPage = () => {
     fetchProvinces();
   }, []);
 
-  const startPolling = (orderId) => {
+  const startPolling = (orderId, paymentMethod) => {
     setIsPolling(true);
     setActiveOrderId(orderId);
     setPollStatus('PENDING');
-    setPollMessage('We are setting up the payment gateway, please wait...');
+    setPollMessage(
+      paymentMethod === 'VNPAY' 
+        ? 'We are setting up the payment gateway, please wait...'
+        : 'We are verifying your order details, please wait...'
+    );
 
     let pollCount = 0;
     const maxPolls = 20; // 30 seconds (20 attempts * 1.5s)
@@ -108,7 +112,7 @@ const CheckoutPage = () => {
       if (pollCount >= maxPolls) {
         clearInterval(pollInterval);
         setPollStatus('CANCELLED');
-        setPollMessage('Timeout getting payment link. Please check your order history.');
+        setPollMessage('Timeout processing your order. Please check your order history.');
         return;
       }
 
@@ -118,13 +122,28 @@ const CheckoutPage = () => {
         const order = response.result;
 
         if (order) {
-          if (order.status === 'PAYMENT_PENDING' && order.paymentUrl) {
-            clearInterval(pollInterval);
-            window.location.href = order.paymentUrl;
-          } else if (order.status === 'CANCELLED') {
-            clearInterval(pollInterval);
-            setPollStatus('CANCELLED');
-            setPollMessage(order.errorMessage || 'Failed to create order. Please try again.');
+          if (paymentMethod === 'VNPAY') {
+            if (order.status === 'PAYMENT_PENDING' && order.paymentUrl) {
+              clearInterval(pollInterval);
+              window.location.href = order.paymentUrl;
+            } else if (order.status === 'CANCELLED') {
+              clearInterval(pollInterval);
+              setPollStatus('CANCELLED');
+              setPollMessage(order.errorMessage || 'Failed to create order. Please try again.');
+            }
+          } else {
+            // For COD
+            if (order.status === 'CANCELLED') {
+              clearInterval(pollInterval);
+              setPollStatus('CANCELLED');
+              setPollMessage(order.errorMessage || 'Order cancelled due to inventory issues.');
+            } else if (order.status === 'CONFIRMED') {
+              clearInterval(pollInterval);
+              clearCart();
+              setPollStatus('CONFIRMED');
+              setPollMessage('Your order has been successfully placed!');
+            }
+            // If it's PENDING_VALIDATION or anything else, it will just keep polling
           }
         }
       } catch (err) {
@@ -269,15 +288,10 @@ const CheckoutPage = () => {
       if (orderRes.success) {
         const orderId = orderRes.result.orderId;
         
-        if (selectedPayment === 'COD') {
-          clearCart();
-          navigate(`/order/${orderId}`);
-          return;
+        if (selectedPayment === 'VNPAY') {
+          localStorage.setItem('pending_order_id', orderId);
         }
-
-        // For VNPAY, save order id for payment-result page and start polling for URL
-        localStorage.setItem('pending_order_id', orderId);
-        startPolling(orderId);
+        startPolling(orderId, selectedPayment);
       }
     } catch (error) {
       console.error(error);

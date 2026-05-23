@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import orderApi from '../api/orderApi';
+import paymentApi from '../api/paymentApi';
 import { useCart } from '../contexts/CartContext';
 import Header from '../components/home/Header';
 
@@ -38,6 +39,13 @@ const PaymentResultPage = () => {
 
       setStatus('PROCESSING');
       setMessage('System is verifying the transaction, please wait. Do not close the browser...');
+
+      // Force the backend to verify the VNPAY transaction (useful for local testing or when IPN is blocked)
+      try {
+        await paymentApi.verifyVnPay(location.search);
+      } catch (err) {
+        console.log('IPN verification call returned:', err);
+      }
 
       let attempts = 0;
       const maxAttempts = 10;
