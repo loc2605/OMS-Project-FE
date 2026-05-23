@@ -10,73 +10,7 @@ const CATEGORY_GROUPS = {
 const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, initialMinPrice, initialMaxPrice, onReset }) => {
   const [minPrice, setMinPrice] = useState(initialMinPrice || '');
   const [maxPrice, setMaxPrice] = useState(initialMaxPrice || '');
-  const sidebarRef = React.useRef(null);
-  const [sidebarStyle, setSidebarStyle] = useState({ position: 'fixed', top: '112px', width: '192px' });
-  const [expandedGroups, setExpandedGroups] = useState({});
 
-  React.useEffect(() => {
-    setMinPrice(initialMinPrice || '');
-    setMaxPrice(initialMaxPrice || '');
-  }, [initialMinPrice, initialMaxPrice]);
-
-  React.useEffect(() => {
-    if (activeCategory) {
-      for (const [groupName, items] of Object.entries(CATEGORY_GROUPS)) {
-        if (items.includes(activeCategory)) {
-          setExpandedGroups(prev => ({ ...prev, [groupName]: true }));
-        }
-      }
-    }
-  }, [activeCategory]);
-
-  React.useEffect(() => {
-    const handleScroll = () => {
-      const footer = document.querySelector('footer');
-      if (!footer || !sidebarRef.current) return;
-
-      const footerRect = footer.getBoundingClientRect();
-      const sidebarRect = sidebarRef.current.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-      const topOffset = 112; // top-28 is 112px
-      const sidebarHeight = sidebarRect.height;
-
-      const minTopOffset = 88; // Ensure it never goes higher than 88px from viewport top (keeping a clean gap under the ~65px header)
-
-      // Check if footer is visible in the viewport
-      if (footerRect.top < viewportHeight) {
-        const availableHeight = footerRect.top - topOffset - 24; // 24px safety margin from the footer!
-        if (availableHeight < sidebarHeight) {
-          const diff = sidebarHeight - availableHeight;
-          const calculatedTop = topOffset - diff;
-          setSidebarStyle({
-            position: 'fixed',
-            top: `${Math.max(calculatedTop, minTopOffset)}px`,
-            width: '192px'
-          });
-          return;
-        }
-      }
-
-      setSidebarStyle({
-        position: 'fixed',
-        top: `${topOffset}px`,
-        width: '192px'
-      });
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('resize', handleScroll);
-
-    const timeoutId1 = setTimeout(handleScroll, 100);
-    const timeoutId2 = setTimeout(handleScroll, 500);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('resize', handleScroll);
-      clearTimeout(timeoutId1);
-      clearTimeout(timeoutId2);
-    };
-  }, [categories, expandedGroups]);
 
   const handleApplyPrice = () => {
     if (onPriceChange) {
@@ -130,9 +64,29 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
     }
   }
 
+  const [expandedGroups, setExpandedGroups] = useState({});
+
+  React.useEffect(() => {
+    setMinPrice(initialMinPrice || '');
+    setMaxPrice(initialMaxPrice || '');
+  }, [initialMinPrice, initialMaxPrice]);
+
+  React.useEffect(() => {
+    if (activeCategory) {
+      for (const [groupName, items] of Object.entries(CATEGORY_GROUPS)) {
+        if (items.includes(activeCategory)) {
+          setExpandedGroups(prev => ({ ...prev, [groupName]: true }));
+        }
+      }
+    }
+  }, [activeCategory]);
+
   return (
-    <aside className="w-48 shrink-0 hidden md:block">
-      <div ref={sidebarRef} style={sidebarStyle} className="space-y-4 overflow-y-auto max-h-[calc(100vh-140px)] scrollbar-hide pb-10">
+    <aside 
+      className="w-48 shrink-0 hidden md:block self-start overflow-y-auto scrollbar-hide pb-4"
+      style={{ position: 'sticky', top: '112px', maxHeight: 'calc(100vh - 140px)', zIndex: 10 }}
+    >
+      <div className="space-y-4">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <h3 className="text-[15px] font-bold text-heading uppercase flex items-center gap-1.5 tracking-wider">
