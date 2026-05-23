@@ -6,10 +6,9 @@ const Hero = () => {
 
   return (
     <section className="relative w-full h-[600px] flex items-center overflow-hidden rounded-2xl mb-12">
-      {/* Background with overlay */}
-      <div 
+      <div
         className="absolute inset-0 bg-cover bg-center transition-transform duration-[20s] hover:scale-110"
-        style={{ 
+        style={{
           backgroundImage: 'url("https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=1600&q=80")',
         }}
       >
@@ -27,13 +26,13 @@ const Hero = () => {
             <span className="text-primary-light">Modern Lifestyle</span>
           </h1>
         </div>
-        
+
         <p className="text-lg text-white/80 max-w-lg leading-relaxed animate-fade-in-up delay-100">
           Discover a curated collection of premium electronics, fashion, and home essentials. The best products for every aspect of your daily life.
         </p>
 
         <div className="flex flex-wrap gap-4 pt-4 animate-fade-in-up delay-200">
-          <button 
+          <button
             onClick={() => navigate('/products')}
             className="group relative px-8 py-4 bg-primary text-white font-bold rounded-full overflow-hidden transition-all hover:pr-12"
           >
