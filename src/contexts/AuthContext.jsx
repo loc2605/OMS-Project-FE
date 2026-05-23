@@ -7,26 +7,25 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => sessionStorage.getItem('isLoggedIn') === 'true');
+  const [user, setUser] = useState(() => {
+    const storedUser = sessionStorage.getItem('user');
+    if (storedUser) {
+      try {
+        return JSON.parse(storedUser);
+      } catch (e) {
+        console.error(e);
+        return null;
+      }
+    }
+    return null;
+  });
 
   useEffect(() => {
     // Dọn dẹp localStorage cũ để tránh bị lỗi tự động đăng nhập từ các lần test trước
     localStorage.removeItem('isLoggedIn');
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-
-    // Khởi tạo trạng thái đăng nhập từ sessionStorage (chỉ lưu trong một phiên làm việc)
-    const loggedIn = sessionStorage.getItem('isLoggedIn') === 'true';
-    setIsAuthenticated(loggedIn);
-    const storedUser = sessionStorage.getItem('user');
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (e) {
-        console.error(e);
-      }
-    }
   }, []);
 
   const login = (userData, token, refreshToken) => {

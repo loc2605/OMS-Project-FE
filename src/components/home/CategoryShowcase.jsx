@@ -1,77 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const categories = [
-  {
-    name: 'Women',
-    image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=80',
-    count: '240+ Products',
-    color: 'bg-rose-500/10'
-  },
-  {
-    name: 'Men',
-    image: 'https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&w=800&q=80',
-    count: '180+ Products',
-    color: 'bg-blue-500/10'
-  },
-  {
-    name: 'Kids',
-    image: 'https://images.unsplash.com/photo-1519234110450-1aa96369f468?auto=format&fit=crop&w=800&q=80',
-    count: '150+ Products',
-    color: 'bg-green-500/10'
-  }
-];
-
 const CategoryShowcase = ({ categories }) => {
   const navigate = useNavigate();
 
-  // Define default metadata for common categories
-  const categoryMeta = {
-    'Women': {
-      image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=80',
-      count: '240+ Products',
-      color: 'bg-rose-500/10'
-    },
-    'Men': {
-      image: 'https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&w=800&q=80',
-      count: '180+ Products',
-      color: 'bg-blue-500/10'
-    },
-    'Kids': {
-      image: 'https://images.unsplash.com/photo-1519234110450-1aa96369f468?auto=format&fit=crop&w=800&q=80',
-      count: '150+ Products',
-      color: 'bg-green-500/10'
-    }
-  };
-
-  // Merge dynamic categories with meta or use defaults
-  const mainCategories = ['Women', 'Men', 'Kids'];
-  
-  const displayCategories = mainCategories.map(name => {
-    const dynamicCat = categories?.find(c => (c.name || c) === name);
-    const meta = categoryMeta[name];
-    
-    return {
-      name,
-      image: dynamicCat?.image || meta.image,
-      count: meta.count,
-      color: meta.color
-    };
-  });
-
-  // Add any other dynamic categories found that aren't in the main list
-  if (categories && categories.length > 0) {
-    categories.forEach(cat => {
-      const name = cat.name || cat;
-      if (!mainCategories.includes(name)) {
-        displayCategories.push({
-          name,
-          image: cat.image || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80',
-          count: 'Check out our collection',
-          color: 'bg-primary/5'
-        });
-      }
-    });
+  if (!categories || categories.length === 0) {
+    return null;
   }
 
   return (
@@ -90,16 +24,20 @@ const CategoryShowcase = ({ categories }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {displayCategories.map((cat, index) => (
+        {categories.map((cat, index) => (
           <div 
             key={index}
             onClick={() => navigate(`/products?categoryName=${cat.name}`)}
             className="group relative h-[400px] rounded-3xl overflow-hidden cursor-pointer shadow-soft hover:shadow-xl transition-all"
           >
             <img 
-              src={cat.image} 
+              src={cat.image || 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80'} 
               alt={cat.name} 
               className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+              onError={(e) => {
+                e.target.onerror = null; 
+                e.target.src = 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80';
+              }}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
             

@@ -84,7 +84,7 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
     }
   };
 
-  const displayCategories = categories && categories.length > 0 ? categories : ['Women', 'Men', 'Kids'];
+  const displayCategories = categories || [];
 
   return (
     <aside className="w-48 shrink-0 hidden md:block">
