@@ -1,15 +1,33 @@
 import React, { useState } from 'react';
 
+const CATEGORY_GROUPS = {
+  "Thời trang": ["Thời trang Nam", "Thời trang Nữ", "Thời trang Trẻ em", "Giày dép", "Phụ kiện thời trang"],
+  "Điện tử": ["Điện thoại", "Máy tính xách tay", "Máy tính bảng", "Tivi & Màn hình", "Tai nghe", "Máy ảnh", "Phụ kiện"],
+  "Nhà cửa & Đời sống": ["Nội thất & Nhà cửa", "Thiết bị gia dụng", "Dụng cụ nhà bếp"],
+  "Sức khỏe & Làm đẹp": ["Sức khỏe & Sắc đẹp"]
+};
+
 const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, initialMinPrice, initialMaxPrice, onReset }) => {
   const [minPrice, setMinPrice] = useState(initialMinPrice || '');
   const [maxPrice, setMaxPrice] = useState(initialMaxPrice || '');
   const sidebarRef = React.useRef(null);
   const [sidebarStyle, setSidebarStyle] = useState({ position: 'fixed', top: '112px', width: '192px' });
+  const [expandedGroups, setExpandedGroups] = useState({});
 
   React.useEffect(() => {
     setMinPrice(initialMinPrice || '');
     setMaxPrice(initialMaxPrice || '');
   }, [initialMinPrice, initialMaxPrice]);
+
+  React.useEffect(() => {
+    if (activeCategory) {
+      for (const [groupName, items] of Object.entries(CATEGORY_GROUPS)) {
+        if (items.includes(activeCategory)) {
+          setExpandedGroups(prev => ({ ...prev, [groupName]: true }));
+        }
+      }
+    }
+  }, [activeCategory]);
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -58,7 +76,7 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
       clearTimeout(timeoutId1);
       clearTimeout(timeoutId2);
     };
-  }, [categories]);
+  }, [categories, expandedGroups]);
 
   const handleApplyPrice = () => {
     if (onPriceChange) {
@@ -86,9 +104,35 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
 
   const displayCategories = categories || [];
 
+  const groups = {};
+  const ungrouped = [];
+
+  displayCategories.forEach(cat => {
+    const name = typeof cat === 'string' ? cat : cat.name;
+    let found = false;
+    for (const [groupName, items] of Object.entries(CATEGORY_GROUPS)) {
+      if (items.includes(name)) {
+        if (!groups[groupName]) groups[groupName] = [];
+        groups[groupName].push(name);
+        found = true;
+        break;
+      }
+    }
+    if (!found) {
+      ungrouped.push(name);
+    }
+  });
+
+  for (const groupName in groups) {
+    if (groups[groupName].length <= 1) {
+      ungrouped.push(...groups[groupName]);
+      delete groups[groupName];
+    }
+  }
+
   return (
     <aside className="w-48 shrink-0 hidden md:block">
-      <div ref={sidebarRef} style={sidebarStyle} className="space-y-4">
+      <div ref={sidebarRef} style={sidebarStyle} className="space-y-4 overflow-y-auto max-h-[calc(100vh-140px)] scrollbar-hide pb-10">
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <h3 className="text-[15px] font-bold text-heading uppercase flex items-center gap-1.5 tracking-wider">
@@ -103,20 +147,49 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
               <span className="material-symbols-outlined text-[14px]">filter_alt_off</span>
             </button>
           </div>
-          <div className="space-y-0.5">
-            {displayCategories.map((cat) => {
-              const name = typeof cat === 'string' ? cat : cat.name;
-              return (
+
+          <div className="space-y-1">
+            {Object.keys(groups).map(groupName => (
+              <div key={groupName} className="border-b border-black/5 pb-1 last:border-0">
                 <button
-                  key={name}
-                  onClick={() => onCategoryChange(activeCategory === name ? '' : name)}
-                  className={`w-full text-left px-2 py-1.5 text-base transition-colors rounded ${activeCategory === name ? 'text-primary bg-black/5 font-semibold' : 'text-heading hover:text-primary'
-                    }`}
+                  onClick={() => setExpandedGroups(prev => ({ ...prev, [groupName]: !prev[groupName] }))}
+                  className="w-full flex items-center justify-between px-2 py-2 text-[14px] font-bold text-heading hover:text-primary transition-colors"
                 >
-                  {name}
+                  {groupName}
+                  <span className={`material-symbols-outlined text-[18px] transition-transform ${expandedGroups[groupName] ? 'rotate-180' : ''}`}>
+                    expand_more
+                  </span>
                 </button>
-              );
-            })}
+                {expandedGroups[groupName] && (
+                  <div className="pl-3 pr-1 py-1 space-y-1">
+                    {groups[groupName].map(name => (
+                      <button
+                        key={name}
+                        onClick={() => onCategoryChange(name)}
+                        className={`w-full text-left px-2 py-1.5 text-[15px] transition-colors rounded ${activeCategory === name ? 'text-primary bg-primary/5 font-bold border border-black' : 'font-semibold text-heading hover:text-primary hover:bg-black/5'}`}
+                      >
+                        {name}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+
+            {ungrouped.length > 0 && (
+              <>
+                {ungrouped.map(name => (
+                  <div key={name} className="border-b border-black/5 pb-1 last:border-0">
+                    <button
+                      onClick={() => onCategoryChange(name)}
+                      className={`w-full flex items-center justify-between px-2 py-2 text-[14px] font-bold transition-colors ${activeCategory === name ? 'text-primary' : 'text-heading hover:text-primary'}`}
+                    >
+                      {name}
+                    </button>
+                  </div>
+                ))}
+              </>
+            )}
           </div>
         </div>
 
