@@ -10,26 +10,26 @@ const Hero = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center transition-transform duration-[20s] hover:scale-110"
         style={{ 
-          backgroundImage: 'url("https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=1600&q=80")',
+          backgroundImage: 'url("https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=1600&q=80")',
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent"></div>
       </div>
 
       {/* Content */}
       <div className="relative z-10 px-8 md:px-16 max-w-2xl text-white space-y-6">
         <div className="space-y-2 animate-fade-in-up">
           <span className="inline-block px-4 py-1.5 bg-primary/20 backdrop-blur-md border border-primary/30 text-primary-light text-xs font-bold tracking-[0.2em] uppercase rounded-full">
-            New Collection 2026
+            All-In-One Destination
           </span>
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight leading-[1.1]">
             Elevate Your <br />
-            <span className="text-primary-light">Everyday Style</span>
+            <span className="text-primary-light">Modern Lifestyle</span>
           </h1>
         </div>
         
         <p className="text-lg text-white/80 max-w-lg leading-relaxed animate-fade-in-up delay-100">
-          Discover a curated collection of premium essentials designed for modern living. Quality craftsmanship meets contemporary design.
+          Discover a curated collection of premium electronics, fashion, and home essentials. The best products for every aspect of your daily life.
         </p>
 
         <div className="flex flex-wrap gap-4 pt-4 animate-fade-in-up delay-200">
