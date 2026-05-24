@@ -17,11 +17,11 @@ const TermsPage = () => {
           className="absolute left-8 top-8 flex items-center gap-2 text-white/80 hover:text-white transition-colors font-bold text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full backdrop-blur-md z-20"
         >
           <span className="material-symbols-outlined text-base">arrow_back</span>
-          Back
+          Trở lại
         </button>
         <div className="container mx-auto max-w-5xl relative">
-          <h1 className="text-5xl font-black text-white mb-4 tracking-tight">Terms & Conditions</h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto">Please read these terms carefully before using our platform. These terms govern your access to and use of ShopModern.</p>
+          <h1 className="text-5xl font-black text-white mb-4 tracking-tight">Điều khoản & Điều kiện</h1>
+          <p className="text-white/80 text-lg max-w-2xl mx-auto">Vui lòng đọc kỹ các điều khoản này trước khi sử dụng nền tảng của chúng tôi. Những điều khoản này chi phối việc bạn truy cập và sử dụng ShopModern.</p>
         </div>
       </div>
 
@@ -34,10 +34,10 @@ const TermsPage = () => {
                 <span className="p-2 bg-primary/10 rounded-lg">
                   <span className="material-symbols-outlined text-primary">verified_user</span>
                 </span>
-                <h2 className="text-2xl font-bold text-gray-900 m-0">1. Acceptance of Terms</h2>
+                <h2 className="text-2xl font-bold text-gray-900 m-0">1. Chấp nhận các Điều khoản</h2>
               </div>
               <p className="text-gray-600 leading-relaxed text-lg">
-                By accessing and using <span className="font-bold text-primary">ShopModern</span>, you agree to be bound by these Terms and Conditions. Our platform is designed to provide high-quality fashion products and services. If you do not agree to all of these terms, you are prohibited from using this website.
+                Bằng cách truy cập và sử dụng <span className="font-bold text-primary">ShopModern</span>, bạn đồng ý bị ràng buộc bởi các Điều khoản và Điều kiện này. Nền tảng của chúng tôi được thiết kế để cung cấp các sản phẩm và dịch vụ thời trang chất lượng cao. Nếu bạn không đồng ý với tất cả các điều khoản này, bạn bị cấm sử dụng trang web này.
               </p>
             </section>
 
@@ -46,10 +46,10 @@ const TermsPage = () => {
                 <span className="p-2 bg-primary/10 rounded-lg">
                   <span className="material-symbols-outlined text-primary">copyright</span>
                 </span>
-                <h2 className="text-2xl font-bold text-gray-900 m-0">2. Intellectual Property</h2>
+                <h2 className="text-2xl font-bold text-gray-900 m-0">2. Sở hữu trí tuệ</h2>
               </div>
               <p className="text-gray-600 leading-relaxed text-lg">
-                The Service and its original content, features, and functionality are and will remain the exclusive property of ShopModern and its licensors. Our trademarks and trade dress may not be used in connection with any product or service without the prior written consent.
+                Dịch vụ và nội dung, tính năng và chức năng ban đầu của nó là và sẽ vẫn là tài sản độc quyền của ShopModern và những người cấp phép cho ShopModern. Không được sử dụng nhãn hiệu và bao bì thương mại của chúng tôi liên quan đến bất kỳ sản phẩm hoặc dịch vụ nào mà không có sự đồng ý trước bằng văn bản.
               </p>
             </section>
 
@@ -58,10 +58,10 @@ const TermsPage = () => {
                 <span className="p-2 bg-primary/10 rounded-lg">
                   <span className="material-symbols-outlined text-primary">person_outline</span>
                 </span>
-                <h2 className="text-2xl font-bold text-gray-900 m-0">3. User Accounts</h2>
+                <h2 className="text-2xl font-bold text-gray-900 m-0">3. Tài khoản Người dùng</h2>
               </div>
               <p className="text-gray-600 leading-relaxed text-lg">
-                When you create an account with us, you must provide information that is accurate, complete, and current at all times. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account on our Service.
+                Khi bạn tạo tài khoản với chúng tôi, bạn phải cung cấp thông tin chính xác, đầy đủ và hiện hành vào mọi thời điểm. Việc không thực hiện như vậy cấu thành vi phạm các Điều khoản, điều này có thể dẫn đến việc chấm dứt ngay lập tức tài khoản của bạn trên Dịch vụ của chúng tôi.
               </p>
             </section>
 
@@ -70,10 +70,10 @@ const TermsPage = () => {
                 <span className="p-2 bg-primary/10 rounded-lg">
                   <span className="material-symbols-outlined text-primary">local_shipping</span>
                 </span>
-                <h2 className="text-2xl font-bold text-gray-900 m-0">4. Shipping & Returns</h2>
+                <h2 className="text-2xl font-bold text-gray-900 m-0">4. Vận chuyển & Đổi trả</h2>
               </div>
               <p className="text-gray-600 leading-relaxed text-lg">
-                We are committed to fast delivery, aiming for 24-48 hour fulfillment. Our return policy is designed to be customer-friendly, allowing returns within 30 days of receipt. All items must be in original condition, with tags attached and in original packaging.
+                Chúng tôi cam kết giao hàng nhanh chóng, với mục tiêu hoàn thành trong vòng 24-48 giờ. Chính sách đổi trả của chúng tôi được thiết kế thân thiện với khách hàng, cho phép đổi trả trong vòng 30 ngày kể từ ngày nhận. Tất cả các mặt hàng phải ở trong tình trạng ban đầu, còn nguyên tem mác và bao bì gốc.
               </p>
             </section>
 
@@ -82,10 +82,10 @@ const TermsPage = () => {
                 <span className="p-2 bg-primary/10 rounded-lg">
                   <span className="material-symbols-outlined text-primary">gavel</span>
                 </span>
-                <h2 className="text-2xl font-bold text-gray-900 m-0">5. Limitation of Liability</h2>
+                <h2 className="text-2xl font-bold text-gray-900 m-0">5. Giới hạn Trách nhiệm</h2>
               </div>
               <p className="text-gray-600 leading-relaxed text-lg">
-                In no event shall ShopModern, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses.
+                Trong mọi trường hợp, ShopModern, cũng như các giám đốc, nhân viên, đối tác, đại lý, nhà cung cấp hoặc chi nhánh của nó, sẽ không chịu trách nhiệm cho bất kỳ thiệt hại gián tiếp, ngẫu nhiên, đặc biệt, hậu quả hoặc trừng phạt nào, bao gồm nhưng không giới hạn ở việc mất lợi nhuận, dữ liệu, sử dụng, thiện chí hoặc các tổn thất vô hình khác.
               </p>
             </section>
 
@@ -94,15 +94,15 @@ const TermsPage = () => {
                 <span className="p-2 bg-primary/10 rounded-lg">
                   <span className="material-symbols-outlined text-primary">language</span>
                 </span>
-                <h2 className="text-2xl font-bold text-gray-900 m-0">6. Governing Law</h2>
+                <h2 className="text-2xl font-bold text-gray-900 m-0">6. Luật điều chỉnh</h2>
               </div>
               <p className="text-gray-600 leading-relaxed text-lg">
-                These Terms shall be governed and construed in accordance with the laws of the jurisdiction, without regard to its conflict of law provisions. Our failure to enforce any right or provision of these Terms will not be considered a waiver of those rights.
+                Các Điều khoản này sẽ được điều chỉnh và hiểu theo luật pháp của khu vực tài phán, không liên quan đến các điều khoản xung đột pháp luật. Việc chúng tôi không thực thi bất kỳ quyền hoặc quy định nào của các Điều khoản này sẽ không được coi là sự từ bỏ các quyền đó.
               </p>
             </section>
 
             <div className="pt-12 border-t border-gray-100 text-gray-400 text-sm">
-              <p className="italic">Last Updated: May 13, 2026</p>
+              <p className="italic">Cập nhật lần cuối: Ngày 13 tháng 5 năm 2026</p>
             </div>
           </div>
         </div>

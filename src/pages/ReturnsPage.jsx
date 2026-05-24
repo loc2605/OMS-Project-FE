@@ -17,11 +17,11 @@ const ReturnsPage = () => {
           className="absolute left-8 top-8 flex items-center gap-2 text-white/80 hover:text-white transition-colors font-bold text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full backdrop-blur-md z-20"
         >
           <span className="material-symbols-outlined text-base">arrow_back</span>
-          Back
+          Trở lại
         </button>
         <div className="container mx-auto max-w-5xl relative">
-          <h1 className="text-5xl font-black text-white mb-4 tracking-tight">Returns & Refunds</h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto">Not happy with your purchase? No problem. Our simple return process ensures you can shop with confidence.</p>
+          <h1 className="text-5xl font-black text-white mb-4 tracking-tight">Đổi trả & Hoàn tiền</h1>
+          <p className="text-white/80 text-lg max-w-2xl mx-auto">Không hài lòng với giao dịch mua hàng của bạn? Không thành vấn đề. Quá trình đổi trả đơn giản của chúng tôi đảm bảo bạn có thể tự tin mua sắm.</p>
         </div>
       </div>
 
@@ -33,10 +33,10 @@ const ReturnsPage = () => {
                 <span className="p-2 bg-primary/10 rounded-lg">
                   <span className="material-symbols-outlined text-primary">assignment_return</span>
                 </span>
-                <h2 className="text-2xl font-bold text-gray-900 m-0">Return Policy</h2>
+                <h2 className="text-2xl font-bold text-gray-900 m-0">Chính sách Đổi trả</h2>
               </div>
               <p className="text-gray-600 leading-relaxed text-lg">
-                We want you to be completely satisfied with your purchase. If for any reason you are not happy, you can return most items within <span className="font-bold text-gray-900">30 days</span> of delivery for a full refund or exchange.
+                Chúng tôi muốn bạn hoàn toàn hài lòng với việc mua hàng của mình. Nếu vì bất kỳ lý do gì bạn không hài lòng, bạn có thể trả lại hầu hết các mặt hàng trong vòng <span className="font-bold text-gray-900">30 ngày</span> kể từ ngày giao hàng để được hoàn tiền đầy đủ hoặc đổi trả.
               </p>
             </section>
 
@@ -45,13 +45,13 @@ const ReturnsPage = () => {
                 <span className="p-2 bg-primary/10 rounded-lg">
                   <span className="material-symbols-outlined text-primary">fact_check</span>
                 </span>
-                <h2 className="text-2xl font-bold text-gray-900 m-0">Conditions for Return</h2>
+                <h2 className="text-2xl font-bold text-gray-900 m-0">Điều kiện Trả hàng</h2>
               </div>
               <ul className="list-none p-0 space-y-4">
                 {[
-                  { icon: 'inventory_2', title: 'Original Packaging', desc: 'Items must be returned in their original packaging with all tags attached.' },
-                  { icon: 'new_releases', title: 'Unused Condition', desc: 'The item must be unused, unwashed, and in the same condition as received.' },
-                  { icon: 'receipt_long', title: 'Proof of Purchase', desc: 'A valid receipt or order number is required for all returns.' }
+                  { icon: 'inventory_2', title: 'Bao bì gốc', desc: 'Các mặt hàng phải được trả lại trong bao bì ban đầu của chúng với tất cả các thẻ đính kèm.' },
+                  { icon: 'new_releases', title: 'Chưa qua sử dụng', desc: 'Mặt hàng phải chưa qua sử dụng, chưa giặt và ở cùng tình trạng như khi nhận.' },
+                  { icon: 'receipt_long', title: 'Bằng chứng mua hàng', desc: 'Cần có biên lai hợp lệ hoặc số đơn đặt hàng cho tất cả các khoản trả hàng.' }
                 ].map((item, i) => (
                   <li key={i} className="flex gap-4 items-start p-4 rounded-2xl bg-gray-50 border border-gray-100">
                     <span className="material-symbols-outlined text-primary">{item.icon}</span>
@@ -69,10 +69,10 @@ const ReturnsPage = () => {
                 <span className="p-2 bg-primary/10 rounded-lg">
                   <span className="material-symbols-outlined text-primary">published_with_changes</span>
                 </span>
-                <h2 className="text-2xl font-bold text-gray-900 m-0">Refund Process</h2>
+                <h2 className="text-2xl font-bold text-gray-900 m-0">Quá trình hoàn tiền</h2>
               </div>
               <p className="text-gray-600 leading-relaxed text-lg">
-                Once we receive and inspect your returned item, we will send you an email notification. If approved, your refund will be automatically applied to your original method of payment within <span className="font-bold text-gray-900">5-10 business days</span>.
+                Khi chúng tôi nhận được và kiểm tra mặt hàng bạn trả lại, chúng tôi sẽ gửi cho bạn email thông báo. Nếu được chấp thuận, khoản tiền hoàn lại của bạn sẽ tự động được áp dụng vào phương thức thanh toán ban đầu của bạn trong vòng <span className="font-bold text-gray-900">5-10 ngày làm việc</span>.
               </p>
             </section>
 
@@ -80,8 +80,8 @@ const ReturnsPage = () => {
               <div className="flex gap-4 items-center">
                 <span className="material-symbols-outlined text-primary text-3xl font-black">warning</span>
                 <div>
-                  <h4 className="text-primary font-black uppercase tracking-widest text-xs mb-1 m-0">Important Note</h4>
-                  <p className="text-sm text-gray-700 m-0">Customized products, perishables, and clearance items are not eligible for return unless they arrive damaged or defective.</p>
+                  <h4 className="text-primary font-black uppercase tracking-widest text-xs mb-1 m-0">Lưu ý Quan trọng</h4>
+                  <p className="text-sm text-gray-700 m-0">Các sản phẩm tùy chỉnh, đồ dễ hỏng và hàng thanh lý không đủ điều kiện để trả lại trừ khi chúng bị hư hỏng hoặc lỗi.</p>
                 </div>
               </div>
             </div>

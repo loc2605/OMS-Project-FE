@@ -20,9 +20,9 @@ const CartPage = () => {
       <main className="max-w-[1400px] mx-auto px-4 pt-4">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 mb-6 text-sm text-gray-500">
-          <button onClick={() => navigate('/')} className="hover:text-primary transition-colors">Home</button>
+          <button onClick={() => navigate('/')} className="hover:text-primary transition-colors">Trang Chủ</button>
           <span className="material-symbols-outlined text-[16px]">chevron_right</span>
-          <span className="text-primary font-medium">Cart</span>
+          <span className="text-primary font-medium">Giỏ Hàng</span>
         </div>
 
         {/* Cart Items */}
@@ -31,12 +31,12 @@ const CartPage = () => {
             <div className="size-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="material-symbols-outlined text-gray-300 text-5xl">shopping_cart</span>
             </div>
-            <p className="text-gray-500 mb-6">Your shopping cart is empty</p>
+            <p className="text-gray-500 mb-6">Giỏ hàng của bạn đang trống</p>
             <button
               onClick={() => navigate('/')}
               className="bg-primary text-white px-10 py-2.5 rounded-sm hover:bg-primary/90 transition-all font-medium"
             >
-              Go Shopping
+              Tiếp tục mua sắm
             </button>
           </div>
         ) : (
@@ -86,7 +86,7 @@ const CartPage = () => {
                       onClick={() => removeFromCart(item.id)}
                       className="text-gray-500 hover:text-primary transition-colors text-sm font-medium"
                     >
-                      Delete
+                      Xóa
                     </button>
                   </div>
                 </div>
@@ -102,7 +102,7 @@ const CartPage = () => {
           <div className="max-w-[1200px] mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-6 text-sm text-gray-600">
               <div className="flex items-center gap-2">
-                <span>Total ({cartCount} items):</span>
+                <span>Tổng thanh toán ({cartCount} Sản phẩm):</span>
                 <span className="text-2xl font-bold text-primary">{formatCurrency(cartTotal)}</span>
               </div>
             </div>
@@ -112,7 +112,7 @@ const CartPage = () => {
                 onClick={() => navigate('/checkout')}
                 className="flex-1 md:w-52 bg-primary text-white py-3 font-medium text-base hover:bg-primary/90 transition-all rounded-sm shadow-sm"
               >
-                Check Out
+                Mua hàng
               </button>
             </div>
           </div>

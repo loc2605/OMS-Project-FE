@@ -17,11 +17,11 @@ const ShippingPage = () => {
           className="absolute left-8 top-8 flex items-center gap-2 text-white/80 hover:text-white transition-colors font-bold text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full backdrop-blur-md z-20"
         >
           <span className="material-symbols-outlined text-base">arrow_back</span>
-          Back
+          Trở lại
         </button>
         <div className="container mx-auto max-w-5xl relative">
-          <h1 className="text-5xl font-black text-white mb-4 tracking-tight">Shipping & Delivery</h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto">Fast, reliable, and secure. Learn more about our shipping methods, rates, and tracking options.</p>
+          <h1 className="text-5xl font-black text-white mb-4 tracking-tight">Vận chuyển & Giao nhận</h1>
+          <p className="text-white/80 text-lg max-w-2xl mx-auto">Nhanh chóng, đáng tin cậy và an toàn. Tìm hiểu thêm về phương thức vận chuyển, giá cước và tùy chọn theo dõi của chúng tôi.</p>
         </div>
       </div>
 
@@ -33,18 +33,18 @@ const ShippingPage = () => {
                 <span className="p-2 bg-primary/10 rounded-lg">
                   <span className="material-symbols-outlined text-primary">local_shipping</span>
                 </span>
-                <h2 className="text-2xl font-bold text-gray-900 m-0">Shipping Methods</h2>
+                <h2 className="text-2xl font-bold text-gray-900 m-0">Phương thức vận chuyển</h2>
               </div>
               <div className="grid md:grid-cols-2 gap-6 mt-8">
                 <div className="p-8 rounded-3xl bg-gray-50 border border-gray-100">
-                  <h3 className="font-bold text-gray-900 mb-2 m-0 text-xl">Standard Shipping</h3>
-                  <p className="text-primary font-black mb-4 uppercase tracking-widest text-xs">5-7 Business Days</p>
-                  <p className="text-gray-600 m-0">Ideal for non-urgent deliveries with the best value.</p>
+                  <h3 className="font-bold text-gray-900 mb-2 m-0 text-xl">Vận chuyển tiêu chuẩn</h3>
+                  <p className="text-primary font-black mb-4 uppercase tracking-widest text-xs">5-7 Ngày làm việc</p>
+                  <p className="text-gray-600 m-0">Lý tưởng cho các đơn hàng không khẩn cấp với chi phí tiết kiệm nhất.</p>
                 </div>
                 <div className="p-8 rounded-3xl bg-gray-50 border border-gray-100">
-                  <h3 className="font-bold text-gray-900 mb-2 m-0 text-xl">Express Shipping</h3>
-                  <p className="text-primary font-black mb-4 uppercase tracking-widest text-xs">2-3 Business Days</p>
-                  <p className="text-gray-600 m-0">Priority handling for when you need your items quickly.</p>
+                  <h3 className="font-bold text-gray-900 mb-2 m-0 text-xl">Vận chuyển hỏa tốc</h3>
+                  <p className="text-primary font-black mb-4 uppercase tracking-widest text-xs">2-3 Ngày làm việc</p>
+                  <p className="text-gray-600 m-0">Xử lý ưu tiên cho những đơn hàng bạn cần giao nhanh.</p>
                 </div>
               </div>
             </section>
@@ -54,10 +54,10 @@ const ShippingPage = () => {
                 <span className="p-2 bg-primary/10 rounded-lg">
                   <span className="material-symbols-outlined text-primary">payments</span>
                 </span>
-                <h2 className="text-2xl font-bold text-gray-900 m-0">Shipping Rates</h2>
+                <h2 className="text-2xl font-bold text-gray-900 m-0">Cước phí vận chuyển</h2>
               </div>
               <p className="text-gray-600 leading-relaxed text-lg">
-                Shipping rates are calculated based on the total weight of your order and your destination. We offer <span className="font-bold text-gray-900">Free Standard Shipping</span> on all domestic orders over <span className="font-bold text-gray-900">$150</span>.
+                Cước phí vận chuyển được tính dựa trên tổng trọng lượng đơn hàng và điểm đến của bạn. Chúng tôi cung cấp <span className="font-bold text-gray-900">Miễn phí Vận chuyển Tiêu chuẩn</span> cho tất cả các đơn hàng trong nước trên <span className="font-bold text-gray-900">150.000đ</span>.
               </p>
             </section>
 
@@ -66,10 +66,10 @@ const ShippingPage = () => {
                 <span className="p-2 bg-primary/10 rounded-lg">
                   <span className="material-symbols-outlined text-primary">public</span>
                 </span>
-                <h2 className="text-2xl font-bold text-gray-900 m-0">International Shipping</h2>
+                <h2 className="text-2xl font-bold text-gray-900 m-0">Vận chuyển Quốc tế</h2>
               </div>
               <p className="text-gray-600 leading-relaxed text-lg">
-                We currently ship to over 50 countries worldwide. Please be aware that international shipments may be subject to customs duties and taxes upon arrival, which are the responsibility of the recipient.
+                Chúng tôi hiện đang vận chuyển đến hơn 50 quốc gia trên toàn thế giới. Xin lưu ý rằng các lô hàng quốc tế có thể phải chịu thuế và phí hải quan khi hàng đến, và người nhận sẽ chịu trách nhiệm cho các khoản phí này.
               </p>
             </section>
 
@@ -78,10 +78,10 @@ const ShippingPage = () => {
                 <span className="p-2 bg-primary/10 rounded-lg">
                   <span className="material-symbols-outlined text-primary">location_on</span>
                 </span>
-                <h2 className="text-2xl font-bold text-gray-900 m-0">Order Tracking</h2>
+                <h2 className="text-2xl font-bold text-gray-900 m-0">Theo dõi đơn hàng</h2>
               </div>
               <p className="text-gray-600 leading-relaxed text-lg">
-                Once your order has been dispatched, you will receive a confirmation email containing a tracking number. You can monitor your package's journey through our website or directly via the courier's tracking portal.
+                Ngay sau khi đơn hàng của bạn được gửi đi, bạn sẽ nhận được email xác nhận có chứa số theo dõi. Bạn có thể theo dõi hành trình gói hàng thông qua trang web của chúng tôi hoặc trực tiếp qua cổng thông tin theo dõi của đơn vị vận chuyển.
               </p>
             </section>
           </div>

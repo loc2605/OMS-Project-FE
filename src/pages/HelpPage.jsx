@@ -8,23 +8,23 @@ const HelpPage = () => {
 
   const faqs = [
     {
-      q: "How do I track my order?",
-      a: "You can track your order by clicking on 'My Orders' in your profile or using the tracking link sent to your email.",
+      q: "Làm thế nào để theo dõi đơn hàng của tôi?",
+      a: "Bạn có thể theo dõi đơn hàng bằng cách nhấp vào 'Đơn Hàng' trong hồ sơ của bạn hoặc sử dụng liên kết theo dõi được gửi đến email của bạn.",
       icon: 'local_shipping'
     },
     {
-      q: "What is your return policy?",
-      a: "We offer a 30-day return policy for most items. Please visit our Returns & Refunds page for more details.",
+      q: "Chính sách đổi trả của bạn là gì?",
+      a: "Chúng tôi cung cấp chính sách đổi trả trong 30 ngày cho hầu hết các mặt hàng. Vui lòng truy cập trang Đổi trả & Hoàn tiền của chúng tôi để biết thêm chi tiết.",
       icon: 'assignment_return'
     },
     {
-      q: "How can I contact customer support?",
-      a: "Our support team is available 24/7 via the 'Contact Us' section or through our live chat on the homepage.",
+      q: "Làm cách nào để liên hệ với bộ phận hỗ trợ khách hàng?",
+      a: "Nhóm hỗ trợ của chúng tôi làm việc 24/7 thông qua phần 'Liên hệ' hoặc thông qua trò chuyện trực tiếp trên trang chủ.",
       icon: 'support_agent'
     },
     {
-      q: "What payment methods do you accept?",
-      a: "We accept all major credit cards, PayPal, and Cash on Delivery (COD) in selected regions.",
+      q: "Bạn chấp nhận phương thức thanh toán nào?",
+      a: "Chúng tôi chấp nhận tất cả các thẻ tín dụng chính, PayPal và Tiền mặt khi giao hàng (COD) ở một số khu vực.",
       icon: 'payments'
     }
   ];
@@ -40,11 +40,11 @@ const HelpPage = () => {
           className="absolute left-8 top-8 flex items-center gap-2 text-white/80 hover:text-white transition-colors font-bold text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full backdrop-blur-md z-20"
         >
           <span className="material-symbols-outlined text-base">arrow_back</span>
-          Back
+          Trở lại
         </button>
         <div className="container mx-auto max-w-5xl relative">
-          <h1 className="text-5xl font-black text-white mb-4 tracking-tight">Help Center</h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto">Find answers to frequently asked questions and get the support you need.</p>
+          <h1 className="text-5xl font-black text-white mb-4 tracking-tight">Trung tâm trợ giúp</h1>
+          <p className="text-white/80 text-lg max-w-2xl mx-auto">Tìm câu trả lời cho các câu hỏi thường gặp và nhận hỗ trợ bạn cần.</p>
         </div>
       </div>
 
@@ -56,7 +56,7 @@ const HelpPage = () => {
                 <span className="p-2 bg-primary/10 rounded-lg">
                   <span className="material-symbols-outlined text-primary">quiz</span>
                 </span>
-                <h2 className="text-2xl font-bold text-gray-900 m-0">Frequently Asked Questions</h2>
+                <h2 className="text-2xl font-bold text-gray-900 m-0">Các câu hỏi thường gặp</h2>
               </div>
               
               <div className="grid gap-6">
@@ -77,10 +77,10 @@ const HelpPage = () => {
             </section>
 
             <section className="bg-primary/5 rounded-[2rem] p-10 text-center border border-primary/10">
-              <h2 className="text-2xl font-bold text-gray-900 mb-2 m-0">Still need help?</h2>
-              <p className="text-gray-600 mb-8 max-w-md mx-auto">Our support team is ready to assist you 24 hours a day, 7 days a week.</p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2 m-0">Vẫn cần giúp đỡ?</h2>
+              <p className="text-gray-600 mb-8 max-w-md mx-auto">Đội ngũ hỗ trợ của chúng tôi sẵn sàng hỗ trợ bạn 24 giờ một ngày, 7 ngày một tuần.</p>
               <button className="px-10 py-4 bg-primary text-white font-black rounded-2xl hover:bg-orange-600 transition-all shadow-xl shadow-primary/20">
-                Contact Support
+                Liên hệ hỗ trợ
               </button>
             </section>
           </div>

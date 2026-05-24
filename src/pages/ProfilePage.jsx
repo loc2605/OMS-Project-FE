@@ -240,7 +240,7 @@ const ProfilePage = () => {
               className="w-full md:w-auto px-8 py-3 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/30 hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
             >
               <span className="material-symbols-outlined text-sm">edit</span>
-              Edit Profile
+              Chỉnh sửa hồ sơ
             </button>
           </div>
         </div>
@@ -255,44 +255,44 @@ const ProfilePage = () => {
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                   <span className="material-symbols-outlined">person</span>
                 </div>
-                Personal Information
+                Thông tin cá nhân
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                 <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Username</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Tên người dùng</p>
                   <p className="font-semibold text-gray-900">{user?.username || 'user'}</p>
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Full Name</p>
-                  <p className="font-semibold text-gray-900">{profile?.fullname || profile?.fullName || user?.fullName || 'Not set'}</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Họ và tên</p>
+                  <p className="font-semibold text-gray-900">{profile?.fullname || profile?.fullName || user?.fullName || 'Chưa cập nhật'}</p>
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Phone Number</p>
-                  <p className="font-semibold text-gray-900">{profile?.phone || 'Not set'}</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Số điện thoại</p>
+                  <p className="font-semibold text-gray-900">{profile?.phone || 'Chưa cập nhật'}</p>
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Gender</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Giới tính</p>
                   <p className="font-semibold text-gray-900">
-                    {profile?.gender === 'MALE' ? 'Male' : profile?.gender === 'FEMALE' ? 'Female' : profile?.gender === 'OTHER' ? 'Other' : 'Not set'}
+                    {profile?.gender === 'MALE' ? 'Nam' : profile?.gender === 'FEMALE' ? 'Nữ' : profile?.gender === 'OTHER' ? 'Khác' : 'Chưa cập nhật'}
                   </p>
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Date of Birth</p>
-                  <p className="font-semibold text-gray-900">{profile?.dateOfBirth || 'Not set'}</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Ngày sinh</p>
+                  <p className="font-semibold text-gray-900">{profile?.dateOfBirth || 'Chưa cập nhật'}</p>
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Account Status</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Trạng thái tài khoản</p>
                   <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-green-50 text-green-700 text-xs font-bold">
                     <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                    Active
+                    Hoạt động
                   </div>
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Account Security</p>
+                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Bảo mật tài khoản</p>
                   <Link to="/change-password" className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 hover:bg-amber-100 dark:bg-amber-950/20 dark:hover:bg-amber-950/40 text-amber-700 dark:text-amber-400 border border-amber-200/60 dark:border-amber-900/30 rounded-xl text-xs font-bold transition-all shadow-sm">
                     <span className="material-symbols-outlined text-[16px]">lock_reset</span>
-                    Change Password
+                    Đổi mật khẩu
                   </Link>
                 </div>
               </div>
@@ -307,13 +307,13 @@ const ProfilePage = () => {
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                     <span className="material-symbols-outlined">location_on</span>
                   </div>
-                  Addresses
+                  Địa chỉ
                 </h3>
                 <button 
                   onClick={() => setShowAddressListModal(true)}
                   className="text-primary text-sm font-bold hover:underline"
                 >
-                  Manage
+                  Quản lý
                 </button>
               </div>
 
@@ -323,7 +323,7 @@ const ProfilePage = () => {
                     <div className="w-16 h-16 mx-auto bg-gray-50 rounded-full flex items-center justify-center mb-3">
                       <span className="material-symbols-outlined text-gray-300 text-3xl">location_off</span>
                     </div>
-                    <p className="text-gray-500 text-sm mb-4">No addresses found.</p>
+                    <p className="text-gray-500 text-sm mb-4">Không tìm thấy địa chỉ.</p>
                     <button
                       onClick={() => {
                         setAddressForm({ ...addressForm, isDefault: true });
@@ -332,14 +332,14 @@ const ProfilePage = () => {
                       className="bg-primary/10 text-primary px-5 py-2 rounded-xl font-bold text-sm transition-all hover:bg-primary/20 inline-flex items-center gap-2"
                     >
                       <span className="material-symbols-outlined text-[18px]">add</span>
-                      Add New
+                      Thêm mới
                     </button>
                   </div>
                 ) : (
                   <div className="group rounded-2xl p-4 bg-gray-50 border border-gray-100 hover:border-primary/30 hover:bg-primary/5 transition-colors">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-sm font-bold text-gray-900">Default Address</span>
-                      <span className="bg-primary text-white text-[9px] px-2 py-0.5 rounded uppercase tracking-wider font-bold shadow-sm">DEFAULT</span>
+                      <span className="text-sm font-bold text-gray-900">Địa chỉ mặc định</span>
+                      <span className="bg-primary text-white text-[9px] px-2 py-0.5 rounded uppercase tracking-wider font-bold shadow-sm">MẶC ĐỊNH</span>
                     </div>
                     <p className="text-sm text-gray-600 leading-relaxed">
                       {(() => {

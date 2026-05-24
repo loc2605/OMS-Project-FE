@@ -8,28 +8,28 @@ const HowToBuyPage = () => {
 
   const steps = [
     {
-      title: "Browse and Select",
-      desc: "Explore our diverse categories and find the products you love. Click on any product to see detailed specifications and reviews.",
+      title: "Duyệt và Chọn",
+      desc: "Khám phá các danh mục đa dạng của chúng tôi và tìm những sản phẩm bạn yêu thích. Nhấp vào bất kỳ sản phẩm nào để xem thông số kỹ thuật và đánh giá chi tiết.",
       icon: 'search'
     },
     {
-      title: "Add to Cart",
-      desc: "Select your preferred options (size, color, etc.) and click 'Add to Cart' to save them for checkout.",
+      title: "Thêm vào Giỏ",
+      desc: "Chọn các tùy chọn ưa thích của bạn (kích thước, màu sắc, v.v.) và nhấp vào 'Thêm vào giỏ' để lưu chúng cho quá trình thanh toán.",
       icon: 'add_shopping_cart'
     },
     {
-      title: "Review Your Cart",
-      desc: "Click the cart icon at the top right to review your selections. You can easily adjust quantities or remove items here.",
+      title: "Xem lại Giỏ hàng",
+      desc: "Nhấp vào biểu tượng giỏ hàng ở trên cùng bên phải để xem lại các lựa chọn của bạn. Bạn có thể dễ dàng điều chỉnh số lượng hoặc xóa các mặt hàng tại đây.",
       icon: 'shopping_cart'
     },
     {
-      title: "Secure Checkout",
-      desc: "Provide your shipping details, choose your preferred payment method, and confirm your order in our secure environment.",
+      title: "Thanh toán An toàn",
+      desc: "Cung cấp thông tin vận chuyển của bạn, chọn phương thức thanh toán ưa thích và xác nhận đơn hàng trong môi trường an toàn của chúng tôi.",
       icon: 'lock_person'
     },
     {
-      title: "Order Confirmation",
-      desc: "After placing your order, you'll receive a confirmation email with all details and a tracking number to follow your package.",
+      title: "Xác nhận Đơn hàng",
+      desc: "Sau khi đặt hàng, bạn sẽ nhận được email xác nhận với tất cả các chi tiết và số theo dõi để theo dõi gói hàng của bạn.",
       icon: 'mark_email_read'
     }
   ];
@@ -45,11 +45,11 @@ const HowToBuyPage = () => {
           className="absolute left-8 top-8 flex items-center gap-2 text-white/80 hover:text-white transition-colors font-bold text-sm bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full backdrop-blur-md z-20"
         >
           <span className="material-symbols-outlined text-base">arrow_back</span>
-          Back
+          Trở lại
         </button>
         <div className="container mx-auto max-w-5xl relative">
-          <h1 className="text-5xl font-black text-white mb-4 tracking-tight">How to Buy</h1>
-          <p className="text-white/80 text-lg max-w-2xl mx-auto">New to ShopModern? Follow our simple step-by-step guide to start your shopping journey today.</p>
+          <h1 className="text-5xl font-black text-white mb-4 tracking-tight">Hướng dẫn mua hàng</h1>
+          <p className="text-white/80 text-lg max-w-2xl mx-auto">Mới sử dụng ShopModern? Thực hiện theo hướng dẫn từng bước đơn giản của chúng tôi để bắt đầu hành trình mua sắm của bạn ngay hôm nay.</p>
         </div>
       </div>
 
@@ -61,7 +61,7 @@ const HowToBuyPage = () => {
                 <span className="p-2 bg-primary/10 rounded-lg">
                   <span className="material-symbols-outlined text-primary">auto_stories</span>
                 </span>
-                <h2 className="text-2xl font-bold text-gray-900 m-0">The Shopping Process</h2>
+                <h2 className="text-2xl font-bold text-gray-900 m-0">Quá trình mua sắm</h2>
               </div>
               
               <div className="space-y-10">
@@ -86,13 +86,13 @@ const HowToBuyPage = () => {
             </section>
 
             <div className="bg-gray-50 rounded-3xl p-10 text-center border border-gray-100">
-              <h3 className="text-xl font-bold text-gray-900 mb-2 m-0">Need any assistance?</h3>
-              <p className="text-gray-500 mb-6 m-0">Our team is available to help you with your order at any stage.</p>
+              <h3 className="text-xl font-bold text-gray-900 mb-2 m-0">Cần sự trợ giúp?</h3>
+              <p className="text-gray-500 mb-6 m-0">Đội ngũ của chúng tôi sẵn sàng giúp đỡ bạn với đơn hàng ở bất kỳ giai đoạn nào.</p>
               <button 
                 onClick={() => navigate('/help')}
                 className="px-8 py-3 bg-gray-900 text-white font-bold rounded-xl hover:bg-primary transition-all active:scale-95"
               >
-                Visit Help Center
+                Truy cập Trung tâm trợ giúp
               </button>
             </div>
           </div>
