@@ -4,6 +4,7 @@ import AppRoutes from './routes/AppRoutes';
 import { AuthProvider } from './contexts/AuthContext';
 import { CartProvider } from './contexts/CartContext.jsx';
 import ScrollToTop from './components/common/ScrollToTop';
+import AIChatbot from './components/common/AIChatbot';
 
 export default function App() {
   return (
@@ -11,6 +12,7 @@ export default function App() {
       <CartProvider>
         <BrowserRouter>
           <ScrollToTop />
+          <AIChatbot />
           <AppRoutes />
         </BrowserRouter>
       </CartProvider>
