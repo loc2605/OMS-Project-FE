@@ -24,8 +24,8 @@ const HomePage = () => {
         <section className="space-y-6 mb-2">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h2 className="text-3xl font-bold text-heading-text">New Arrivals</h2>
-              <p className="text-gray-500">Discover the latest additions to our premium collection</p>
+              <h2 className="text-3xl font-bold text-heading-text">Sản Phẩm Mới</h2>
+              <p className="text-gray-500">Khám phá những sản phẩm mới nhất trong bộ sưu tập cao cấp của chúng tôi</p>
             </div>
           </div>
 

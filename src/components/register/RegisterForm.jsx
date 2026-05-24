@@ -24,7 +24,7 @@ const RegisterForm = () => {
     e.preventDefault();
     setIsSubmitted(true);
     if (!isPasswordValid) {
-      alert("Password does not meet the minimum requirements");
+      alert("Mật khẩu không đáp ứng các yêu cầu tối thiểu");
       return;
     }
     if (password === confirmPassword && fullName && email && password) {
@@ -41,15 +41,15 @@ const RegisterForm = () => {
         if (response.success) {
           navigate('/login');
         } else {
-          alert(response.message || 'Registration failed');
+          alert(response.message || 'Đăng ký thất bại');
         }
       } catch (error) {
-        alert(error.message || 'Registration failed');
+        alert(error.message || 'Đăng ký thất bại');
       }
     } else if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      alert("Mật khẩu không khớp");
     } else {
-      alert("Please fill in all required fields");
+      alert("Vui lòng điền đầy đủ thông tin");
     }
   };
 
@@ -57,10 +57,10 @@ const RegisterForm = () => {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Username</label>
+          <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Tên đăng nhập</label>
           <div className="relative">
             <input 
-              className="w-full h-11 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" 
+              className="w-full h-12 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" 
               placeholder="johndoe123" 
               type="text" 
               value={username} 
@@ -70,9 +70,9 @@ const RegisterForm = () => {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Full Name</label>
+          <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Họ và tên</label>
           <div className="relative">
-            <input className="w-full h-11 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" placeholder="John Doe" type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+            <input className="w-full h-12 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" placeholder="John Doe" type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} />
             <span className="material-symbols-outlined absolute right-3 top-2.5 text-green-500 text-xl">check_circle</span>
           </div>
         </div>
@@ -80,22 +80,22 @@ const RegisterForm = () => {
 
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Email Address</label>
-          <input className="w-full h-11 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" placeholder="john@example.com" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Địa chỉ Email</label>
+          <input className="w-full h-12 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" placeholder="john@example.com" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Phone Number</label>
-          <input className="w-full h-11 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" placeholder="0123 456 789" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Số điện thoại</label>
+          <input className="w-full h-12 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" placeholder="0123 456 789" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
         </div>
       </div>
 
       <div className="flex flex-col gap-1.5">
         <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Password</label>
+            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Mật khẩu</label>
             <div className="relative">
-              <input className="w-full h-11 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" placeholder="••••••••" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} />
+              <input className="w-full h-12 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" placeholder="••••••••" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} />
               <button className="absolute right-3 top-2.5 text-gray-400 hover:text-gray-600" type="button" onClick={() => setShowPassword((p) => !p)}>
                 <span className="material-symbols-outlined">{showPassword ? 'visibility_off' : 'visibility'}</span>
               </button>
@@ -103,9 +103,9 @@ const RegisterForm = () => {
           </div>
           
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Confirm Password</label>
+            <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Xác nhận mật khẩu</label>
             <input 
-              className={`w-full h-11 px-4 rounded-lg border bg-white dark:bg-gray-900 focus:ring-2 outline-none transition-all dark:text-white ${isSubmitted && confirmPassword && password !== confirmPassword ? 'border-red-400 focus:ring-red-200 focus:border-red-500' : 'border-gray-200 dark:border-gray-700 focus:ring-primary/20 focus:border-primary'}`} 
+              className={`w-full h-12 px-4 rounded-lg border bg-white dark:bg-gray-900 focus:ring-2 outline-none transition-all dark:text-white ${isSubmitted && confirmPassword && password !== confirmPassword ? 'border-red-400 focus:ring-red-200 focus:border-red-500' : 'border-gray-200 dark:border-gray-700 focus:ring-primary/20 focus:border-primary'}`} 
               placeholder="••••••••" 
               type="password" 
               value={confirmPassword} 
@@ -113,7 +113,7 @@ const RegisterForm = () => {
             />
             {isSubmitted && confirmPassword && password !== confirmPassword && (
               <p className="text-[11px] text-red-500 font-bold mt-1.5">
-                Passwords do not match
+                Mật khẩu không khớp
               </p>
             )}
           </div>
@@ -122,19 +122,19 @@ const RegisterForm = () => {
         <div className="grid grid-cols-2 gap-y-1.5 gap-x-2 mt-1">
           <div className={`flex items-center gap-1.5 ${hasMinLength ? 'text-green-600 dark:text-green-400' : 'text-gray-400'}`}>
             <span className="material-symbols-outlined text-[14px]">{hasMinLength ? 'check_circle' : 'circle'}</span>
-            <span className="text-[11px] font-medium leading-tight">6+ characters</span>
+            <span className="text-[11px] font-medium leading-tight">Từ 6 ký tự</span>
           </div>
           <div className={`flex items-center gap-1.5 ${hasUppercase ? 'text-green-600 dark:text-green-400' : 'text-gray-400'}`}>
             <span className="material-symbols-outlined text-[14px]">{hasUppercase ? 'check_circle' : 'circle'}</span>
-            <span className="text-[11px] font-medium leading-tight">One uppercase</span>
+            <span className="text-[11px] font-medium leading-tight">1 chữ in hoa</span>
           </div>
           <div className={`flex items-center gap-1.5 ${hasNumber ? 'text-green-600 dark:text-green-400' : 'text-gray-400'}`}>
             <span className="material-symbols-outlined text-[14px]">{hasNumber ? 'check_circle' : 'circle'}</span>
-            <span className="text-[11px] font-medium leading-tight">One number</span>
+            <span className="text-[11px] font-medium leading-tight">1 chữ số</span>
           </div>
           <div className={`flex items-center gap-1.5 ${hasLowercase ? 'text-green-600 dark:text-green-400' : 'text-gray-400'}`}>
             <span className="material-symbols-outlined text-[14px]">{hasLowercase ? 'check_circle' : 'circle'}</span>
-            <span className="text-[11px] font-medium leading-tight">One lowercase</span>
+            <span className="text-[11px] font-medium leading-tight">1 chữ in thường</span>
           </div>
         </div>
       </div>
@@ -145,23 +145,23 @@ const RegisterForm = () => {
             <input className="peer h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary mt-0.5" type="checkbox" />
           </div>
           <span className="text-xs text-gray-600 dark:text-gray-400 leading-tight">
-            I agree to the <Link className="text-primary font-bold hover:underline" to="/terms">Terms & Conditions</Link> and <Link className="text-primary font-bold hover:underline" to="/privacy">Privacy Policy</Link>.
+            Tôi đồng ý với <Link className="text-primary font-bold hover:underline" to="/terms">Điều khoản Dịch vụ</Link> và <Link className="text-primary font-bold hover:underline" to="/privacy">Chính sách Bảo mật</Link>.
           </span>
         </label>
       </div>
 
       <button className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-lg shadow-lg shadow-primary/20 transition-all transform active:scale-[0.98]" type="submit">
-        Create Account
+        Đăng Ký
       </button>
 
       <p className="text-center text-sm text-gray-600 dark:text-gray-400 pt-2">
-        Already have an account? <Link to="/login" className="text-primary font-bold hover:underline">Log In</Link>
+        Đã có tài khoản? <Link to="/login" className="text-primary font-bold hover:underline">Đăng Nhập</Link>
       </p>
 
       {/* Trust Badge */}
       <div className="mt-6 flex items-center justify-center gap-2 text-gray-400/60 dark:text-gray-600/50">
         <span className="material-symbols-outlined text-sm">lock</span>
-        <span className="text-[10px] uppercase tracking-[0.2em] font-bold">Secure SSL Encryption</span>
+        <span className="text-[10px] uppercase tracking-[0.2em] font-bold">Bảo mật mã hóa SSL</span>
       </div>
     </form>
   );

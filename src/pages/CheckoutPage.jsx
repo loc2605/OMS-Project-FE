@@ -610,7 +610,6 @@ const CheckoutPage = () => {
                   />
                   <div className="flex flex-col justify-center">
                     <h3 className="text-sm text-gray-800 line-clamp-2 mb-1">{item.name}</h3>
-                    <span className="text-xs text-gray-400">Variation: {item.variant || 'Default'}</span>
                   </div>
                 </div>
                 <div className="col-span-2 text-center text-sm">{formatCurrency(item.price)}</div>

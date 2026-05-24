@@ -140,7 +140,7 @@ const Header = () => {
               <div className="relative flex items-center w-full">
                 <input
                   className="w-full h-10 pl-4 pr-[80px] bg-[#F5F5F5] border border-black/5 rounded focus:ring-1 focus:ring-primary focus:border-primary text-sm placeholder:text-[#999]"
-                  placeholder="Search for product name"
+                  placeholder="Tìm kiếm tên sản phẩm"
                   type="text"
                   value={searchValue}
                   onChange={(e) => setSearchValue(e.target.value)}
@@ -169,7 +169,7 @@ const Header = () => {
                 }`}
               to="/"
             >
-              Home
+              Trang Chủ
             </Link>
 
             <Link
@@ -177,7 +177,7 @@ const Header = () => {
                 }`}
               to="/products"
             >
-              Products
+              Sản Phẩm
             </Link>
 
             <Link
@@ -185,7 +185,7 @@ const Header = () => {
                 }`}
               to="/orders"
             >
-              My Orders
+              Đơn Hàng
             </Link>
 
 
@@ -217,7 +217,7 @@ const Header = () => {
                 {openNotification && (
                   <div className="absolute right-0 mt-2 w-[400px] bg-white border border-black/10 rounded-sm shadow-xl z-50 overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="px-4 py-3 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
-                      <h3 className="text-sm font-bold text-gray-800">Recently Received Notifications</h3>
+                      <h3 className="text-sm font-bold text-gray-800">Thông báo mới nhận</h3>
                     </div>
                     <div className="max-h-[400px] overflow-y-auto">
                       {loadingNotifications ? (
@@ -253,7 +253,7 @@ const Header = () => {
                                       }}
                                       className="px-4 py-1.5 bg-primary text-white text-xs font-medium rounded-sm hover:bg-primary/90 transition-all shadow-sm"
                                     >
-                                      View Order Details
+                                      Xem chi tiết đơn hàng
                                     </button>
                                   </div>
                                 )}
@@ -264,7 +264,7 @@ const Header = () => {
                       ) : (
                         <div className="py-12 text-center flex flex-col items-center">
                           <span className="material-symbols-outlined text-gray-300 text-4xl mb-2">notifications_off</span>
-                          <p className="text-sm text-gray-500">No notifications yet</p>
+                          <p className="text-sm text-gray-500">Chưa có thông báo nào</p>
                         </div>
                       )}
                     </div>
@@ -308,14 +308,14 @@ const Header = () => {
                       className="w-full text-left px-4 py-2 text-sm text-heading hover:bg-gray-100"
                       type="button"
                     >
-                      Profile
+                      Hồ sơ
                     </button>
                     <button
                       onClick={handleLogout}
                       className="w-full text-left px-4 py-2 text-sm text-heading hover:bg-gray-100"
                       type="button"
                     >
-                      Logout
+                      Đăng xuất
                     </button>
                   </div>
                 )}
@@ -328,7 +328,7 @@ const Header = () => {
                     : 'border border-black/10 bg-white text-heading hover:bg-primary hover:text-white'
                   }`}
               >
-                Login
+                Đăng Nhập
               </Link>
             )}
           </div>

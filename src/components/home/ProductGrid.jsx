@@ -124,15 +124,15 @@ const ProductGrid = ({ filters, onCategoriesFetched }) => {
       <div className="flex items-center justify-between mb-2 bg-white/50 p-2 rounded">
         <div></div>
         <div className="flex items-center gap-4">
-          <span className="text-sm text-body-text">Sort by:</span>
+          <span className="text-sm text-body-text">Sắp xếp theo:</span>
           <select 
             value={sortOption}
             onChange={(e) => setSortOption(e.target.value)}
             className="bg-white border border-primary/40 text-sm min-w-[160px] px-5 py-1.5 rounded focus:ring-1 focus:ring-primary focus:border-primary cursor-pointer transition-all"
           >
-            <option value="newest">Newest</option>
-            <option value="priceAsc">Lowest Price</option>
-            <option value="priceDesc">Highest Price</option>
+            <option value="newest">Mới Nhất</option>
+            <option value="priceAsc">Giá Thấp Nhất</option>
+            <option value="priceDesc">Giá Cao Nhất</option>
           </select>
         </div>
       </div>
@@ -181,7 +181,7 @@ const ProductGrid = ({ filters, onCategoriesFetched }) => {
         </div>
       )}
       {!loading && filteredProducts.length === 0 && (
-        <div className="mt-10 text-center text-gray-500">No products found.</div>
+        <div className="mt-10 text-center text-gray-500">Không tìm thấy sản phẩm.</div>
       )}
     </div>
   );

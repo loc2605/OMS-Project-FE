@@ -91,12 +91,12 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
           <div className="flex items-center justify-between">
             <h3 className="text-[15px] font-bold text-heading uppercase flex items-center gap-1.5 tracking-wider">
               <span className="material-symbols-outlined text-[20px] text-primary">list</span>
-              Categories
+              Danh Mục
             </h3>
             <button
               onClick={handleReset}
               className="size-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-primary transition-colors"
-              title="Reset Filters"
+              title="Xóa Bộ Lọc"
             >
               <span className="material-symbols-outlined text-[14px]">filter_alt_off</span>
             </button>
@@ -148,12 +148,12 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
         </div>
 
         <div className="space-y-3 pt-3 border-t border-black/5">
-          <h3 className="text-[15px] font-bold text-heading uppercase tracking-wider">Price Range</h3>
+          <h3 className="text-[15px] font-bold text-heading uppercase tracking-wider">Khoảng Giá</h3>
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-1.5">
               <input
                 className="w-full text-sm p-1.5 rounded border border-black/10 focus:ring-1 focus:ring-primary focus:border-primary"
-                placeholder="Min"
+                placeholder="Từ"
                 type="number"
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
@@ -161,13 +161,13 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
               <span className="text-gray-400 text-xs">-</span>
               <input
                 className="w-full text-sm p-1.5 rounded border border-black/10 focus:ring-1 focus:ring-primary focus:border-primary"
-                placeholder="Max"
+                placeholder="Đến"
                 type="number"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
               />
             </div>
-            <button onClick={handleApplyPrice} className="w-full py-1.5 bg-primary text-[15px] font-bold text-white rounded uppercase mt-1 hover:bg-[#d63013] transition-colors">Apply</button>
+            <button onClick={handleApplyPrice} className="w-full py-1.5 bg-primary text-[15px] font-bold text-white rounded uppercase mt-1 hover:bg-[#d63013] transition-colors">Áp Dụng</button>
           </div>
         </div>
       </div>

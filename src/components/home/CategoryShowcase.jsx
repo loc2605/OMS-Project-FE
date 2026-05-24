@@ -12,14 +12,14 @@ const CategoryShowcase = ({ categories }) => {
     <section className="space-y-6 mb-8">
       <div className="flex items-end justify-between">
         <div className="space-y-1">
-          <h2 className="text-3xl font-bold text-heading-text">Curated Categories</h2>
-          <p className="text-gray-500">Explore our wide range of premium collections</p>
+          <h2 className="text-3xl font-bold text-heading-text">Danh Mục Nổi Bật</h2>
+          <p className="text-gray-500">Khám phá bộ sưu tập đa dạng và cao cấp của chúng tôi</p>
         </div>
         <button
           onClick={() => navigate('/products')}
           className="text-primary font-bold text-sm hover:underline flex items-center gap-1"
         >
-          View All
+          Xem Tất Cả
         </button>
       </div>
 
@@ -44,7 +44,7 @@ const CategoryShowcase = ({ categories }) => {
             <div className="absolute bottom-0 left-0 p-5 w-full transform translate-y-2 group-hover:translate-y-0 transition-transform">
               <h3 className="text-xl md:text-2xl font-bold text-white mb-1.5">{cat.name}</h3>
               <div className="flex items-center gap-2 text-white/80 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">
-                Discover More <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                Khám Phá Thêm <span className="material-symbols-outlined text-sm">arrow_forward</span>
               </div>
             </div>
           </div>

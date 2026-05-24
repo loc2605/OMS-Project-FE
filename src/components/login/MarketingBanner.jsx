@@ -27,20 +27,20 @@ const MarketingBanner = () => {
       </div>
 
       <div className="relative z-10 max-w-lg">
-        <span className="inline-block bg-white text-primary px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-widest mb-6 shadow-xl animate-bounce-subtle">Limited Time Offer</span>
+        <span className="inline-block bg-white text-primary px-4 py-1.5 rounded-full text-sm font-bold uppercase tracking-widest mb-6 shadow-xl animate-bounce-subtle">Sản Phẩm Đa Dạng</span>
         <h2 className="text-white text-7xl font-black leading-none tracking-tighter mb-6 drop-shadow-2xl">
-          MEGA <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60">SALE</span>
+          THẾ GIỚI <br />
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-white to-white/60">MUA SẮM</span>
         </h2>
         <p className="text-white/90 text-2xl font-medium mb-8 max-w-md leading-relaxed">
-          Up to 70% off on all new season collections. <br />
-          <span className="text-white font-bold">Don't miss out!</span>
+          Khám phá hàng ngàn sản phẩm chất lượng với mức giá cực tốt. <br />
+          <span className="text-white font-bold">Đáp ứng mọi nhu cầu!</span>
         </p>
         <button 
           onClick={() => navigate('/products')}
           className="bg-white text-primary font-bold py-5 px-10 rounded-xl hover:bg-orange-50 hover:scale-105 active:scale-95 transition-all text-xl shadow-2xl flex items-center gap-2 group"
         >
-          Shop The Collection
+          Mua Sắm Ngay
           <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
         </button>
       </div>
@@ -48,15 +48,15 @@ const MarketingBanner = () => {
       <div className="relative z-10 grid grid-cols-3 gap-8 text-white/90 border-t border-white/20 pt-8">
         <div>
           <p className="text-3xl font-black text-white">24h</p>
-          <p className="text-xs uppercase tracking-widest font-bold opacity-70">Fast Delivery</p>
+          <p className="text-xs uppercase tracking-widest font-bold opacity-70">Giao Hàng Nhanh</p>
         </div>
         <div>
           <p className="text-3xl font-black text-white">100%</p>
-          <p className="text-xs uppercase tracking-widest font-bold opacity-70">Authentic</p>
+          <p className="text-xs uppercase tracking-widest font-bold opacity-70">Chính Hãng</p>
         </div>
         <div>
           <p className="text-3xl font-black text-white">Free</p>
-          <p className="text-xs uppercase tracking-widest font-bold opacity-70">Returns</p>
+          <p className="text-xs uppercase tracking-widest font-bold opacity-70">Đổi Trả</p>
         </div>
       </div>
     </div>
