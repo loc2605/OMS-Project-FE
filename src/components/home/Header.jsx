@@ -4,6 +4,32 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useCart } from '../../contexts/CartContext.jsx';
 import notificationApi from '../../api/notificationApi';
 
+const getLocalizedNotification = (noti) => {
+  if (!noti) return null;
+  let title = noti.title;
+  let content = noti.content;
+
+  if (title === 'Order Update') {
+    title = 'Cập nhật đơn hàng';
+  } else if (title === 'Delivery Update') {
+    title = 'Cập nhật vận chuyển';
+  }
+
+  content = content
+    .replace(/Order confirmation for order ID /gi, 'Đã xác nhận đơn hàng ')
+    .replace(/is processing/gi, 'đang được xử lý')
+    .replace(/Shipper /gi, 'Người giao hàng ')
+    .replace(/ assigned to deliver order ID /gi, ' đã được phân phối để giao đơn hàng ')
+    .replace(/Order ID /gi, 'Đơn hàng ')
+    .replace(/ has been successfully delivered/gi, ' đã được giao thành công')
+    .replace(/Delivery failed for order ID /gi, 'Giao hàng thất bại cho đơn hàng ')
+    .replace(/ due to /gi, ' do ')
+    .replace(/Order cancelled for order ID /gi, 'Đơn hàng đã bị hủy cho mã đơn ')
+    .replace(/ due to inventory issues/gi, ' do sự cố hàng tồn kho');
+
+  return { ...noti, title, content };
+};
+
 const Header = () => {
   const { isAuthenticated, logout, user } = useAuth();
   const { cartCount, clearCart } = useCart();
@@ -227,20 +253,21 @@ const Header = () => {
                       ) : notifications.length > 0 ? (
                         <div className="divide-y divide-gray-50">
                           {notifications.map((noti) => {
-                            const isExpanded = expandedNotificationId === noti.id;
-                            const orderMatch = noti.content.match(/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i);
+                            const locNoti = getLocalizedNotification(noti);
+                            const isExpanded = expandedNotificationId === locNoti.id;
+                            const orderMatch = locNoti.content.match(/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i);
                             return (
                               <div 
-                                key={noti.id} 
-                                onClick={() => handleNotificationClick(noti)}
-                                className={`p-4 hover:bg-gray-50 transition-colors cursor-pointer ${!noti.read ? 'bg-primary/5' : ''}`}
+                                key={locNoti.id} 
+                                onClick={() => handleNotificationClick(locNoti)}
+                                className={`p-4 hover:bg-gray-50 transition-colors cursor-pointer ${!locNoti.read ? 'bg-primary/5' : ''}`}
                               >
-                                <h4 className="text-sm font-medium text-gray-800 mb-1">{noti.title}</h4>
+                                <h4 className="text-sm font-medium text-gray-800 mb-1">{locNoti.title}</h4>
                                 <p className={`text-xs text-gray-600 leading-relaxed ${isExpanded ? 'whitespace-pre-wrap' : 'line-clamp-2'}`}>
-                                  {noti.content}
+                                  {locNoti.content}
                                 </p>
                                 <span className="text-[10px] text-gray-400 mt-2 block">
-                                  {new Date(noti.createdAt).toLocaleString('vi-VN')}
+                                  {new Date(locNoti.createdAt).toLocaleString('vi-VN')}
                                 </span>
                                 
                                 {isExpanded && orderMatch && (
@@ -336,22 +363,25 @@ const Header = () => {
       </div>
       
       {/* Toast Notification */}
-      {toastNoti && (
-        <div className="fixed bottom-6 right-6 bg-white border-l-4 border-primary rounded-sm shadow-2xl p-4 w-[350px] z-[9999] animate-in slide-in-from-right-8 fade-in duration-300">
-          <div className="flex justify-between items-start mb-1">
-            <h4 className="text-sm font-bold text-gray-800 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-[18px]">notifications_active</span>
-              {toastNoti.title}
-            </h4>
-            <button onClick={() => setToastNoti(null)} className="text-gray-400 hover:text-gray-600">
-              <span className="material-symbols-outlined text-[16px]">close</span>
-            </button>
+      {toastNoti && (() => {
+        const locToast = getLocalizedNotification(toastNoti);
+        return (
+          <div className="fixed bottom-6 right-6 bg-white border-l-4 border-primary rounded-sm shadow-2xl p-4 w-[350px] z-[9999] animate-in slide-in-from-right-8 fade-in duration-300">
+            <div className="flex justify-between items-start mb-1">
+              <h4 className="text-sm font-bold text-gray-800 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary text-[18px]">notifications_active</span>
+                {locToast.title}
+              </h4>
+              <button onClick={() => setToastNoti(null)} className="text-gray-400 hover:text-gray-600">
+                <span className="material-symbols-outlined text-[16px]">close</span>
+              </button>
+            </div>
+            <p className="text-xs text-gray-600 leading-relaxed mt-2 line-clamp-3">
+              {locToast.content}
+            </p>
           </div>
-          <p className="text-xs text-gray-600 leading-relaxed mt-2 line-clamp-3">
-            {toastNoti.content}
-          </p>
-        </div>
-      )}
+        );
+      })()}
     </header>
   );
 };

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useCart } from '../../contexts/CartContext.jsx';
 import aiApi from '../../api/aiApi';
 
 const AIChatbot = () => {
@@ -11,6 +12,21 @@ const AIChatbot = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const { cartItems } = useCart();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const hasStickyCartBar = location.pathname === '/cart' && cartItems && cartItems.length > 0;
+  const hasMobileProfileNav = isMobile && location.pathname === '/profile';
+  const shouldShiftUp = hasStickyCartBar || hasMobileProfileNav;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -59,7 +75,7 @@ const AIChatbot = () => {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 font-sans">
+    <div className={`fixed right-6 z-[9999] font-sans transition-all duration-300 ${shouldShiftUp ? 'bottom-24' : 'bottom-6'}`}>
       {/* Bubble Button */}
       {!isOpen && (
         <button

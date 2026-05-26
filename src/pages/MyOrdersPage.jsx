@@ -15,17 +15,30 @@ const MyOrdersPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  const translateStatus = (status) => {
+    switch (status) {
+      case 'PENDING_VALIDATION': return 'Đang xác thực';
+      case 'PENDING': return 'Chờ xử lý';
+      case 'PAYMENT_PENDING': return 'Chờ thanh toán';
+      case 'CONFIRMED': return 'Đã xác nhận';
+      case 'SHIPPING': return 'Đang giao hàng';
+      case 'COMPLETED': return 'Hoàn thành';
+      case 'CANCELLED': return 'Đã hủy';
+      default: return status ? status.replace(/_/g, ' ') : '';
+    }
+  };
+
   useEffect(() => {
     setCurrentPage(1);
   }, [activeTab, searchTerm]);
 
   const tabs = [
-    { id: 'ALL', label: 'All' },
-    { id: 'PENDING', label: 'Pending' },
-    { id: 'CONFIRMED', label: 'Confirmed' },
-    { id: 'SHIPPING', label: 'Shipping' },
-    { id: 'COMPLETED', label: 'Completed' },
-    { id: 'CANCELLED', label: 'Cancelled' },
+    { id: 'ALL', label: 'Tất cả' },
+    { id: 'PENDING', label: 'Chờ xử lý' },
+    { id: 'CONFIRMED', label: 'Đã xác nhận' },
+    { id: 'SHIPPING', label: 'Đang giao' },
+    { id: 'COMPLETED', label: 'Hoàn thành' },
+    { id: 'CANCELLED', label: 'Đã hủy' },
   ];
 
   useEffect(() => {
@@ -122,13 +135,13 @@ const MyOrdersPage = () => {
               <div>
                 <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
                   <span className="material-symbols-outlined text-primary text-[20px]">search</span>
-                  SEARCH ORDER
+                  TÌM KIẾM ĐƠN HÀNG
                 </h3>
                 <div className="flex shadow-sm">
                   <div className="relative flex-1">
                     <input
                       type="text"
-                      placeholder="Enter order ID"
+                      placeholder="Nhập mã đơn hàng"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="w-full h-full bg-[#f8f8f8] border border-gray-200 border-r-0 rounded-l-sm py-2.5 pl-4 pr-10 text-sm outline-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary focus:bg-white transition-all relative z-10"
@@ -137,7 +150,7 @@ const MyOrdersPage = () => {
                       <button
                         onClick={() => setSearchTerm('')}
                         className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center outline-none z-20 w-6 h-6 rounded-full hover:bg-gray-200"
-                        title="Clear search"
+                        title="Xóa tìm kiếm"
                       >
                         <span className="material-symbols-outlined text-[16px]">close</span>
                       </button>
@@ -153,7 +166,7 @@ const MyOrdersPage = () => {
               <div>
                 <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
                   <span className="material-symbols-outlined text-primary text-[20px]">filter_list</span>
-                  ORDER STATUS
+                  TRẠNG THÁI ĐƠN HÀNG
                 </h3>
                 <div className="space-y-1">
                   {tabs.map((tab) => (
@@ -183,21 +196,21 @@ const MyOrdersPage = () => {
             {loading ? (
               <div className="flex flex-col items-center justify-center py-32 bg-white rounded-sm shadow-sm">
                 <div className="size-12 border-4 border-gray-100 border-t-primary rounded-full animate-spin mb-4"></div>
-                <p className="text-gray-500 text-sm">Synchronizing your orders...</p>
+                <p className="text-gray-500 text-sm">Đang tải danh sách đơn hàng của bạn...</p>
               </div>
             ) : filteredOrders.length === 0 ? (
               <div className="bg-white rounded-sm shadow-sm py-32 text-center">
                 <div className="size-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="material-symbols-outlined text-gray-300 text-6xl">order_approve</span>
                 </div>
-                <h3 className="text-lg font-medium text-gray-800">No orders found</h3>
-                <p className="text-gray-400 text-sm mt-2">Try adjusting your filters or search terms.</p>
+                <h3 className="text-lg font-medium text-gray-800">Không tìm thấy đơn hàng nào</h3>
+                <p className="text-gray-400 text-sm mt-2">Thử điều chỉnh bộ lọc hoặc từ khóa tìm kiếm.</p>
                 {activeTab !== 'ALL' || searchTerm !== '' ? (
                   <button
                     onClick={() => { setActiveTab('ALL'); setSearchTerm(''); }}
                     className="mt-6 text-primary text-sm font-medium hover:underline"
                   >
-                    Clear all filters
+                    Xóa tất cả bộ lọc
                   </button>
                 ) : null}
               </div>
@@ -208,12 +221,12 @@ const MyOrdersPage = () => {
                     {/* Order Header */}
                     <div className="px-6 py-4 border-b border-gray-50 flex justify-between items-center bg-[#fcfcfc]">
                       <div className="flex items-center gap-3">
-                        <span className="text-sm font-bold text-gray-800">Order ID: {order.orderId}</span>
+                        <span className="text-sm font-bold text-gray-800">Mã đơn hàng: {order.orderId}</span>
                         <span className="text-gray-300">|</span>
                         <span className="text-xs text-gray-500">{formatDate(order.createdAt)}</span>
                       </div>
                       <span className={`text-[11px] font-bold uppercase px-3 py-1 rounded-full border ${getStatusColor(order.status)}`}>
-                        {order.status ? order.status.replace(/_/g, ' ') : ''}
+                        {translateStatus(order.status)}
                       </span>
                     </div>
 
@@ -234,11 +247,11 @@ const MyOrdersPage = () => {
                                 {order.orderItems[0].productName}
                               </h4>
                               <p className="text-sm text-gray-400 mt-1">
-                                Quantity: {order.orderItems[0].quantity}
+                                Số lượng: {order.orderItems[0].quantity}
                               </p>
                               {order.orderItems.length > 1 && (
                                 <p className="text-sm text-primary/70 mt-1 font-medium">
-                                  + {order.orderItems.length - 1} other items
+                                  + {order.orderItems.length - 1} sản phẩm khác
                                 </p>
                               )}
                             </div>
@@ -252,14 +265,14 @@ const MyOrdersPage = () => {
                           <div className="size-20 bg-gray-50 rounded-sm flex items-center justify-center border border-gray-100">
                             <span className="material-symbols-outlined text-gray-300 text-4xl">inventory_2</span>
                           </div>
-                          <p className="text-sm text-gray-500 italic">No items information</p>
+                          <p className="text-sm text-gray-500 italic">Không có thông tin sản phẩm</p>
                         </div>
                       )}
                     </div>
 
                     <div className="px-6 py-4 flex justify-end items-center gap-2 bg-[#fdfdfd]">
                       <span className="material-symbols-outlined text-primary text-[20px]">verified</span>
-                      <span className="text-sm text-gray-600">Order Total:</span>
+                      <span className="text-sm text-gray-600">Tổng tiền đơn hàng:</span>
                       <span className="text-xl font-bold text-primary ml-2">{formatCurrency(order.totalAmount)}</span>
                     </div>
 
@@ -270,13 +283,13 @@ const MyOrdersPage = () => {
                         className="px-6 py-2 bg-white text-primary border border-primary text-sm font-medium rounded-sm hover:bg-primary/5 transition-all shadow-sm flex items-center gap-2"
                       >
                         <span className="material-symbols-outlined text-[18px]">replay</span>
-                        Buy Again
+                        Mua lại
                       </button>
                       <button
                         onClick={() => navigate(`/order/${order.orderId}`)}
                         className="px-6 py-2 bg-primary text-white text-sm font-medium rounded-sm hover:bg-primary/90 transition-all shadow-sm"
                       >
-                        View Details
+                        Xem chi tiết
                       </button>
                     </div>
                   </div>
