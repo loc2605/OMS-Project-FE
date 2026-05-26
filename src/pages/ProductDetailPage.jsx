@@ -22,6 +22,8 @@ const ProductDetailPage = () => {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
 
+  const currentStock = inventory ? inventory.availableQuantity : (product ? product.stockQuantity : 0);
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -49,6 +51,7 @@ const ProductDetailPage = () => {
   }, [id]);
 
   const handleAddToCart = () => {
+    if (currentStock === 0) return;
     if (!isAuthenticated) {
       navigate('/login');
       return;
@@ -57,6 +60,7 @@ const ProductDetailPage = () => {
   };
 
   const handleBuyNow = () => {
+    if (currentStock === 0) return;
     if (!isAuthenticated) {
       navigate('/login');
       return;
@@ -147,7 +151,7 @@ const ProductDetailPage = () => {
               <div className="flex items-center border border-gray-200 rounded-sm">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  disabled={quantity <= 1 || product.stockQuantity === 0}
+                  disabled={quantity <= 1 || currentStock === 0}
                   className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-50 border-r border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <span className="material-symbols-outlined text-[16px]">remove</span>
@@ -157,7 +161,7 @@ const ProductDetailPage = () => {
                   value={quantity}
                   onChange={(e) => {
                     const val = parseInt(e.target.value);
-                    if (!isNaN(val) && val >= 1 && val <= product.stockQuantity) {
+                    if (!isNaN(val) && val >= 1 && val <= currentStock) {
                       setQuantity(val);
                     } else if (e.target.value === '') {
                       setQuantity('');
@@ -166,29 +170,29 @@ const ProductDetailPage = () => {
                   onBlur={() => {
                     if (!quantity || quantity < 1) setQuantity(1);
                   }}
-                  disabled={product.stockQuantity === 0}
+                  disabled={currentStock === 0}
                   className="w-12 h-8 text-center outline-none text-sm font-medium bg-transparent disabled:bg-gray-50 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none m-0"
                   style={{ MozAppearance: 'textfield' }}
                   min="1"
-                  max={product.stockQuantity || 1}
+                  max={currentStock || 1}
                 />
                 <button
-                  onClick={() => setQuantity(Math.min(product.stockQuantity, quantity + 1))}
-                  disabled={quantity >= product.stockQuantity || product.stockQuantity === 0}
+                  onClick={() => setQuantity(Math.min(currentStock, quantity + 1))}
+                  disabled={quantity >= currentStock || currentStock === 0}
                   className="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-50 border-l border-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <span className="material-symbols-outlined text-[16px]">add</span>
                 </button>
               </div>
-              <span className="text-sm text-gray-500">{product.stockQuantity} sản phẩm có sẵn</span>
+              <span className="text-sm text-gray-500">{currentStock} sản phẩm có sẵn</span>
             </div>
 
             <div className="space-y-4">
               <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   onClick={handleAddToCart}
-                  disabled={product.stockQuantity === 0}
-                  className={`flex-1 border border-primary text-primary bg-[#ffeeea] font-bold py-3.5 rounded-sm flex items-center justify-center gap-2 transition-all ${product.stockQuantity === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/10'}`}
+                  disabled={currentStock === 0}
+                  className={`flex-1 border border-primary text-primary bg-[#ffeeea] font-bold py-3.5 rounded-sm flex items-center justify-center gap-2 transition-all ${currentStock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/10'}`}
                   type="button"
                 >
                   <span className="material-symbols-outlined">add_shopping_cart</span>
@@ -196,8 +200,8 @@ const ProductDetailPage = () => {
                 </button>
                 <button
                   onClick={handleBuyNow}
-                  disabled={product.stockQuantity === 0}
-                  className={`flex-1 bg-primary text-white font-bold py-3.5 rounded-sm flex items-center justify-center gap-2 transition-all ${product.stockQuantity === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/90'}`}
+                  disabled={currentStock === 0}
+                  className={`flex-1 bg-primary text-white font-bold py-3.5 rounded-sm flex items-center justify-center gap-2 transition-all ${currentStock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/90'}`}
                 >
                   Mua ngay
                 </button>

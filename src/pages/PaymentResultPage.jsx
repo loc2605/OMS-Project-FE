@@ -7,7 +7,7 @@ import Header from '../components/home/Header';
 
 const PaymentResultPage = () => {
   const [status, setStatus] = useState('PROCESSING'); // PROCESSING, SUCCESS, FAILED, TIMEOUT
-  const [message, setMessage] = useState('System is verifying the transaction, please wait...');
+  const [message, setMessage] = useState('Hệ thống đang xác thực giao dịch, vui lòng chờ...');
   const [orderInfo, setOrderInfo] = useState(null);
   
   const navigate = useNavigate();
@@ -27,18 +27,18 @@ const PaymentResultPage = () => {
 
       if (!orderId) {
         setStatus('FAILED');
-        setMessage('Cannot find the pending order information.');
+        setMessage('Không tìm thấy thông tin đơn hàng đang chờ xử lý.');
         return;
       }
 
       if (responseCode !== '00') {
         setStatus('FAILED');
-        setMessage('The payment transaction was cancelled or failed.');
+        setMessage('Giao dịch thanh toán đã bị hủy hoặc thất bại.');
         return;
       }
 
       setStatus('PROCESSING');
-      setMessage('System is verifying the transaction, please wait. Do not close the browser...');
+      setMessage('Hệ thống đang xác thực giao dịch, vui lòng chờ. Không đóng trình duyệt...');
 
       // Force the backend to verify the VNPAY transaction (useful for local testing or when IPN is blocked)
       try {
@@ -62,11 +62,11 @@ const PaymentResultPage = () => {
             clearCart();
             setOrderInfo(order);
             setStatus('SUCCESS');
-            setMessage('Payment & Order Successful!');
+            setMessage('Thanh toán & Đặt hàng Thành công!');
           } else if (order.status === 'CANCELLED') {
             clearInterval(interval);
             setStatus('FAILED');
-            setMessage(order.errorMessage || 'System cancelled the order due to payment failure.');
+            setMessage(order.errorMessage || 'Hệ thống đã hủy đơn hàng do thanh toán thất bại.');
           }
         } catch (err) {
           console.error('Error querying order status:', err);
@@ -75,7 +75,7 @@ const PaymentResultPage = () => {
         if (attempts >= maxAttempts) {
           clearInterval(interval);
           setStatus('TIMEOUT');
-          setMessage('Order is pending processing. We will notify you as soon as payment is received.');
+          setMessage('Đơn hàng đang chờ xử lý. Chúng tôi sẽ thông báo cho bạn ngay khi nhận được thanh toán.');
         }
       }, 1500);
     };
@@ -92,7 +92,7 @@ const PaymentResultPage = () => {
           {status === 'PROCESSING' && (
             <div className="flex flex-col items-center">
               <div className="size-20 border-4 border-gray-100 border-t-primary rounded-full animate-spin mb-6"></div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">Processing</h3>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">Đang xử lý</h3>
               <p className="text-gray-500 leading-relaxed">{message}</p>
             </div>
           )}
@@ -105,8 +105,8 @@ const PaymentResultPage = () => {
               <h3 className="text-2xl font-bold text-gray-800 mb-2">{message}</h3>
               {orderInfo && (
                 <div className="text-gray-600 mb-8 mt-4 bg-gray-50 w-full p-4 rounded-sm text-left border border-gray-100">
-                  <p><strong>Order ID:</strong> {orderInfo.orderId}</p>
-                  <p><strong>Total Amount:</strong> {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(orderInfo.totalAmount)}</p>
+                  <p><strong>Mã đơn hàng:</strong> {orderInfo.orderId}</p>
+                  <p><strong>Tổng số tiền:</strong> {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(orderInfo.totalAmount)}</p>
                 </div>
               )}
               <div className="flex gap-4 w-full justify-center">
@@ -114,13 +114,13 @@ const PaymentResultPage = () => {
                   onClick={() => navigate(`/order/${orderInfo?.orderId || localStorage.getItem('pending_order_id')}`)}
                   className="px-8 bg-primary text-white py-3 rounded-sm font-medium hover:bg-primary/90 transition-all shadow-sm"
                 >
-                  View Order Details
+                  Xem chi tiết đơn hàng
                 </button>
                 <button
                   onClick={() => navigate('/')}
                   className="px-8 bg-white text-gray-600 py-3 rounded-sm font-medium border border-gray-200 hover:bg-gray-50 transition-all"
                 >
-                  Continue Shopping
+                  Tiếp tục mua sắm
                 </button>
               </div>
             </div>
@@ -131,20 +131,20 @@ const PaymentResultPage = () => {
               <div className="size-20 bg-red-50 rounded-full flex items-center justify-center mb-6">
                 <span className="material-symbols-outlined text-red-500 text-5xl">error</span>
               </div>
-              <h3 className="text-2xl font-bold text-gray-800 mb-2">Payment Failed</h3>
+              <h3 className="text-2xl font-bold text-gray-800 mb-2">Thanh toán thất bại</h3>
               <p className="text-red-500 leading-relaxed font-medium mb-8">{message}</p>
               <div className="flex gap-4 w-full justify-center">
                 <button
                   onClick={() => navigate('/checkout')}
                   className="px-8 bg-primary text-white py-3 rounded-sm font-medium hover:bg-primary/90 transition-all shadow-sm"
                 >
-                  Try Again / Repay
+                  Thử lại / Thanh toán lại
                 </button>
                 <button
                   onClick={() => navigate('/')}
                   className="px-8 bg-white text-gray-600 py-3 rounded-sm font-medium border border-gray-200 hover:bg-gray-50 transition-all"
                 >
-                  Back to Home
+                  Quay lại Trang chủ
                 </button>
               </div>
             </div>
@@ -155,13 +155,13 @@ const PaymentResultPage = () => {
               <div className="size-20 bg-yellow-50 rounded-full flex items-center justify-center mb-6">
                 <span className="material-symbols-outlined text-yellow-500 text-5xl">schedule</span>
               </div>
-              <h3 className="text-xl font-bold text-gray-800 mb-2">Pending Confirmation</h3>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">Đang chờ xác nhận</h3>
               <p className="text-gray-500 leading-relaxed mb-8">{message}</p>
               <button
                 onClick={() => navigate('/orders')}
                 className="px-8 bg-primary text-white py-3 rounded-sm font-medium hover:bg-primary/90 transition-all shadow-sm"
               >
-                Check Purchase History
+                Kiểm tra Lịch sử mua hàng
               </button>
             </div>
           )}

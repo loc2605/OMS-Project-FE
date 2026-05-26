@@ -5,6 +5,7 @@ import aiApi from '../../api/aiApi';
 
 const AIChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
   const [messages, setMessages] = useState([
     { sender: 'bot', text: 'Dạ chào bạn, mình là trợ lý AI của ShopModern. Mình có thể giúp gì cho bạn hôm nay?' }
   ]);
@@ -75,7 +76,11 @@ const AIChatbot = () => {
   };
 
   return (
-    <div className={`fixed right-6 z-[9999] font-sans transition-all duration-300 ${shouldShiftUp ? 'bottom-24' : 'bottom-6'}`}>
+    <div className={`font-sans transition-all duration-300 ${
+      isFullScreen 
+        ? 'fixed inset-0 z-[99999]' 
+        : `fixed right-6 z-[9999] ${shouldShiftUp ? 'bottom-24' : 'bottom-6'}`
+    }`}>
       {/* Bubble Button */}
       {!isOpen && (
         <button
@@ -88,7 +93,11 @@ const AIChatbot = () => {
 
       {/* Chat Window */}
       {isOpen && (
-        <div className="bg-white w-96 rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[500px] border border-gray-100">
+        <div className={`bg-white border-gray-100 transition-all duration-300 flex flex-col ${
+          isFullScreen
+            ? 'w-screen h-screen rounded-none border-none'
+            : 'w-[calc(100vw-32px)] sm:w-[420px] rounded-2xl shadow-2xl overflow-hidden h-[70vh] sm:h-[600px] border'
+        }`}>
           {/* Header */}
           <div className="bg-primary text-white p-4 flex justify-between items-center shadow-md z-10 relative">
             <div className="flex items-center gap-2">
@@ -98,12 +107,23 @@ const AIChatbot = () => {
                 <span className="text-xs text-white/80">Sẵn sàng hỗ trợ</span>
               </div>
             </div>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-white/80 hover:text-white transition-colors"
-            >
-              <span className="material-symbols-outlined">close</span>
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setIsFullScreen(!isFullScreen)}
+                className="text-white/80 hover:text-white transition-colors flex items-center justify-center p-1 rounded-full hover:bg-white/10"
+                title={isFullScreen ? "Thu nhỏ" : "Toàn màn hình"}
+              >
+                <span className="material-symbols-outlined text-[20px]">
+                  {isFullScreen ? "fullscreen_exit" : "fullscreen"}
+                </span>
+              </button>
+              <button
+                onClick={() => { setIsOpen(false); setIsFullScreen(false); }}
+                className="text-white/80 hover:text-white transition-colors flex items-center justify-center p-1 rounded-full hover:bg-white/10"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
           </div>
 
           {/* Messages Area */}
@@ -132,7 +152,7 @@ const AIChatbot = () => {
                           }}
                         >
                           <img
-                            src={product.imageUrl?.[0] || 'https://via.placeholder.com/60'}
+                            src={product.imageUrl?.[0] || product.image || 'https://via.placeholder.com/60'}
                             alt={product.name}
                             className="w-14 h-14 object-cover rounded-lg"
                           />

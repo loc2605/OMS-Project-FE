@@ -13,6 +13,39 @@ const ProfilePage = () => {
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [showAddressListModal, setShowAddressListModal] = useState(false);
 
+  const [editForm, setEditForm] = useState({
+    fullname: '',
+    phone: '',
+    gender: 'OTHER',
+    dateOfBirth: ''
+  });
+
+  const handleStartEditProfile = () => {
+    setEditForm({
+      fullname: profile?.fullname || profile?.fullName || user?.fullName || '',
+      phone: profile?.phone || '',
+      gender: profile?.gender || 'OTHER',
+      dateOfBirth: profile?.dateOfBirth || ''
+    });
+    setIsEditingProfile(true);
+  };
+
+  const handleSaveProfile = async () => {
+    try {
+      const res = await profileApi.updateProfile(editForm);
+      if (res.success) {
+        setProfile(res.result);
+        setIsEditingProfile(false);
+        alert('Cập nhật thông tin cá nhân thành công!');
+      } else {
+        alert(res.message || 'Cập nhật thất bại.');
+      }
+    } catch (error) {
+      console.error('Update profile error:', error);
+      alert('Có lỗi xảy ra khi cập nhật thông tin!');
+    }
+  };
+
   // Vietnam Provinces API state
   const [provinces, setProvinces] = useState([]);
   const [wards, setWards] = useState([]);
@@ -236,7 +269,7 @@ const ProfilePage = () => {
           </div>
           <div className="w-full md:w-auto mt-4 md:mt-0">
             <button 
-              onClick={() => setIsEditingProfile(true)} 
+              onClick={handleStartEditProfile} 
               className="w-full md:w-auto px-8 py-3 bg-primary text-white rounded-xl font-bold shadow-lg shadow-primary/30 hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
             >
               <span className="material-symbols-outlined text-sm">edit</span>
@@ -380,45 +413,76 @@ const ProfilePage = () => {
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-              <h3 className="text-lg font-bold text-heading">Edit Profile</h3>
+              <h3 className="text-lg font-bold text-heading">Chỉnh sửa hồ sơ</h3>
               <button onClick={() => setIsEditingProfile(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
             <div className="p-6 space-y-5">
               <div className="space-y-1">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Name</label>
-                <input className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm bg-white shadow-sm font-medium" defaultValue={profile?.fullname || user?.fullName} />
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Họ và tên</label>
+                <input 
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm bg-white shadow-sm font-medium" 
+                  value={editForm.fullname}
+                  onChange={(e) => setEditForm({ ...editForm, fullname: e.target.value })}
+                />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Phone Number</label>
-                <input className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm bg-white shadow-sm font-medium" defaultValue={profile?.phone} />
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Số điện thoại</label>
+                <input 
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm bg-white shadow-sm font-medium" 
+                  value={editForm.phone}
+                  onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
+                />
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Gender</label>
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Giới tính</label>
                 <div className="flex gap-6 mt-2 px-1">
                   <label className="flex items-center gap-2 cursor-pointer">
-                    <input className="text-primary border-gray-300 focus:ring-primary w-4 h-4" name="edit_gender" type="radio" defaultChecked={profile?.gender === 'MALE'} />
-                    <span className="text-sm font-medium text-gray-700">Male</span>
+                    <input 
+                      className="text-primary border-gray-300 focus:ring-primary w-4 h-4" 
+                      name="edit_gender" 
+                      type="radio" 
+                      checked={editForm.gender === 'MALE'} 
+                      onChange={() => setEditForm({ ...editForm, gender: 'MALE' })}
+                    />
+                    <span className="text-sm font-medium text-gray-700">Nam</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
-                    <input className="text-primary border-gray-300 focus:ring-primary w-4 h-4" name="edit_gender" type="radio" defaultChecked={profile?.gender === 'FEMALE'} />
-                    <span className="text-sm font-medium text-gray-700">Female</span>
+                    <input 
+                      className="text-primary border-gray-300 focus:ring-primary w-4 h-4" 
+                      name="edit_gender" 
+                      type="radio" 
+                      checked={editForm.gender === 'FEMALE'} 
+                      onChange={() => setEditForm({ ...editForm, gender: 'FEMALE' })}
+                    />
+                    <span className="text-sm font-medium text-gray-700">Nữ</span>
                   </label>
                   <label className="flex items-center gap-2 cursor-pointer">
-                    <input className="text-primary border-gray-300 focus:ring-primary w-4 h-4" name="edit_gender" type="radio" defaultChecked={profile?.gender === 'OTHER'} />
-                    <span className="text-sm font-medium text-gray-700">Other</span>
+                    <input 
+                      className="text-primary border-gray-300 focus:ring-primary w-4 h-4" 
+                      name="edit_gender" 
+                      type="radio" 
+                      checked={editForm.gender === 'OTHER'} 
+                      onChange={() => setEditForm({ ...editForm, gender: 'OTHER' })}
+                    />
+                    <span className="text-sm font-medium text-gray-700">Khác</span>
                   </label>
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Date of Birth</label>
-                <input type="date" className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm bg-white shadow-sm font-medium" defaultValue={profile?.dateOfBirth} />
+                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Ngày sinh</label>
+                <input 
+                  type="date" 
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm bg-white shadow-sm font-medium" 
+                  value={editForm.dateOfBirth}
+                  onChange={(e) => setEditForm({ ...editForm, dateOfBirth: e.target.value })}
+                />
               </div>
             </div>
             <div className="p-5 border-t border-gray-100 flex gap-3 bg-gray-50/50">
-              <button onClick={() => setIsEditingProfile(false)} className="flex-1 px-4 py-3 rounded-lg border border-gray-200 text-gray-600 font-bold hover:bg-gray-100 transition-all text-xs uppercase tracking-wider">Cancel</button>
-              <button onClick={() => { alert('Profile update API integration pending'); setIsEditingProfile(false); }} className="flex-1 px-4 py-3 rounded-lg bg-primary text-white font-bold hover:opacity-90 shadow-lg shadow-primary/20 transition-all text-xs uppercase tracking-wider">Save Changes</button>
+              <button onClick={() => setIsEditingProfile(false)} className="flex-1 px-4 py-3 rounded-lg border border-gray-200 text-gray-600 font-bold hover:bg-gray-100 transition-all text-xs uppercase tracking-wider">Hủy</button>
+              <button onClick={handleSaveProfile} className="flex-1 px-4 py-3 rounded-lg bg-primary text-white font-bold hover:opacity-90 shadow-lg shadow-primary/20 transition-all text-xs uppercase tracking-wider">Lưu thay đổi</button>
             </div>
           </div>
         </div>
@@ -429,44 +493,58 @@ const ProfilePage = () => {
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-              <h3 className="text-lg font-bold text-heading">Manage Addresses</h3>
+              <h3 className="text-lg font-bold text-heading">Quản lý địa chỉ</h3>
               <button onClick={() => setShowAddressListModal(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
             <div className="p-6 overflow-y-auto space-y-4 flex-grow bg-gray-50/30">
               {addresses.length === 0 ? (
-                <div className="text-center text-gray-500 py-4">No addresses found.</div>
+                <div className="text-center text-gray-500 py-4">Không tìm thấy địa chỉ nào.</div>
               ) : (
-                addresses.map((addr, index) => addr && (
-                  <div key={addr.id || index} className="p-5 border border-gray-100 rounded-xl flex flex-col md:flex-row justify-between gap-4 hover:border-primary/30 transition-colors bg-white shadow-sm">
-                    <div className="space-y-1 flex-1">
-                      <div className="flex items-center gap-3 mb-2">
-                        <span className="text-sm font-bold text-[#333333]">{addr?.city || ''}</span>
-                        {addr?.isDefault && (
-                          <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold">DEFAULT</span>
+                addresses.map((addr, index) => {
+                  if (!addr) return null;
+                  const isThisDefault = addr.isDefault || (addresses.every(a => !a?.isDefault) && index === 0);
+                  return (
+                    <div 
+                      key={addr.id || index} 
+                      className={`p-5 border rounded-xl flex flex-col md:flex-row justify-between gap-4 transition-all shadow-sm ${
+                        isThisDefault 
+                          ? 'border-primary bg-primary/[0.02] ring-1 ring-primary/20' 
+                          : 'border-gray-100 hover:border-primary/30 hover:bg-primary/[0.01] bg-white'
+                      }`}
+                    >
+                      <div className="space-y-1 flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <span className="text-sm font-bold text-[#333333]">{addr?.city || ''}</span>
+                          {isThisDefault && (
+                            <span className="bg-primary text-white text-[10px] px-2.5 py-0.5 rounded-full font-bold shadow-sm flex items-center gap-1">
+                              <span className="material-symbols-outlined text-[12px] font-bold">check_circle</span>
+                              MẶC ĐỊNH
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-sm text-[#666666] leading-relaxed font-medium">
+                          {addr?.street}, {addr?.ward}, {addr?.city}
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-end justify-between gap-3">
+                        <div className="flex gap-4">
+                          <button className="text-blue-500 text-sm font-medium hover:text-blue-600 transition-colors" onClick={() => alert("Tính năng chỉnh sửa sẽ sớm được hỗ trợ!")}>Chỉnh sửa</button>
+                          <button className="text-red-500 text-sm font-medium hover:text-red-600 transition-colors" onClick={() => handleDeleteAddress(addr.id)}>Xóa</button>
+                        </div>
+                        {!isThisDefault && (
+                          <button
+                            onClick={() => handleSetDefaultAddress(addr.id)}
+                            className="border border-gray-200 px-3 py-1.5 rounded-[6px] text-xs font-bold text-[#666666] hover:bg-gray-50 transition-colors uppercase tracking-wider"
+                          >
+                            Thiết lập mặc định
+                          </button>
                         )}
                       </div>
-                      <div className="text-sm text-[#666666] leading-relaxed">
-                        {addr?.street}, {addr?.ward}, {addr?.city}
-                      </div>
                     </div>
-                    <div className="flex flex-col items-end justify-between gap-3">
-                      <div className="flex gap-4">
-                        <button className="text-blue-500 text-sm font-medium hover:text-blue-600 transition-colors" onClick={() => alert("Edit feature coming soon!")}>Edit</button>
-                        <button className="text-red-500 text-sm font-medium hover:text-red-600 transition-colors" onClick={() => handleDeleteAddress(addr.id)}>Delete</button>
-                      </div>
-                      {!addr?.isDefault && (
-                        <button
-                          onClick={() => handleSetDefaultAddress(addr.id)}
-                          className="border border-gray-200 px-3 py-1.5 rounded-[6px] text-xs font-bold text-[#666666] hover:bg-gray-50 transition-colors uppercase tracking-wider"
-                        >
-                          Set Default
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </div>
             <div className="p-5 border-t border-gray-100 bg-white">
@@ -479,7 +557,7 @@ const ProfilePage = () => {
                 className="w-full bg-primary text-white px-6 py-3.5 rounded-xl font-bold transition-all shadow-lg shadow-primary/20 hover:opacity-90 flex items-center justify-center gap-2 text-sm uppercase tracking-wider"
               >
                 <span className="material-symbols-outlined text-[20px]">add</span>
-                Add New Address
+                Thêm địa chỉ mới
               </button>
             </div>
           </div>
@@ -491,7 +569,7 @@ const ProfilePage = () => {
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
           <div className="bg-white rounded-2xl w-full max-w-3xl shadow-2xl overflow-hidden">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center">
-              <h3 className="text-xl font-bold text-heading">New Address</h3>
+              <h3 className="text-xl font-bold text-heading">Địa chỉ mới</h3>
               <button onClick={handleCloseModal} className="text-gray-400 hover:text-gray-600 transition-colors">
                 <span className="material-symbols-outlined">close</span>
               </button>
@@ -502,16 +580,16 @@ const ProfilePage = () => {
               <div className="space-y-4 pt-2">
                 <div className="grid grid-cols-2 gap-3">
                   <CustomSelect
-                    label="Province / City"
-                    placeholder="Select Province"
+                    label="Tỉnh / Thành phố"
+                    placeholder="Chọn Tỉnh / Thành phố"
                     options={provinces}
                     value={addressForm.city}
                     onChange={handleProvinceChange}
                   />
 
                   <CustomSelect
-                    label="Ward"
-                    placeholder="Select Ward"
+                    label="Phường / Xã"
+                    placeholder="Chọn Phường / Xã"
                     disabled={!addressForm.city}
                     options={wards}
                     value={addressForm.ward}
@@ -520,11 +598,11 @@ const ProfilePage = () => {
                 </div>
 
                 <div className="space-y-1 pt-2">
-                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Street Address</label>
+                  <label className="text-[11px] font-bold text-gray-500 uppercase tracking-wider ml-1">Địa chỉ chi tiết</label>
                   <input
                     required
                     className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-base bg-white shadow-sm font-medium"
-                    placeholder="House number, street name..."
+                    placeholder="Số nhà, tên đường..."
                     value={addressForm.street}
                     onChange={(e) => setAddressForm({ ...addressForm, street: e.target.value })}
                   />
@@ -539,7 +617,7 @@ const ProfilePage = () => {
                   checked={addressForm.isDefault}
                   onChange={(e) => setAddressForm({ ...addressForm, isDefault: e.target.checked })}
                 />
-                <label htmlFor="default-checkbox" className="text-sm text-gray-600 cursor-pointer">Set as default address</label>
+                <label htmlFor="default-checkbox" className="text-sm text-gray-600 cursor-pointer">Đặt làm địa chỉ mặc định</label>
               </div>
 
               <div className="flex gap-3 pt-6">
@@ -548,13 +626,13 @@ const ProfilePage = () => {
                   onClick={handleCloseModal}
                   className="flex-1 px-4 py-2.5 rounded-lg border border-gray-200 text-gray-600 font-bold hover:bg-gray-50 transition-all uppercase tracking-wider text-xs"
                 >
-                  Cancel
+                  Hủy
                 </button>
                 <button
                   type="submit"
                   className="flex-1 px-4 py-2.5 rounded-lg bg-primary text-white font-bold hover:opacity-90 shadow-lg shadow-primary/20 transition-all uppercase tracking-wider text-xs"
                 >
-                  Submit
+                  Lưu
                 </button>
               </div>
             </form>

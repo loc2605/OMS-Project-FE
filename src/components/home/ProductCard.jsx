@@ -13,6 +13,9 @@ const ProductCard = ({ product, isSkeleton = false }) => {
   };
 
   const handleAddToCart = () => {
+    if (product?.stockQuantity === 0 || product?.quantity === 0) {
+      return;
+    }
     if (!isAuthenticated) {
       navigate('/login');
       return;
@@ -32,8 +35,8 @@ const ProductCard = ({ product, isSkeleton = false }) => {
           </div>
           <div className="pt-3 border-t border-gray-50 flex justify-between items-end">
             <div className="space-y-1">
-               <div className="h-2 w-8 bg-gray-200 rounded animate-pulse"></div>
-               <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-2 w-8 bg-gray-200 rounded animate-pulse"></div>
+              <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
             </div>
             <div className="size-10 bg-gray-200 rounded-full animate-pulse"></div>
           </div>
@@ -43,26 +46,33 @@ const ProductCard = ({ product, isSkeleton = false }) => {
   }
 
   const productImage = product.imageUrl?.[0] || product.image;
-  const formattedPrice = typeof product.price === 'number' 
+  const formattedPrice = typeof product.price === 'number'
     ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.price)
     : product.price;
 
+  const isOutOfStock = product?.stockQuantity === 0 || product?.quantity === 0;
+
   return (
-    <div 
-      className="group bg-white rounded-2xl border border-gray-100 hover:border-primary/30 shadow-sm hover:shadow-xl transition-all duration-500 cursor-pointer overflow-hidden flex flex-col h-full" 
+    <div
+      className="group bg-white rounded-2xl border border-gray-100 hover:border-primary/30 shadow-sm hover:shadow-xl transition-all duration-500 cursor-pointer overflow-hidden flex flex-col h-full relative"
       onClick={handleCardClick}
     >
       {/* Image Container */}
       <div className="relative aspect-[4/5] overflow-hidden bg-gray-50">
-        <img 
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out" 
-          src={productImage} 
-          alt={product.name} 
+        <img
+          className={`w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-in-out ${isOutOfStock ? 'grayscale opacity-60' : ''}`}
+          src={productImage}
+          alt={product.name}
         />
-        
+
         {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-2">
-          {product.discount && (
+        <div className="absolute top-3 left-3 flex flex-col gap-2 z-20">
+          {isOutOfStock && (
+            <span className="bg-gray-800/90 text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase tracking-wider shadow-md backdrop-blur-[2px]">
+              Hết hàng
+            </span>
+          )}
+          {product.discount && !isOutOfStock && (
             <span className="bg-red-500 text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-md">
               {product.discount}
             </span>
@@ -71,13 +81,23 @@ const ProductCard = ({ product, isSkeleton = false }) => {
 
         {/* Hover Overlay Button (Desktop) */}
         <div className="absolute inset-x-0 bottom-0 p-4 translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300 ease-out bg-gradient-to-t from-black/60 via-black/20 to-transparent hidden lg:block">
-          <button 
-            onClick={(e) => { e.stopPropagation(); handleAddToCart(); }} 
-            className="w-full bg-primary text-white text-sm font-bold py-3 rounded-xl hover:bg-[#d63013] transition-all shadow-lg flex items-center justify-center gap-2 transform active:scale-95"
-          >
-            <span className="material-symbols-outlined text-[18px]">shopping_cart</span>
-            Quick Add
-          </button>
+          {isOutOfStock ? (
+            <button
+              disabled
+              className="w-full bg-gray-500/80 text-white text-sm font-bold py-3 rounded-xl cursor-not-allowed transition-all shadow-lg flex items-center justify-center gap-2"
+            >
+              <span className="material-symbols-outlined text-[18px]">block</span>
+              Hết hàng
+            </button>
+          ) : (
+            <button
+              onClick={(e) => { e.stopPropagation(); handleAddToCart(); }}
+              className="w-full bg-primary text-white text-sm font-bold py-3 rounded-xl hover:bg-[#d63013] transition-all shadow-lg flex items-center justify-center gap-2 transform active:scale-95"
+            >
+              <span className="material-symbols-outlined text-[18px]">shopping_cart</span>
+              Thêm nhanh
+            </button>
+          )}
         </div>
       </div>
 
@@ -88,11 +108,11 @@ const ProductCard = ({ product, isSkeleton = false }) => {
             {product.categoryName}
           </span>
         )}
-        
+
         <h3 className="text-sm md:text-[15px] font-medium text-gray-800 line-clamp-2 leading-snug group-hover:text-primary transition-colors flex-grow">
           {product.name}
         </h3>
-        
+
         <div className="flex items-end justify-between mt-3 pt-3 border-t border-gray-50">
           <div>
             <p className="text-[11px] text-gray-400 font-medium mb-0.5">Price</p>
@@ -100,15 +120,25 @@ const ProductCard = ({ product, isSkeleton = false }) => {
               {formattedPrice}
             </span>
           </div>
-          
+
           {/* Mobile/Tablet Add Button */}
-          <button 
-            onClick={(e) => { e.stopPropagation(); handleAddToCart(); }} 
-            className="lg:hidden size-10 bg-primary hover:bg-[#d63013] text-white rounded-full flex items-center justify-center transition-all shadow-sm active:scale-95 border border-primary hover:border-[#d63013]"
-            aria-label="Add to cart"
-          >
-            <span className="material-symbols-outlined text-[18px]">add_shopping_cart</span>
-          </button>
+          {isOutOfStock ? (
+            <button
+              disabled
+              className="lg:hidden size-10 bg-gray-100 text-gray-400 rounded-full flex items-center justify-center transition-all cursor-not-allowed border border-gray-200"
+              aria-label="Hết hàng"
+            >
+              <span className="material-symbols-outlined text-[18px]">block</span>
+            </button>
+          ) : (
+            <button
+              onClick={(e) => { e.stopPropagation(); handleAddToCart(); }}
+              className="lg:hidden size-10 bg-primary hover:bg-[#d63013] text-white rounded-full flex items-center justify-center transition-all shadow-sm active:scale-95 border border-primary hover:border-[#d63013]"
+              aria-label="Add to cart"
+            >
+              <span className="material-symbols-outlined text-[18px]">add_shopping_cart</span>
+            </button>
+          )}
         </div>
       </div>
     </div>

@@ -41,7 +41,7 @@ const Header = () => {
   const searchParamValue = searchParams.get('search') || '';
   const [searchValue, setSearchValue] = useState(searchParamValue);
   const menuRef = useRef(null);
-  
+
   // Notifications state
   const [openNotification, setOpenNotification] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -84,7 +84,7 @@ const Header = () => {
       setExpandedNotificationId(null);
     } else {
       setExpandedNotificationId(noti.id);
-      
+
       // Mark as read if not already read
       if (!noti.read) {
         try {
@@ -105,7 +105,7 @@ const Header = () => {
           const response = await notificationApi.getMyNotifications({ size: 5 });
           if (response.success) {
             const notifs = response.result?.content || [];
-            
+
             setNotifications(prev => {
               if (prev.length > 0) {
                 const newFirst = notifs[0];
@@ -127,7 +127,7 @@ const Header = () => {
           console.error('Failed to fetch notifications:', error);
         }
       };
-      
+
       fetchNotifications();
       const intervalId = setInterval(fetchNotifications, 2000); // 2 seconds
       return () => clearInterval(intervalId);
@@ -172,9 +172,9 @@ const Header = () => {
                   onChange={(e) => setSearchValue(e.target.value)}
                 />
                 {searchValue && (
-                  <button 
-                    type="button" 
-                    onClick={handleClearSearch} 
+                  <button
+                    type="button"
+                    onClick={handleClearSearch}
                     className="absolute right-12 text-gray-400 hover:text-gray-600 flex items-center justify-center p-1"
                   >
                     <span className="material-symbols-outlined text-[18px]">close</span>
@@ -211,7 +211,7 @@ const Header = () => {
                 }`}
               to="/orders"
             >
-              Đơn Hàng
+              Đơn Hàng Của Tôi
             </Link>
 
 
@@ -257,8 +257,8 @@ const Header = () => {
                             const isExpanded = expandedNotificationId === locNoti.id;
                             const orderMatch = locNoti.content.match(/[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}/i);
                             return (
-                              <div 
-                                key={locNoti.id} 
+                              <div
+                                key={locNoti.id}
                                 onClick={() => handleNotificationClick(locNoti)}
                                 className={`p-4 hover:bg-gray-50 transition-colors cursor-pointer ${!locNoti.read ? 'bg-primary/5' : ''}`}
                               >
@@ -269,10 +269,10 @@ const Header = () => {
                                 <span className="text-[10px] text-gray-400 mt-2 block">
                                   {new Date(locNoti.createdAt).toLocaleString('vi-VN')}
                                 </span>
-                                
+
                                 {isExpanded && orderMatch && (
                                   <div className="mt-3 pt-3 border-t border-gray-100 flex justify-end">
-                                    <button 
+                                    <button
                                       onClick={(e) => {
                                         e.stopPropagation();
                                         setOpenNotification(false);
@@ -351,8 +351,8 @@ const Header = () => {
               <Link
                 to="/login"
                 className={`inline-flex items-center justify-center rounded-lg px-5 py-2.5 text-sm font-bold transition-all active:scale-[0.98] ${location.pathname === '/login'
-                    ? 'bg-primary text-white shadow-lg shadow-primary/20'
-                    : 'border border-black/10 bg-white text-heading hover:bg-primary hover:text-white'
+                  ? 'bg-primary text-white shadow-lg shadow-primary/20'
+                  : 'border border-black/10 bg-white text-heading hover:bg-primary hover:text-white'
                   }`}
               >
                 Đăng Nhập
@@ -361,7 +361,7 @@ const Header = () => {
           </div>
         </div>
       </div>
-      
+
       {/* Toast Notification */}
       {toastNoti && (() => {
         const locToast = getLocalizedNotification(toastNoti);
