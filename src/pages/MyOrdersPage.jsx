@@ -21,8 +21,11 @@ const MyOrdersPage = () => {
       case 'PENDING': return 'Chờ xử lý';
       case 'PAYMENT_PENDING': return 'Chờ thanh toán';
       case 'CONFIRMED': return 'Đã xác nhận';
-      case 'SHIPPING': return 'Đang giao hàng';
-      case 'COMPLETED': return 'Hoàn thành';
+      case 'SHIPPING':
+      case 'READY_TO_UP':
+      case 'ASSIGNING':
+      case 'DELIVERING': return 'Đang vận chuyển';
+      case 'COMPLETED': return 'Đã hoàn thành';
       case 'CANCELLED': return 'Đã hủy';
       default: return status ? status.replace(/_/g, ' ') : '';
     }
@@ -46,8 +49,11 @@ const MyOrdersPage = () => {
       try {
         setLoading(true);
         const response = await orderApi.getMyOrders();
+        console.log('MyOrdersPage response:', response);
         if (response.success) {
           setOrders(response.result.content || response.result || []);
+        } else {
+          console.warn('MyOrdersPage API returned success=false:', response);
         }
       } catch (error) {
         console.error('Failed to fetch orders:', error);
@@ -63,6 +69,8 @@ const MyOrdersPage = () => {
       // Group PENDING, PENDING_VALIDATION, and PAYMENT_PENDING under the 'PENDING' tab
       const matchesTab = activeTab === 'ALL' || 
         (activeTab === 'PENDING' && ['PENDING', 'PENDING_VALIDATION', 'PAYMENT_PENDING'].includes(order.status)) ||
+        (activeTab === 'SHIPPING' && ['SHIPPING', 'READY_TO_UP', 'ASSIGNING', 'DELIVERING'].includes(order.status)) ||
+        (activeTab === 'COMPLETED' && ['COMPLETED', 'DELIVERED'].includes(order.status)) ||
         order.status === activeTab;
       
       const searchLower = searchTerm.toLowerCase();

@@ -116,7 +116,16 @@ const OrderTrackingPage = () => {
     }
   };
 
-  const statusInfo = getStatusDisplay(delivery?.status === 'DELIVERED' ? 'COMPLETED' : (delivery?.status || order?.status));
+  const getCustomerStatus = (order, delivery) => {
+    if (!order) return null;
+    if (order.status === 'CANCELLED') return 'CANCELLED';
+    if (order.status === 'COMPLETED') return 'COMPLETED';
+    if (delivery?.status === 'DELIVERED') return 'COMPLETED';
+    if (['DELIVERING', 'READY_TO_UP', 'ASSIGNING', 'SHIPPING'].includes(delivery?.status || order?.status)) return 'SHIPPING';
+    return order.status;
+  };
+
+  const statusInfo = getStatusDisplay(getCustomerStatus(order, delivery));
 
   // Active steps calculation for the timeline
   const isStep1Active = ['PENDING_VALIDATION', 'PENDING', 'PAYMENT_PENDING', 'CONFIRMED', 'SHIPPING', 'COMPLETED'].includes(order?.status);
@@ -146,18 +155,20 @@ const OrderTrackingPage = () => {
                   <div className="h-4 w-px bg-gray-300"></div>
                   <span className="text-sm font-bold text-gray-800 tracking-tight uppercase">Mã đơn hàng: {orderId}</span>
                 </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <span className="text-gray-500 uppercase font-medium">Trạng thái:</span>
-                  <span className={`px-3.5 py-1 ${statusInfo.color} text-[11px] font-bold rounded-sm uppercase tracking-wider border transition-all`}>
-                    {statusInfo.text}
-                  </span>
-                  <button
-                    onClick={handleReorder}
-                    className="ml-2 px-4 py-1.5 bg-primary text-white text-sm font-medium rounded-sm hover:bg-primary/90 transition-all shadow-sm flex items-center gap-1"
-                  >
-                    <span className="material-symbols-outlined text-[16px]">replay</span>
-                    Mua lại
-                  </button>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center gap-3 text-sm">
+                    <span className="text-gray-500 uppercase font-medium">Trạng thái:</span>
+                    <span className={`px-3.5 py-1 ${statusInfo.color} text-[11px] font-bold rounded-sm uppercase tracking-wider border transition-all`}>
+                      {statusInfo.text}
+                    </span>
+                    <button
+                      onClick={handleReorder}
+                      className="ml-2 px-4 py-1.5 bg-primary text-white text-sm font-medium rounded-sm hover:bg-primary/90 transition-all shadow-sm flex items-center gap-1"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">replay</span>
+                      Mua lại
+                    </button>
+                  </div>
                 </div>
               </div>
 

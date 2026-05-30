@@ -61,7 +61,7 @@ const RegisterForm = () => {
           <div className="relative">
             <input 
               className="w-full h-12 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" 
-              placeholder="johndoe123" 
+              placeholder="nguyenvana" 
               type="text" 
               value={username} 
               onChange={(e) => setUsername(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ''))} 
@@ -72,8 +72,7 @@ const RegisterForm = () => {
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Họ và tên</label>
           <div className="relative">
-            <input className="w-full h-12 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" placeholder="John Doe" type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} />
-            <span className="material-symbols-outlined absolute right-3 top-2.5 text-green-500 text-xl">check_circle</span>
+            <input className="w-full h-12 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" placeholder="Nguyễn Văn A" type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} />
           </div>
         </div>
       </div>
@@ -81,7 +80,7 @@ const RegisterForm = () => {
       <div className="grid grid-cols-2 gap-4">
         <div className="flex flex-col gap-1.5">
           <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Địa chỉ Email</label>
-          <input className="w-full h-12 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" placeholder="john@example.com" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input className="w-full h-12 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" placeholder="vana@gmail.com" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
         </div>
 
         <div className="flex flex-col gap-1.5">
