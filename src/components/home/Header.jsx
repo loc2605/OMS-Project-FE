@@ -291,7 +291,7 @@ const Header = () => {
                       ) : (
                         <div className="py-12 text-center flex flex-col items-center">
                           <span className="material-symbols-outlined text-gray-300 text-4xl mb-2">notifications_off</span>
-                          <p className="text-sm text-gray-500">Chưa có thông báo nào</p>
+                          <p className="text-sm text-gray-500">Chưa có thông báo nào.</p>
                         </div>
                       )}
                     </div>
