@@ -102,7 +102,8 @@ const Header = () => {
     if (isAuthenticated) {
       const fetchNotifications = async () => {
         try {
-          const response = await notificationApi.getMyNotifications({ size: 5 });
+          // Request more notifications (increase limit) so dropdown can show more items
+          const response = await notificationApi.getMyNotifications({ size: 100 });
           if (response.success) {
             const notifs = response.result?.content || [];
 
