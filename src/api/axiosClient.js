@@ -2,9 +2,6 @@ import axios from 'axios';
 
 const axiosClient = axios.create({
   baseURL: 'http://192.168.10.159:8888/api/v1',
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 // Interceptor cho Request
@@ -15,6 +12,33 @@ axiosClient.interceptors.request.use(
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
+
+    const storedUser = sessionStorage.getItem('user');
+    if (storedUser) {
+      try {
+        const user = JSON.parse(storedUser);
+        const accountId = user?.accountId || user?.id || user?.userId || user?.account_id;
+        const userRole = user?.role || user?.userRole || user?.roleName || user?.type;
+        if (accountId) {
+          config.headers['X-Account-Id'] = accountId;
+        }
+        if (userRole) {
+          config.headers['X-User-Role'] = userRole;
+        }
+      } catch (_) {
+        // ignore invalid user storage
+      }
+    }
+
+    const sessionAccountId = sessionStorage.getItem('accountId');
+    const sessionUserRole = sessionStorage.getItem('userRole');
+    if (sessionAccountId && !config.headers['X-Account-Id']) {
+      config.headers['X-Account-Id'] = sessionAccountId;
+    }
+    if (sessionUserRole && !config.headers['X-User-Role']) {
+      config.headers['X-User-Role'] = sessionUserRole;
+    }
+
     return config;
   },
   (error) => {

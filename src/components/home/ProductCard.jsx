@@ -115,7 +115,7 @@ const ProductCard = ({ product, isSkeleton = false }) => {
 
         <div className="flex items-end justify-between mt-3 pt-3 border-t border-gray-50">
           <div>
-            <p className="text-[11px] text-gray-400 font-medium mb-0.5">Price</p>
+            <p className="text-[11px] text-gray-400 font-medium mb-0.5">Giá</p>
             <span className="text-base md:text-lg font-bold text-gray-900">
               {formattedPrice}
             </span>

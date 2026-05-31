@@ -1,9 +1,10 @@
 import axiosClient from './axiosClient';
 
 const profileApi = {
-  getProfile: () => {
+  getProfile: async () => {
     const url = '/customers/me';
-    return axiosClient.get(url);
+    const res = await axiosClient.get(url);
+    return res;
   },
   getAddresses: () => {
     const url = '/customers/addresses';
@@ -27,7 +28,15 @@ const profileApi = {
   },
   updateProfile: (data) => {
     const url = '/customers/me';
-    return axiosClient.put(url, data);
+    if (data instanceof FormData) {
+      return axiosClient.put(url, data);
+    }
+    const jsonData = JSON.parse(JSON.stringify(data));
+    return axiosClient.put(url, jsonData, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
   }
 };
 

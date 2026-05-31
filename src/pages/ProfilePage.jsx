@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Header from '../components/home/Header';
 import profileApi from '../api/profileApi';
@@ -6,7 +6,7 @@ import { useAuth } from '../contexts/AuthContext';
 
 const ProfilePage = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, login } = useAuth();
   const [profile, setProfile] = useState(null);
   const [addresses, setAddresses] = useState([]);
   const [showAddressModal, setShowAddressModal] = useState(false);
@@ -19,6 +19,17 @@ const ProfilePage = () => {
     gender: 'OTHER',
     dateOfBirth: ''
   });
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState('');
+  const [saveError, setSaveError] = useState('');
+  const avatarInputRef = useRef(null);
+
+  const closeEditModal = () => {
+    setIsEditingProfile(false);
+    setSaveError('');
+    setAvatarFile(null);
+    setAvatarPreview('');
+  };
 
   const handleStartEditProfile = () => {
     setEditForm({
@@ -27,24 +38,74 @@ const ProfilePage = () => {
       gender: profile?.gender || 'OTHER',
       dateOfBirth: profile?.dateOfBirth || ''
     });
+    setAvatarFile(null);
+    setAvatarPreview('');
+    setSaveError('');
     setIsEditingProfile(true);
   };
 
   const handleSaveProfile = async () => {
     try {
-      const res = await profileApi.updateProfile(editForm);
+      setSaveError('');
+      const payload = {
+        fullname: editForm.fullname,
+        phone: editForm.phone,
+        gender: editForm.gender,
+        dateOfBirth: editForm.dateOfBirth
+      };
+      let requestData = payload;
+      if (avatarFile) {
+        const formData = new FormData();
+        formData.append('fullname', payload.fullname);
+        formData.append('phone', payload.phone);
+        formData.append('gender', payload.gender);
+        formData.append('dateOfBirth', payload.dateOfBirth);
+        formData.append('file', avatarFile);
+        requestData = formData;
+      }
+      const res = await profileApi.updateProfile(requestData);
       if (res.success) {
         setProfile(res.result);
-        setIsEditingProfile(false);
+        // update auth context so header avatar updates immediately
+        try {
+          const token = sessionStorage.getItem('token');
+          const refreshToken = sessionStorage.getItem('refreshToken');
+          if (login) login(res.result, token, refreshToken);
+        } catch (_) {}
+        closeEditModal();
         alert('Cập nhật thông tin cá nhân thành công!');
       } else {
-        alert(res.message || 'Cập nhật thất bại.');
+        setSaveError(res.message || 'Cập nhật thất bại.');
       }
     } catch (error) {
       console.error('Update profile error:', error);
-      alert('Có lỗi xảy ra khi cập nhật thông tin!');
+      let message = 'Có lỗi xảy ra khi cập nhật thông tin!';
+      if (typeof error === 'string') {
+        message = error;
+      } else if (error?.data?.message) {
+        message = error.data.message;
+      } else if (error?.message) {
+        message = error.message;
+      }
+      setSaveError(message);
     }
   };
+
+  const handleAvatarChange = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setAvatarFile(file);
+      setAvatarPreview(URL.createObjectURL(file));
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (avatarPreview) {
+        URL.revokeObjectURL(avatarPreview);
+      }
+    };
+  }, [avatarPreview]);
 
   // Vietnam Provinces API state
   const [provinces, setProvinces] = useState([]);
@@ -58,8 +119,9 @@ const ProfilePage = () => {
   });
 
   const defaultAvatar = 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';
-  const userAvatar = profile?.avatarUrl || user?.avatarUrl || profile?.avatar || user?.avatar || defaultAvatar;
-  const displayName = profile?.fullname || profile?.fullName || user?.fullName || user?.username || 'User';
+  const currentAvatar = profile?.avatarUrl || user?.avatarUrl || profile?.avatar || user?.avatar || defaultAvatar;
+  const userAvatar = avatarPreview || currentAvatar;
+  const displayName = profile?.fullname || profile?.fullName || user?.fullName || 'User';
 
   useEffect(() => {
     const fetchProvinces = async () => {
@@ -78,6 +140,12 @@ const ProfilePage = () => {
         const profileRes = await profileApi.getProfile();
         if (profileRes.success) {
           setProfile(profileRes.result);
+          // Sync auth context / session so Header and other components show updated avatar
+          try {
+            const token = sessionStorage.getItem('token');
+            const refreshToken = sessionStorage.getItem('refreshToken');
+            if (login) login(profileRes.result, token, refreshToken);
+          } catch (_) {}
           // If addresses are included in profile result, use them
           if (profileRes.result.addresses) {
             setAddresses(profileRes.result.addresses);
@@ -256,9 +324,20 @@ const ProfilePage = () => {
               className="w-28 h-28 md:w-32 md:h-32 rounded-full border-[4px] md:border-[6px] border-white object-cover shadow-lg bg-white" 
               alt="User Avatar" 
             />
-            <button className="absolute bottom-2 right-2 bg-white rounded-full p-2.5 shadow-lg border border-gray-100 text-gray-600 hover:text-primary hover:scale-110 transition-all opacity-0 group-hover:opacity-100">
+            <button
+              type="button"
+              onClick={() => avatarInputRef.current?.click()}
+              className="absolute bottom-2 right-2 bg-white rounded-full p-2.5 shadow-lg border border-gray-100 text-gray-600 hover:text-primary hover:scale-110 transition-all opacity-0 group-hover:opacity-100"
+            >
               <span className="material-symbols-outlined text-sm block">photo_camera</span>
             </button>
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleAvatarChange}
+            />
           </div>
           <div className="flex-1 text-center md:text-left mb-2">
             <h1 className="text-3xl font-black text-gray-900 tracking-tight">{displayName}</h1>
@@ -292,10 +371,6 @@ const ProfilePage = () => {
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
-                <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Tên người dùng</p>
-                  <p className="font-semibold text-gray-900">{user?.username || 'user'}</p>
-                </div>
                 <div>
                   <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Họ và tên</p>
                   <p className="font-semibold text-gray-900">{profile?.fullname || profile?.fullName || user?.fullName || 'Chưa cập nhật'}</p>
@@ -414,11 +489,38 @@ const ProfilePage = () => {
           <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
             <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
               <h3 className="text-lg font-bold text-heading">Chỉnh sửa hồ sơ</h3>
-              <button onClick={() => setIsEditingProfile(false)} className="text-gray-400 hover:text-gray-600 transition-colors">
+              <button onClick={closeEditModal} className="text-gray-400 hover:text-gray-600 transition-colors">
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
             <div className="p-6 space-y-5">
+              <div className="flex flex-col items-center gap-3 md:flex-row md:items-start">
+                <div className="relative">
+                  <img
+                    src={avatarPreview || currentAvatar}
+                    alt="Avatar preview"
+                    className="w-28 h-28 rounded-full object-cover border border-gray-200 shadow-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => avatarInputRef.current?.click()}
+                    className="absolute bottom-0 right-0 bg-primary text-white rounded-full p-2 shadow-lg border border-white"
+                  >
+                    <span className="material-symbols-outlined text-sm">photo_camera</span>
+                  </button>
+                </div>
+                <div className="flex-1 space-y-1">
+                  <p className="text-l text-gray-500">Thay ảnh đại diện để hồ sơ trở nên nổi bật hơn Thử ngay!</p>
+                  <button
+                    type="button"
+                    onClick={() => avatarInputRef.current?.click()}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-xl border border-gray-200 hover:bg-gray-50"
+                  >
+                    Chọn ảnh mới
+                  </button>
+                  {avatarFile && <p className="text-sm text-gray-600">Ảnh sẽ được tải lên khi lưu thay đổi.</p>}
+                </div>
+              </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Họ và tên</label>
                 <input 
@@ -434,6 +536,9 @@ const ProfilePage = () => {
                   value={editForm.phone}
                   onChange={(e) => setEditForm({ ...editForm, phone: e.target.value })}
                 />
+                {saveError && (
+                  <p className="text-sm text-red-600 mt-1">{saveError}</p>
+                )}
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1">Giới tính</label>
@@ -481,7 +586,7 @@ const ProfilePage = () => {
               </div>
             </div>
             <div className="p-5 border-t border-gray-100 flex gap-3 bg-gray-50/50">
-              <button onClick={() => setIsEditingProfile(false)} className="flex-1 px-4 py-3 rounded-lg border border-gray-200 text-gray-600 font-bold hover:bg-gray-100 transition-all text-xs uppercase tracking-wider">Hủy</button>
+              <button onClick={closeEditModal} className="flex-1 px-4 py-3 rounded-lg border border-gray-200 text-gray-600 font-bold hover:bg-gray-100 transition-all text-xs uppercase tracking-wider">Hủy</button>
               <button onClick={handleSaveProfile} className="flex-1 px-4 py-3 rounded-lg bg-primary text-white font-bold hover:opacity-90 shadow-lg shadow-primary/20 transition-all text-xs uppercase tracking-wider">Lưu thay đổi</button>
             </div>
           </div>
