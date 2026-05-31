@@ -324,20 +324,7 @@ const ProfilePage = () => {
               className="w-28 h-28 md:w-32 md:h-32 rounded-full border-[4px] md:border-[6px] border-white object-cover shadow-lg bg-white" 
               alt="User Avatar" 
             />
-            <button
-              type="button"
-              onClick={() => avatarInputRef.current?.click()}
-              className="absolute bottom-2 right-2 bg-white rounded-full p-2.5 shadow-lg border border-gray-100 text-gray-600 hover:text-primary hover:scale-110 transition-all opacity-0 group-hover:opacity-100"
-            >
-              <span className="material-symbols-outlined text-sm block">photo_camera</span>
-            </button>
-            <input
-              ref={avatarInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleAvatarChange}
-            />
+            {/* Avatar change button removed from header — input moved into edit modal */}
           </div>
           <div className="flex-1 text-center md:text-left mb-2">
             <h1 className="text-3xl font-black text-gray-900 tracking-tight">{displayName}</h1>
@@ -501,13 +488,20 @@ const ProfilePage = () => {
                     alt="Avatar preview"
                     className="w-28 h-28 rounded-full object-cover border border-gray-200 shadow-sm"
                   />
-                  <button
-                    type="button"
-                    onClick={() => avatarInputRef.current?.click()}
-                    className="absolute bottom-0 right-0 bg-primary text-white rounded-full p-2 shadow-lg border border-white"
-                  >
-                    <span className="material-symbols-outlined text-sm">photo_camera</span>
-                  </button>
+                    <input
+                      ref={avatarInputRef}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={handleAvatarChange}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => avatarInputRef.current?.click()}
+                      className="absolute bottom-0 right-0 bg-primary text-white rounded-full p-2 shadow-lg border border-white"
+                    >
+                      <span className="material-symbols-outlined text-sm">photo_camera</span>
+                    </button>
                 </div>
                 <div className="flex-1 space-y-1">
                   <p className="text-l text-gray-500">Thay ảnh đại diện để hồ sơ trở nên nổi bật hơn Thử ngay!</p>
