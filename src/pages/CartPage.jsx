@@ -17,7 +17,7 @@ const CartPage = () => {
     <div className="bg-[#f5f5f5] text-body-text min-h-screen pb-32">
       <Header />
 
-      <main className="max-w-[1400px] mx-auto px-4 pt-4">
+      <main className="max-w-[1200px] mx-auto px-4 pt-6">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 mb-6 text-sm text-gray-500">
           <button onClick={() => navigate('/')} className="hover:text-primary transition-colors">Trang Chủ</button>
@@ -40,7 +40,7 @@ const CartPage = () => {
             </button>
           </div>
         ) : (
-          <div className="bg-white rounded-xl shadow-sm mb-4 overflow-hidden">
+          <div className="bg-white rounded-xl shadow-sm mb-6 overflow-hidden">
             {/* Items List */}
             <div className="divide-y divide-gray-50">
               {cartItems.map((item) => (
@@ -67,7 +67,27 @@ const CartPage = () => {
                       >
                         <span className="material-symbols-outlined text-[16px]">remove</span>
                       </button>
-                      <span className="w-12 text-center text-sm text-gray-800 font-medium">{item.quantity}</span>
+                      <input
+                        type="number"
+                        min="1"
+                        inputMode="numeric"
+                        pattern="[0-9]*"
+                        value={item.quantity}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === '') return;
+                          const newQuantity = Number(value);
+                          if (!Number.isNaN(newQuantity) && newQuantity > 0) {
+                            updateQuantity(item.id, newQuantity);
+                          }
+                        }}
+                        onBlur={(e) => {
+                          if (e.target.value === '') {
+                            updateQuantity(item.id, 1);
+                          }
+                        }}
+                        className="w-10 h-8 text-center text-sm font-medium bg-transparent outline-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none appearance-none"
+                      />
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
                         className="size-8 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors border-l border-gray-200"
@@ -99,7 +119,7 @@ const CartPage = () => {
       {/* Sticky Bottom Summary Bar (Shopee Style) */}
       {cartItems.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 bg-white shadow-[0_-5px_15px_rgba(0,0,0,0.05)] z-50">
-          <div className="max-w-[1200px] mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="max-w-[1200px] mx-auto px-6 md:px-4 py-4 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-6 text-sm text-gray-600">
               <div className="flex items-center gap-2">
                 <span>Tổng thanh toán ({cartCount} Sản phẩm):</span>
