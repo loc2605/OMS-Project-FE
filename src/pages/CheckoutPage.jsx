@@ -56,7 +56,7 @@ const CustomSelect = ({ label, options, value, onChange, disabled, placeholder, 
           type="button"
           disabled={disabled}
           onClick={() => setActiveDropdown(isOpen ? null : label)}
-          className={`w-full px-4 py-3 rounded-sm border border-gray-200 focus:border-primary outline-none transition-all text-sm bg-white flex justify-between items-center disabled:bg-gray-50 disabled:opacity-60 cursor-pointer ${isOpen ? 'border-primary shadow-sm' : ''}`}
+          className={`w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary outline-none transition-all text-sm bg-white flex justify-between items-center disabled:bg-gray-50 disabled:opacity-60 cursor-pointer ${isOpen ? 'border-primary shadow-sm' : ''}`}
         >
           <span className={!value ? 'text-gray-400' : 'text-gray-700 font-medium'}>
             {value || placeholder}
@@ -67,7 +67,7 @@ const CustomSelect = ({ label, options, value, onChange, disabled, placeholder, 
         </button>
 
         {isOpen && (
-          <div className="absolute top-full left-0 w-full mt-1 bg-white border border-gray-100 rounded-sm shadow-xl z-[210] flex flex-col max-h-64">
+          <div className="absolute top-full left-0 w-full mt-1 bg-white border border-gray-100 rounded-xl shadow-xl z-[210] flex flex-col max-h-64">
             {/* Search Input */}
             <div className="p-2 border-b border-gray-100 bg-gray-50/50 sticky top-0 z-10">
               <div className="relative flex items-center">
@@ -79,7 +79,7 @@ const CustomSelect = ({ label, options, value, onChange, disabled, placeholder, 
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onClick={(e) => e.stopPropagation()}
-                  className="w-full pl-8 pr-8 py-1.5 rounded-sm border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none text-xs"
+                  className="w-full pl-8 pr-8 py-1.5 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none text-xs"
                 />
                 {searchQuery && (
                   <button
@@ -163,8 +163,9 @@ const CheckoutPage = () => {
         if (res.success) {
           setProfile(res.result);
           if (res.result.addresses && res.result.addresses.length > 0) {
-            setAddresses(res.result.addresses);
-            const defaultAddr = res.result.addresses.find(a => a.isDefault) || res.result.addresses[0];
+            const normalized = sortAddressesByDefault(normalizeAddresses(res.result.addresses));
+            setAddresses(normalized);
+            const defaultAddr = selectDefaultAddress(normalized);
             setSelectedAddress(defaultAddr);
           }
         }
@@ -203,6 +204,11 @@ const CheckoutPage = () => {
     return items.find((item) => item.isDefault) || items[0] || null;
   };
 
+  const normalizeAddress = (addr) => ({
+    ...addr,
+    isDefault: !!(addr?.isDefault || addr?.default)
+  });
+  const normalizeAddresses = (items) => (Array.isArray(items) ? items.map(normalizeAddress) : []);
   const sortAddressesByDefault = (items) => {
     if (!items || items.length === 0) return [];
     return [...items].sort((a, b) => {
@@ -210,6 +216,11 @@ const CheckoutPage = () => {
       const bDefault = b?.isDefault ? 0 : 1;
       return aDefault - bDefault;
     });
+  };
+
+  const formatAddressLine = (addr) => {
+    if (!addr) return '';
+    return [addr.street, addr.ward, addr.district, addr.city].filter(Boolean).join(', ');
   };
 
   useEffect(() => {
@@ -335,7 +346,7 @@ const CheckoutPage = () => {
         // Fetch addresses again
         const profileRes = await profileApi.getProfile();
         if (profileRes.success && profileRes.result.addresses) {
-          const updatedAddresses = profileRes.result.addresses;
+          const updatedAddresses = sortAddressesByDefault(normalizeAddresses(profileRes.result.addresses));
           setAddresses(updatedAddresses);
           // Find the newly added address (usually the last one or by some logic)
           // Or if it's default, it will be the new selected address
@@ -410,7 +421,7 @@ const CheckoutPage = () => {
       {isPolling && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
-          <div className="bg-white rounded-sm shadow-2xl w-full max-w-[450px] relative z-10 p-10 text-center animate-in fade-in zoom-in duration-300">
+          <div className="bg-white rounded-3xl shadow-2xl w-full max-w-[450px] relative z-10 p-10 text-center animate-in fade-in zoom-in duration-300">
 
             {pollStatus === 'PENDING' && (
               <div className="flex flex-col items-center">
@@ -435,13 +446,13 @@ const CheckoutPage = () => {
                 <div className="flex flex-col gap-3 w-full">
                   <button
                     onClick={() => navigate(`/order/${activeOrderId}`)}
-                    className="w-full bg-primary text-white py-3 rounded-sm font-medium hover:bg-primary/90 transition-all shadow-sm"
+                    className="w-full bg-primary text-white py-3 rounded-xl font-medium hover:bg-primary/90 transition-all shadow-sm"
                   >
                     Xem chi tiết đơn hàng
                   </button>
                   <button
                     onClick={() => navigate('/')}
-                    className="w-full bg-white text-gray-600 py-3 rounded-sm font-medium border border-gray-200 hover:bg-gray-50 transition-all"
+                    className="w-full bg-white text-gray-600 py-3 rounded-xl font-medium border border-gray-200 hover:bg-gray-50 transition-all"
                   >
                     Quay lại trang chủ
                   </button>
@@ -459,7 +470,7 @@ const CheckoutPage = () => {
                 <p className="text-gray-400 text-sm mb-8">Vui lòng kiểm tra lại thông tin và thử lại.</p>
                 <button
                   onClick={() => setIsPolling(false)}
-                  className="w-full bg-gray-800 text-white py-3 rounded-sm font-medium hover:bg-black transition-all"
+                  className="w-full bg-gray-800 text-white py-3 rounded-xl font-medium hover:bg-black transition-all"
                 >
                   Đóng & Thử lại
                 </button>
@@ -473,7 +484,7 @@ const CheckoutPage = () => {
       {showAddressModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40" onClick={() => setShowAddressModal(false)}></div>
-          <div className="bg-white rounded-sm shadow-xl w-full max-w-[700px] relative z-10 overflow-hidden animate-in fade-in zoom-in duration-200">
+          <div className="bg-white rounded-3xl shadow-xl w-full max-w-[700px] relative z-10 overflow-hidden animate-in fade-in zoom-in duration-200">
             <div className="p-8 border-b border-gray-100 flex justify-between items-center">
               <h3 className="text-xl font-medium">Địa chỉ của tôi</h3>
               <button onClick={() => setShowAddressModal(false)} className="material-symbols-outlined text-gray-400 hover:text-gray-600 transition-colors">close</button>
@@ -515,7 +526,7 @@ const CheckoutPage = () => {
                           )}
                         </div>
                         <div className="text-gray-600 mb-1 font-medium">{addr.street}</div>
-                        <div className="text-gray-600">{addr.ward}, {addr.district}, {addr.city}</div>
+                        <div className="text-gray-600">{formatAddressLine(addr)}</div>
                       </div>
                     </div>
                   </label>
@@ -537,7 +548,7 @@ const CheckoutPage = () => {
             <div className="p-6 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
               <button
                 onClick={() => setShowAddressModal(false)}
-                className="px-8 py-2 text-sm border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
+                className="px-8 py-2 rounded-xl text-sm border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
               >
                 Hủy
               </button>
@@ -547,7 +558,7 @@ const CheckoutPage = () => {
                   setAddressError('');
                   setShowAddressModal(false);
                 }}
-                className="px-8 py-2 text-sm bg-primary text-white hover:bg-primary/90 transition-colors shadow-sm"
+                className="px-8 py-2 rounded-xl text-sm bg-primary text-white hover:bg-primary/90 transition-colors shadow-sm"
               >
                 Xác nhận
               </button>
@@ -560,7 +571,7 @@ const CheckoutPage = () => {
       {showAddAddressModal && (
         <div className="fixed inset-0 z-[150] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/40" onClick={() => setShowAddAddressModal(false)}></div>
-          <div className="bg-white rounded-sm shadow-xl w-full max-w-[850px] relative z-10 overflow-hidden animate-in fade-in zoom-in duration-200">
+          <div className="bg-white rounded-3xl shadow-xl w-full max-w-[850px] relative z-10 overflow-hidden animate-in fade-in zoom-in duration-200">
             <div className="p-8 border-b border-gray-100 flex justify-between items-center">
               <h3 className="text-xl font-medium">Địa chỉ mới</h3>
               <button onClick={() => setShowAddAddressModal(false)} className="material-symbols-outlined text-gray-400 hover:text-gray-600 transition-colors">close</button>
@@ -593,7 +604,7 @@ const CheckoutPage = () => {
                 <label className="text-[11px] font-bold text-gray-400 uppercase tracking-wider ml-1">Địa chỉ chi tiết</label>
                 <input
                   required
-                  className="w-full px-4 py-3 rounded-sm border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm font-medium"
+                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all text-sm font-medium"
                   placeholder="Số nhà, tên đường, ngõ..."
                   value={addressForm.street}
                   onChange={(e) => setAddressForm({ ...addressForm, street: e.target.value })}
@@ -604,7 +615,7 @@ const CheckoutPage = () => {
                 <input
                   id="checkout-default-addr"
                   type="checkbox"
-                  className="size-5 rounded-sm text-primary focus:ring-primary border-gray-300 cursor-pointer"
+                  className="size-5 rounded-full text-primary focus:ring-primary border-gray-300 cursor-pointer"
                   checked={addressForm.isDefault}
                   onChange={(e) => setAddressForm({ ...addressForm, isDefault: e.target.checked })}
                 />
@@ -615,14 +626,14 @@ const CheckoutPage = () => {
                 <button
                   type="button"
                   onClick={() => setShowAddAddressModal(false)}
-                  className="px-10 py-3 text-sm font-medium border border-gray-200 hover:bg-gray-50 transition-colors"
+                  className="px-10 py-3 rounded-xl text-sm font-medium border border-gray-200 hover:bg-gray-50 transition-colors"
                 >
                   Hủy
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-10 py-3 text-sm font-medium bg-primary text-white hover:bg-primary/90 transition-colors shadow-md disabled:opacity-50"
+                  className="px-10 py-3 rounded-xl text-sm font-medium bg-primary text-white hover:bg-primary/90 transition-colors shadow-md disabled:opacity-50"
                 >
                   {loading ? 'Đang lưu...' : 'Gửi'}
                 </button>
@@ -645,7 +656,7 @@ const CheckoutPage = () => {
         {/* 1. Shipping Address Section (Shopee Style) */}
         <section
           ref={addressRef}
-          className={`bg-white rounded-sm shadow-sm mb-4 relative overflow-hidden transition-all duration-300 ${addressError ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+          className={`bg-white rounded-3xl shadow-sm mb-4 relative overflow-hidden transition-all duration-300 ${addressError ? 'ring-2 ring-primary ring-offset-2' : ''}`}
         >
           {/* Decorative Top Border */}
           <div className="h-[3px] w-full bg-[repeating-linear-gradient(45deg,#ee4d2d,#ee4d2d_33px,#fff_33px,#fff_46px,#405cbf_46px,#405cbf_79px,#fff_79px,#fff_92px)]"></div>
@@ -664,7 +675,7 @@ const CheckoutPage = () => {
                     <span className="font-bold text-gray-800">{profile?.phone || user?.phone}</span>
                   </div>
                   <div className="text-gray-600">
-                    {selectedAddress.street}, {selectedAddress.ward}, {selectedAddress.city}
+                    {formatAddressLine(selectedAddress)}
                     {selectedAddress.isDefault ? (
                       <span className="ml-3 inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-primary">
                         <span className="material-symbols-outlined text-[14px]">check_circle</span>
@@ -694,7 +705,7 @@ const CheckoutPage = () => {
                   setTempSelectedAddress(selectedAddress);
                   setShowAddressModal(true);
                 }}
-                className="text-[#4080ee] hover:opacity-80 text-sm font-medium whitespace-nowrap"
+                className="text-[#4080ee] hover:bg-[#4080ee1a] rounded-full px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors border border-[#4080ee33]"
               >
                 {selectedAddress ? 'Thay đổi' : 'Chọn địa chỉ'}
               </button>
@@ -703,7 +714,7 @@ const CheckoutPage = () => {
         </section>
 
         {/* 2. Product Table Section */}
-        <section className="bg-white rounded-sm shadow-sm mb-4 overflow-hidden">
+        <section className="bg-white rounded-3xl shadow-sm mb-4 overflow-hidden">
           <div className="grid grid-cols-12 p-4 text-sm text-gray-400 border-b border-gray-50">
             <div className="col-span-6 text-gray-800 font-medium text-base">Sản phẩm</div>
             <div className="col-span-2 text-center">Đơn giá</div>
@@ -716,7 +727,7 @@ const CheckoutPage = () => {
               <div key={item.id} className="grid grid-cols-12 p-4 items-center hover:bg-gray-50/50 transition-colors">
                 <div className="col-span-6 flex gap-3">
                   <div
-                    className="size-20 bg-cover bg-center rounded-sm border border-gray-100 flex-shrink-0"
+                    className="size-20 bg-cover bg-center rounded-xl border border-gray-100 flex-shrink-0"
                     style={{ backgroundImage: `url(${item.imageUrl?.[0] || item.image})` }}
                   />
                   <div className="flex flex-col justify-center">
@@ -736,7 +747,7 @@ const CheckoutPage = () => {
         </section>
 
         {/* 3. Payment Method Section */}
-        <section className="bg-white rounded-sm shadow-sm mb-4 flex flex-col lg:flex-row">
+        <section className="bg-white rounded-3xl shadow-sm mb-4 flex flex-col lg:flex-row">
           <div className="p-6 flex-1 border-b lg:border-b-0 lg:border-r border-gray-50 flex flex-col md:flex-row md:items-start gap-6">
             <h2 className="text-lg font-medium whitespace-nowrap pt-1">Phương thức thanh toán</h2>
             <div className="flex flex-wrap items-start gap-3">
@@ -744,7 +755,7 @@ const CheckoutPage = () => {
                 <button
                   key={option.id}
                   onClick={() => setSelectedPayment(option.id)}
-                  className={`px-6 py-2.5 rounded-sm border text-sm transition-all relative ${selectedPayment === option.id
+                  className={`px-6 py-2.5 rounded-xl border text-sm transition-all relative ${selectedPayment === option.id
                     ? 'border-primary text-primary'
                     : 'border-gray-200 text-gray-600 hover:border-gray-400'
                     }`}
@@ -781,7 +792,7 @@ const CheckoutPage = () => {
                   type="button"
                   disabled={loading || checkoutItems.length === 0}
                   onClick={handlePlaceOrder}
-                  className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 rounded-sm text-base shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 rounded-xl text-base shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? 'Đang xử lý...' : 'Đặt hàng'}
                 </button>
