@@ -138,7 +138,7 @@ const MyOrdersPage = () => {
 
           {/* Sidebar - Search & Filter */}
           <aside className="w-full lg:w-[320px] sticky top-[80px] space-y-6">
-            <div className="bg-white rounded-sm shadow-sm p-6 space-y-8">
+            <div className="bg-white rounded-xl shadow-sm p-6 space-y-8">
               {/* Search Section */}
               <div>
                 <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2">
@@ -152,7 +152,7 @@ const MyOrdersPage = () => {
                       placeholder="Nhập mã đơn hàng"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full h-full bg-[#f8f8f8] border border-gray-200 border-r-0 rounded-l-sm py-2.5 pl-4 pr-10 text-sm outline-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary focus:bg-white transition-all relative z-10"
+                      className="w-full h-full bg-[#f8f8f8] border border-gray-200 border-r-0 rounded-l-xl py-2.5 pl-4 pr-10 text-sm outline-none focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary focus:bg-white transition-all relative z-10"
                     />
                     {searchTerm && (
                       <button
@@ -164,7 +164,7 @@ const MyOrdersPage = () => {
                       </button>
                     )}
                   </div>
-                  <button className="bg-primary hover:opacity-90 text-white px-4 py-2.5 rounded-r-sm flex items-center justify-center transition-all border border-primary z-10 shadow-sm shadow-primary/20">
+                  <button className="bg-primary hover:opacity-90 text-white px-4 py-2.5 rounded-r-xl flex items-center justify-center transition-all border border-primary z-10 shadow-sm shadow-primary/20">
                     <span className="material-symbols-outlined text-[20px]">search</span>
                   </button>
                 </div>
@@ -181,7 +181,7 @@ const MyOrdersPage = () => {
                     <button
                       key={tab.id}
                       onClick={() => setActiveTab(tab.id)}
-                      className={`w-full flex items-center justify-between px-4 py-2.5 rounded-sm text-sm transition-all ${activeTab === tab.id
+                      className={`w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-sm transition-all ${activeTab === tab.id
                           ? 'bg-primary text-white font-medium shadow-md shadow-primary/20'
                           : 'text-gray-600 hover:bg-gray-50'
                         }`}
@@ -202,12 +202,12 @@ const MyOrdersPage = () => {
           {/* Main Content - Orders List */}
           <div className="flex-1 w-full">
             {loading ? (
-              <div className="flex flex-col items-center justify-center py-32 bg-white rounded-sm shadow-sm">
+              <div className="flex flex-col items-center justify-center py-32 bg-white rounded-xl shadow-sm">
                 <div className="size-12 border-4 border-gray-100 border-t-primary rounded-full animate-spin mb-4"></div>
                 <p className="text-gray-500 text-sm">Đang tải danh sách đơn hàng của bạn...</p>
               </div>
             ) : filteredOrders.length === 0 ? (
-              <div className="bg-white rounded-sm shadow-sm py-32 text-center">
+              <div className="bg-white rounded-xl shadow-sm py-32 text-center">
                 <div className="size-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6">
                   <span className="material-symbols-outlined text-gray-300 text-6xl">order_approve</span>
                 </div>
@@ -225,7 +225,7 @@ const MyOrdersPage = () => {
             ) : (
               <div className="space-y-4">
                 {pagedOrders.map((order) => (
-                  <div key={order.orderId} className="bg-white rounded-sm shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 hover:shadow-md transition-shadow">
+                  <div key={order.orderId} className="bg-white rounded-xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500 hover:shadow-md transition-shadow">
                     {/* Order Header */}
                     <div className="px-6 py-4 border-b border-gray-50 flex justify-between items-center bg-[#fcfcfc]">
                       <div className="flex items-center gap-3">
@@ -243,7 +243,7 @@ const MyOrdersPage = () => {
                       {order.orderItems && order.orderItems.length > 0 ? (
                         <div className="flex justify-between items-center">
                           <div className="flex gap-4">
-                            <div className="size-20 bg-gray-50 rounded-sm flex items-center justify-center border border-gray-100 flex-shrink-0 overflow-hidden">
+                            <div className="size-20 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100 flex-shrink-0 overflow-hidden">
                               {order.orderItems[0].imageUrl ? (
                                 <img src={order.orderItems[0].imageUrl} alt={order.orderItems[0].productName} className="w-full h-full object-cover" />
                               ) : (
@@ -270,7 +270,7 @@ const MyOrdersPage = () => {
                         </div>
                       ) : (
                         <div className="flex items-center gap-4">
-                          <div className="size-20 bg-gray-50 rounded-sm flex items-center justify-center border border-gray-100">
+                          <div className="size-20 bg-gray-50 rounded-xl flex items-center justify-center border border-gray-100">
                             <span className="material-symbols-outlined text-gray-300 text-4xl">inventory_2</span>
                           </div>
                           <p className="text-sm text-gray-500 italic">Không có thông tin sản phẩm</p>
@@ -288,14 +288,14 @@ const MyOrdersPage = () => {
                     <div className="px-6 py-4 bg-[#fffcf5] border-t border-gray-50 flex justify-end gap-3">
                       <button
                         onClick={() => handleReorder(order)}
-                        className="px-6 py-2 bg-white text-primary border border-primary text-sm font-medium rounded-sm hover:bg-primary/5 transition-all shadow-sm flex items-center gap-2"
+                        className="px-6 py-2 bg-white text-primary border border-primary text-sm font-medium rounded-xl hover:bg-primary/5 transition-all shadow-sm flex items-center gap-2"
                       >
                         <span className="material-symbols-outlined text-[18px]">replay</span>
                         Mua lại
                       </button>
                       <button
                         onClick={() => navigate(`/order/${order.orderId}`)}
-                        className="px-6 py-2 bg-primary text-white text-sm font-medium rounded-sm hover:bg-primary/90 transition-all shadow-sm"
+                        className="px-6 py-2 bg-primary text-white text-sm font-medium rounded-xl hover:bg-primary/90 transition-all shadow-sm"
                       >
                         Xem chi tiết
                       </button>

@@ -152,8 +152,9 @@ const Header = () => {
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-white border-b border-black/5">
-      <div className="max-w-full mx-auto px-4 md:px-8 lg:px-12 py-3 flex items-center justify-between gap-8">
+    <>
+      <header className="fixed top-0 left-0 right-0 z-50 w-full bg-white/95 backdrop-blur-sm border-b border-black/5 shadow-sm">
+        <div className="max-w-full mx-auto px-4 md:px-8 lg:px-12 py-3 flex items-center justify-between gap-8">
         <div className="flex items-center gap-8 flex-1">
           <div className="flex items-center gap-2 shrink-0">
             <div className="size-9 bg-primary rounded flex items-center justify-center text-white">
@@ -362,6 +363,8 @@ const Header = () => {
           </div>
         </div>
       </div>
+      </header>
+      <div className="h-[56px] md:h-[66px]" />
 
       {/* Toast Notification */}
       {toastNoti && (() => {
@@ -383,7 +386,7 @@ const Header = () => {
           </div>
         );
       })()}
-    </header>
+    </>
   );
 };
 

@@ -143,7 +143,7 @@ const OrderTrackingPage = () => {
         <div className="flex flex-col gap-6">
           
           {/* Order Header Card */}
-          <div className="bg-white p-8 rounded-sm shadow-sm relative overflow-hidden">
+          <div className="bg-white p-8 rounded-xl shadow-sm relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-primary"></div>
             <div className="flex flex-col gap-8">
               <div className="flex justify-between items-center border-b border-gray-100 pb-4">
@@ -158,12 +158,12 @@ const OrderTrackingPage = () => {
                 <div className="flex flex-col gap-2">
                   <div className="flex items-center gap-3 text-sm">
                     <span className="text-gray-500 uppercase font-medium">Trạng thái:</span>
-                    <span className={`px-3.5 py-1 ${statusInfo.color} text-[11px] font-bold rounded-sm uppercase tracking-wider border transition-all`}>
+                    <span className={`px-3.5 py-1 ${statusInfo.color} text-[11px] font-bold rounded-full uppercase tracking-wider border transition-all`}>
                       {statusInfo.text}
                     </span>
                     <button
                       onClick={handleReorder}
-                      className="ml-2 px-4 py-1.5 bg-primary text-white text-sm font-medium rounded-sm hover:bg-primary/90 transition-all shadow-sm flex items-center gap-1"
+                      className="ml-2 px-4 py-1.5 bg-primary text-white text-sm font-medium rounded-xl hover:bg-primary/90 transition-all shadow-sm flex items-center gap-1"
                     >
                       <span className="material-symbols-outlined text-[18px]">replay</span>
                       Mua lại
@@ -241,7 +241,7 @@ const OrderTrackingPage = () => {
                   </div>
                   
                   {delivery && (
-                    <div className="mt-10 bg-gray-50 border border-gray-100 p-4 rounded-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div className="mt-10 bg-gray-50 border border-gray-100 p-4 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
                        <div className="flex flex-col gap-1">
                           <span className="text-sm font-bold text-gray-800">Mã vận đơn: <span className="text-primary">{delivery.trackingNumber}</span></span>
                           {delivery.shipperName && (
@@ -256,7 +256,7 @@ const OrderTrackingPage = () => {
                 </div>
               ) : (
                 <div className="py-6 px-4">
-                  <div className="bg-red-50 p-6 rounded-sm border border-red-100 flex items-center gap-4">
+                  <div className="bg-red-50 p-6 rounded-xl border border-red-100 flex items-center gap-4">
                     <div className="size-12 bg-red-100 rounded-full flex items-center justify-center text-red-500">
                       <span className="material-symbols-outlined text-3xl">cancel</span>
                     </div>
@@ -275,7 +275,7 @@ const OrderTrackingPage = () => {
             <div className="lg:col-span-2 space-y-6">
               
               {/* Order Items List */}
-              <div className="bg-white p-6 rounded-sm shadow-sm relative overflow-hidden">
+              <div className="bg-white p-6 rounded-xl shadow-sm relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-primary"></div>
                 <h2 className="text-base font-bold text-gray-800 mb-6 flex items-center gap-2 mt-2">
                   <span className="material-symbols-outlined text-primary text-[20px]">shopping_bag</span>
@@ -284,7 +284,7 @@ const OrderTrackingPage = () => {
                 <div className="divide-y divide-gray-50">
                   {order?.orderItems?.map((item, idx) => (
                     <div key={idx} className="py-5 flex gap-4 first:pt-0 last:pb-0 group">
-                      <div className="size-20 bg-gray-50 rounded-sm border border-gray-100 flex items-center justify-center flex-shrink-0 group-hover:border-primary/30 transition-all overflow-hidden">
+                      <div className="size-20 bg-gray-50 rounded-xl border border-gray-100 flex items-center justify-center flex-shrink-0 group-hover:border-primary/30 transition-all overflow-hidden">
                         {item.imageUrl ? (
                           <img src={item.imageUrl} alt={item.productName} className="w-full h-full object-cover" />
                         ) : (
@@ -340,7 +340,7 @@ const OrderTrackingPage = () => {
                       </span>
                     </div>
                     <div className="text-right">
-                      <span className="text-[11px] text-gray-400 font-bold uppercase tracking-wide bg-gray-50 px-2.5 py-1 rounded-sm border border-gray-100">
+                      <span className="text-[11px] text-gray-400 font-bold uppercase tracking-wide bg-gray-50 px-2.5 py-1 rounded-full border border-gray-100">
                         ID: {order?.paymentId || 'N/A'}
                       </span>
                     </div>
@@ -352,7 +352,7 @@ const OrderTrackingPage = () => {
             {/* Right Column: Shipping Info */}
             <div className="space-y-6">
               {/* Delivery Address */}
-              <div className="bg-white p-6 rounded-sm shadow-sm relative overflow-hidden">
+              <div className="bg-white p-6 rounded-xl shadow-sm relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-primary"></div>
                 <h2 className="text-base font-bold text-gray-800 mb-6 flex items-center gap-2">
                   <span className="material-symbols-outlined text-primary text-[20px]">location_on</span>
@@ -383,11 +383,11 @@ const OrderTrackingPage = () => {
               </div>
 
               {/* Order Status Message */}
-              <div className="bg-white p-6 rounded-sm shadow-sm">
+              <div className="bg-white p-6 rounded-xl shadow-sm">
                 <h3 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2 uppercase tracking-wide">
                    Cập nhật mới nhất
                 </h3>
-                <p className="text-sm text-gray-600 leading-relaxed bg-gray-50 p-4 rounded-sm italic border-l-4 border-gray-200">
+                <p className="text-sm text-gray-600 leading-relaxed bg-gray-50 p-4 rounded-xl italic border-l-4 border-gray-200">
                   "{order?.message || 'Chúng tôi đã nhận được đơn hàng của bạn và đang tiến hành xử lý.'}"
                 </p>
               </div>

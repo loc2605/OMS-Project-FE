@@ -113,14 +113,14 @@ const ProductDetailPage = () => {
         {/* Main Content Area */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* Gallery Card */}
-          <div className="lg:col-span-5 bg-card-white p-4 shadow-soft">
+          <div className="lg:col-span-5 bg-card-white p-4 shadow-soft rounded-[32px]">
             <div className="space-y-4">
-              <div className="overflow-hidden bg-white border border-gray-100 rounded">
+              <div className="overflow-hidden bg-white border border-gray-100 rounded-3xl">
                 <div className="aspect-square bg-center bg-no-repeat bg-cover" data-alt={product.name} style={{ backgroundImage: `url("${product.imageUrl?.[0] || product.image}")` }}></div>
               </div>
               <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
                 {(product.imageUrl || [product.image]).map((img, index) => (
-                  <div key={index} className={`min-w-[80px] aspect-square rounded border-2 ${index === 0 ? 'border-primary' : 'border-gray-200'} cursor-pointer overflow-hidden`}>
+                  <div key={index} className={`min-w-[80px] aspect-square rounded-3xl border-2 ${index === 0 ? 'border-primary' : 'border-gray-200'} cursor-pointer overflow-hidden`}>
                     <div className="w-full h-full bg-center bg-cover" style={{ backgroundImage: `url("${img}")` }}></div>
                   </div>
                 ))}
@@ -128,7 +128,7 @@ const ProductDetailPage = () => {
             </div>
           </div>
           {/* Product Info Card */}
-          <div className="lg:col-span-7 bg-card-white p-6 shadow-soft space-y-6">
+          <div className="lg:col-span-7 bg-card-white p-6 shadow-soft space-y-6 rounded-[32px]">
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <span className="text-gray-400 text-xs font-medium">SKU: {product.sku || 'N/A'}</span>
@@ -136,7 +136,7 @@ const ProductDetailPage = () => {
               <h1 className="text-2xl font-bold tracking-tight text-heading-text">{product.name}</h1>
 
             </div>
-            <div className="p-5 bg-[#fafafa] rounded">
+            <div className="p-5 bg-[#fafafa] rounded-2xl">
               <div className="flex items-center gap-4">
                 {product.oldPrice && <span className="text-gray-400 line-through text-sm">{formatCurrency(product.oldPrice)}</span>}
                 <span className="text-3xl font-bold text-primary">{formatCurrency(product.price)}</span>
@@ -147,7 +147,7 @@ const ProductDetailPage = () => {
             {/* Quantity Selector */}
             <div className="flex items-center gap-6 py-2">
               <span className="text-sm font-medium text-gray-600">Số lượng</span>
-              <div className="flex items-center border border-gray-200 rounded-sm">
+              <div className="flex items-center border border-gray-200 rounded-2xl overflow-hidden">
                 <button
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
                   disabled={quantity <= 1 || currentStock === 0}
@@ -191,16 +191,16 @@ const ProductDetailPage = () => {
                 <button
                   onClick={handleAddToCart}
                   disabled={currentStock === 0}
-                  className={`flex-1 border border-primary text-primary bg-[#ffeeea] font-bold py-3.5 rounded-sm flex items-center justify-center gap-2 transition-all ${currentStock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/10'}`}
+                  className={`flex-1 border border-primary text-primary bg-[#ffeeea] font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 transition-all ${currentStock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/10'}`}
                   type="button"
                 >
                   <span className="material-symbols-outlined">add_shopping_cart</span>
-                  Thêm vào giỏ
+                  Thêm vào giỏ hàng
                 </button>
                 <button
                   onClick={handleBuyNow}
                   disabled={currentStock === 0}
-                  className={`flex-1 bg-primary text-white font-bold py-3.5 rounded-sm flex items-center justify-center gap-2 transition-all ${currentStock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/90'}`}
+                  className={`flex-1 bg-primary text-white font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 transition-all ${currentStock === 0 ? 'opacity-50 cursor-not-allowed' : 'hover:bg-primary/90'}`}
                 >
                   Mua ngay
                 </button>

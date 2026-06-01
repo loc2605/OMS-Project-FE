@@ -27,27 +27,27 @@ const CartPage = () => {
 
         {/* Cart Items */}
         {cartItems.length === 0 ? (
-          <div className="bg-white rounded-sm shadow-sm p-20 text-center">
+          <div className="bg-white rounded-xl shadow-sm p-20 text-center">
             <div className="size-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="material-symbols-outlined text-gray-300 text-5xl">shopping_cart</span>
             </div>
             <p className="text-gray-500 mb-6">Giỏ hàng của bạn đang trống</p>
             <button
               onClick={() => navigate('/')}
-              className="bg-primary text-white px-10 py-2.5 rounded-sm hover:bg-primary/90 transition-all font-medium"
+              className="bg-primary text-white px-10 py-2.5 rounded-xl hover:bg-primary/90 transition-all font-medium"
             >
               Tiếp tục mua sắm
             </button>
           </div>
         ) : (
-          <div className="bg-white rounded-sm shadow-sm mb-4 overflow-hidden">
+          <div className="bg-white rounded-xl shadow-sm mb-4 overflow-hidden">
             {/* Items List */}
             <div className="divide-y divide-gray-50">
               {cartItems.map((item) => (
                 <div key={item.id} className="px-6 py-5 grid grid-cols-12 items-center hover:bg-gray-50/30 transition-colors">
                   <div className="col-span-6 flex gap-4">
                     <div
-                      className="size-20 bg-cover bg-center rounded-sm border border-gray-100 flex-shrink-0"
+                      className="size-20 bg-cover bg-center rounded-xl border border-gray-100 flex-shrink-0"
                       style={{ backgroundImage: `url(${item.imageUrl?.[0] || item.image})` }}
                     />
                     <div className="flex flex-col justify-center">
@@ -60,7 +60,7 @@ const CartPage = () => {
                   </div>
 
                   <div className="col-span-2 flex justify-center">
-                    <div className="flex items-center border border-gray-200 rounded-sm overflow-hidden">
+                    <div className="flex items-center border border-gray-200 rounded-xl overflow-hidden">
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
                         className="size-8 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition-colors border-r border-gray-200"
@@ -110,7 +110,7 @@ const CartPage = () => {
             <div className="flex items-center gap-4 w-full md:w-auto">
               <button
                 onClick={() => navigate('/checkout')}
-                className="flex-1 md:w-52 bg-primary text-white py-3 font-medium text-base hover:bg-primary/90 transition-all rounded-sm shadow-sm"
+                className="flex-1 md:w-52 bg-primary text-white py-3 font-medium text-base hover:bg-primary/90 transition-all rounded-xl shadow-sm"
               >
                 Mua hàng
               </button>

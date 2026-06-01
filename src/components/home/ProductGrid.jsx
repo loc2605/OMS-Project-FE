@@ -121,14 +121,13 @@ const ProductGrid = ({ filters, onCategoriesFetched }) => {
 
   return (
     <div className="flex-1">
-      <div className="flex items-center justify-between mb-2 bg-white/50 p-2 rounded">
-        <div></div>
-        <div className="flex items-center gap-4">
-          <span className="text-sm text-body-text">Sắp xếp theo:</span>
+      <div className="flex items-center justify-end mb-4 bg-white/90 border border-gray-200 rounded-3xl p-4 shadow-sm">
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-gray-600">Sắp xếp theo</span>
           <select 
             value={sortOption}
             onChange={(e) => setSortOption(e.target.value)}
-            className="bg-white border border-primary/40 text-sm min-w-[160px] px-5 py-1.5 rounded focus:ring-1 focus:ring-primary focus:border-primary cursor-pointer transition-all"
+            className="bg-white border border-gray-200 text-sm min-w-[160px] px-4 py-2 rounded-2xl focus:ring-1 focus:ring-primary/20 focus:border-primary/70 cursor-pointer transition-all"
           >
             <option value="newest">Mới Nhất</option>
             <option value="priceAsc">Giá Thấp Nhất</option>
@@ -165,7 +164,7 @@ const ProductGrid = ({ filters, onCategoriesFetched }) => {
               <button
                 key={idx}
                 onClick={() => handlePageChange(idx)}
-                className={`w-8 h-8 flex items-center justify-center rounded transition-colors ${pagination.page === idx ? 'bg-primary text-white font-medium' : 'hover:bg-primary/10'}`}
+                className={`w-9 h-9 flex items-center justify-center rounded-full transition-colors ${pagination.page === idx ? 'bg-primary text-white font-semibold shadow-sm' : 'text-gray-600 hover:bg-primary/10'}`}
               >
                 {idx + 1}
               </button>

@@ -83,13 +83,13 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
 
   return (
     <aside 
-      className="w-48 shrink-0 hidden md:block self-start overflow-y-auto scrollbar-hide pb-4"
-      style={{ position: 'sticky', top: '112px', maxHeight: 'calc(100vh - 140px)', zIndex: 10 }}
+      className="w-full md:w-72 shrink-0 hidden md:block self-start overflow-y-auto scrollbar-hide pb-4"
+      style={{ position: 'sticky', top: '72px', maxHeight: 'calc(100vh - 88px)', zIndex: 10 }}
     >
-      <div className="space-y-4">
-        <div className="space-y-2">
+      <div className="space-y-6 bg-white rounded-[32px] border border-gray-100 shadow-sm p-5">
+        <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-[15px] font-bold text-heading uppercase flex items-center gap-1.5 tracking-wider">
+            <h3 className="text-[15px] font-semibold text-gray-900 flex items-center gap-1.5">
               <span className="material-symbols-outlined text-[20px] text-primary">list</span>
               Danh Mục
             </h3>
@@ -107,7 +107,7 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
               <div key={groupName} className="border-b border-black/5 pb-1 last:border-0">
                 <button
                   onClick={() => setExpandedGroups(prev => ({ ...prev, [groupName]: !prev[groupName] }))}
-                  className="w-full flex items-center justify-between px-2 py-2 text-[15px] font-bold text-heading hover:text-primary transition-colors"
+                  className="w-full flex items-center justify-between px-2 py-2 text-[15px] font-medium text-gray-700 hover:text-primary transition-colors"
                 >
                   {groupName}
                   <span className={`material-symbols-outlined text-[15px] transition-transform ${expandedGroups[groupName] ? 'rotate-180' : ''}`}>
@@ -120,7 +120,7 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
                       <button
                         key={name}
                         onClick={() => onCategoryChange(name)}
-                        className={`w-full text-left px-2 py-1.5 text-[15px] transition-colors rounded ${activeCategory === name ? 'text-primary bg-primary/5 font-bold border border-black' : 'font-semibold text-heading hover:text-primary hover:bg-black/5'}`}
+                        className={`w-full text-left px-3 py-2 text-[15px] transition-colors rounded-2xl ${activeCategory === name ? 'text-primary bg-primary/10 font-semibold border border-primary/20' : 'font-medium text-gray-700 hover:text-primary hover:bg-gray-100'}`}
                       >
                         {name}
                       </button>
@@ -136,7 +136,7 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
                   <div key={name} className="border-b border-black/5 pb-1 last:border-0">
                     <button
                       onClick={() => onCategoryChange(name)}
-                      className={`w-full flex items-center justify-between px-2 py-2 text-[14px] font-bold transition-colors ${activeCategory === name ? 'text-primary' : 'text-heading hover:text-primary'}`}
+                      className={`w-full flex items-center justify-between px-3 py-2 text-[14px] font-medium transition-colors rounded-2xl ${activeCategory === name ? 'text-primary bg-primary/10' : 'text-gray-700 hover:text-primary hover:bg-gray-100'}`}
                     >
                       {name}
                     </button>
@@ -148,11 +148,11 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
         </div>
 
         <div className="space-y-3 pt-3 border-t border-black/5">
-          <h3 className="text-[15px] font-bold text-heading uppercase tracking-wider">Khoảng Giá</h3>
+          <h3 className="text-sm font-semibold text-gray-900">Khoảng Giá</h3>
           <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               <input
-                className="w-full text-sm p-1.5 rounded border border-black/10 focus:ring-1 focus:ring-primary focus:border-primary"
+                className="w-full text-sm p-2 rounded-2xl border border-gray-200 focus:ring-1 focus:ring-primary/20 focus:border-primary outline-none"
                 placeholder="Từ"
                 type="number"
                 value={minPrice}
@@ -160,14 +160,14 @@ const Sidebar = ({ activeCategory, categories, onCategoryChange, onPriceChange, 
               />
               <span className="text-gray-400 text-xs">-</span>
               <input
-                className="w-full text-sm p-1.5 rounded border border-black/10 focus:ring-1 focus:ring-primary focus:border-primary"
+                className="w-full text-sm p-2 rounded-2xl border border-gray-200 focus:ring-1 focus:ring-primary/20 focus:border-primary outline-none"
                 placeholder="Đến"
                 type="number"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
               />
             </div>
-            <button onClick={handleApplyPrice} className="w-full py-1.5 bg-primary text-[15px] font-bold text-white rounded uppercase mt-1 hover:bg-[#d63013] transition-colors">Áp Dụng</button>
+            <button onClick={handleApplyPrice} className="w-full py-2 bg-primary text-[15px] font-semibold text-white rounded-2xl mt-1 hover:bg-[#d63013] transition-colors">Áp Dụng</button>
           </div>
         </div>
       </div>
