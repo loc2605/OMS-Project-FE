@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import authApi from '../../api/authApi';
 
 const RegisterForm = () => {
@@ -11,8 +11,8 @@ const RegisterForm = () => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [agreement, setAgreement] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
 
   const hasMinLength = password.length >= 6;
   const hasUppercase = /[A-Z]/.test(password);
@@ -20,36 +20,77 @@ const RegisterForm = () => {
   const hasLowercase = /[a-z]/.test(password);
   const isPasswordValid = hasMinLength && hasUppercase && hasNumber && hasLowercase;
 
+  const isUsernameValid = (value) => /^[a-z0-9]{3,20}$/.test(value);
+  const isEmailValid = (value) => /^[a-zA-Z0-9._%+-]+@gmail\.com$/i.test(value.trim());
+  const isPhoneValid = (value) => /^0\d{9}$/.test(value.replace(/\D/g, ''));
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitted(true);
-    if (!isPasswordValid) {
-      alert("Mật khẩu không đáp ứng các yêu cầu tối thiểu");
+
+    const allFieldsEmpty = !username.trim() && !fullName.trim() && !email.trim() && !phone.trim() && !password && !confirmPassword && !agreement;
+    if (allFieldsEmpty) {
+      alert('Vui lòng điền đầy đủ thông tin');
       return;
     }
-    if (password === confirmPassword && fullName && email && password) {
-      try {
-        const payload = {
-          username,
-          password,
-          confirmPassword,
-          email,
-          fullName,
-          phone
-        };
-        const response = await authApi.register(payload);
-        if (response.success) {
-          navigate('/login');
-        } else {
-          alert(response.message || 'Đăng ký thất bại');
-        }
-      } catch (error) {
-        alert(error.message || 'Đăng ký thất bại');
+
+    const errors = [];
+    if (!username.trim()) {
+      errors.push('Tên đăng nhập là bắt buộc.');
+    } else if (!isUsernameValid(username)) {
+      errors.push('Tên đăng nhập chỉ gồm chữ thường và số, không có dấu cách, độ dài 3-20 ký tự.');
+    }
+    if (!fullName.trim()) {
+      errors.push('Họ và tên là bắt buộc.');
+    }
+    if (!email.trim()) {
+      errors.push('Email là bắt buộc.');
+    } else if (!isEmailValid(email)) {
+      errors.push('Email phải có dạng abc@gmail.com.');
+    }
+    if (!phone.trim()) {
+      errors.push('Số điện thoại là bắt buộc.');
+    } else if (!isPhoneValid(phone)) {
+      errors.push('Số điện thoại phải đủ 10 số và bắt đầu bằng 0.');
+    }
+    if (!password) {
+      errors.push('Mật khẩu là bắt buộc.');
+    }
+    if (!confirmPassword) {
+      errors.push('Xác nhận mật khẩu là bắt buộc.');
+    }
+    if (password && confirmPassword && password !== confirmPassword) {
+      errors.push('Mật khẩu không khớp.');
+    }
+    if (password && !isPasswordValid) {
+      errors.push('Mật khẩu không đáp ứng các yêu cầu tối thiểu.');
+    }
+    if (!agreement) {
+      errors.push('Bạn cần đồng ý với Điều khoản Dịch vụ và Chính sách Bảo mật.');
+    }
+
+    if (errors.length > 0) {
+      alert(errors[0]);
+      return;
+    }
+
+    try {
+      const payload = {
+        username,
+        password,
+        confirmPassword,
+        email,
+        fullName,
+        phone
+      };
+      const response = await authApi.register(payload);
+      if (response.success) {
+        navigate('/login');
+      } else {
+        alert(response.message || 'Đăng ký thất bại');
       }
-    } else if (password !== confirmPassword) {
-      alert("Mật khẩu không khớp");
-    } else {
-      alert("Vui lòng điền đầy đủ thông tin");
+    } catch (error) {
+      alert(error.message || 'Đăng ký thất bại');
     }
   };
 
@@ -104,17 +145,12 @@ const RegisterForm = () => {
           <div className="flex flex-col gap-1.5">
             <label className="text-sm font-semibold text-gray-700 dark:text-gray-300">Xác nhận mật khẩu</label>
             <input 
-              className={`w-full h-12 px-4 rounded-lg border bg-white dark:bg-gray-900 focus:ring-2 outline-none transition-all dark:text-white ${isSubmitted && confirmPassword && password !== confirmPassword ? 'border-red-400 focus:ring-red-200 focus:border-red-500' : 'border-gray-200 dark:border-gray-700 focus:ring-primary/20 focus:border-primary'}`} 
+              className="w-full h-12 px-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all dark:text-white" 
               placeholder="••••••••" 
               type="password" 
               value={confirmPassword} 
               onChange={(e) => setConfirmPassword(e.target.value)} 
             />
-            {isSubmitted && confirmPassword && password !== confirmPassword && (
-              <p className="text-[11px] text-red-500 font-bold mt-1.5">
-                Mật khẩu không khớp
-              </p>
-            )}
           </div>
         </div>
 
@@ -141,7 +177,12 @@ const RegisterForm = () => {
       <div className="pt-1">
         <label className="flex items-start gap-2 cursor-pointer group">
           <div className="relative flex items-center h-4">
-            <input className="peer h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary mt-0.5" type="checkbox" />
+            <input
+              className="peer h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary mt-0.5"
+              type="checkbox"
+              checked={agreement}
+              onChange={(e) => setAgreement(e.target.checked)}
+            />
           </div>
           <span className="text-xs text-gray-600 dark:text-gray-400 leading-tight">
             Tôi đồng ý với <Link className="text-primary font-bold hover:underline" to="/terms">Điều khoản Dịch vụ</Link> và <Link className="text-primary font-bold hover:underline" to="/privacy">Chính sách Bảo mật</Link>.

@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext.jsx';
 import Header from '../components/home/Header';
 import { useAuth } from '../contexts/AuthContext';
@@ -129,9 +129,20 @@ const CustomSelect = ({ label, options, value, onChange, disabled, placeholder, 
 };
 
 const CheckoutPage = () => {
+  const location = useLocation();
   const { cartItems, cartCount, cartTotal, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const buyNowItem = location.state?.buyNowItem
+    ? {
+        ...location.state.buyNowItem,
+        quantity: Number(location.state.buyNowItem.quantity) || 1,
+      }
+    : null;
+  const checkoutItems = buyNowItem ? [buyNowItem] : cartItems;
+  const checkoutTotal = buyNowItem
+    ? (Number(buyNowItem.price || 0) * Number(buyNowItem.quantity || 1))
+    : cartTotal;
 
   const [selectedPayment, setSelectedPayment] = useState('COD');
 
@@ -168,7 +179,7 @@ const CheckoutPage = () => {
 
 
 
-  const totalAmount = cartTotal + shippingFee;
+  const totalAmount = checkoutTotal + shippingFee;
 
   const [isPolling, setIsPolling] = useState(false);
   const [pollStatus, setPollStatus] = useState('PENDING'); // PENDING, CONFIRMED, CANCELLED
@@ -187,6 +198,20 @@ const CheckoutPage = () => {
   const [activeOrderId, setActiveOrderId] = useState(null);
   const openedPaymentUrlRef = useRef(null);
 
+  const selectDefaultAddress = (items) => {
+    if (!items || items.length === 0) return null;
+    return items.find((item) => item.isDefault) || items[0] || null;
+  };
+
+  const sortAddressesByDefault = (items) => {
+    if (!items || items.length === 0) return [];
+    return [...items].sort((a, b) => {
+      const aDefault = a?.isDefault ? 0 : 1;
+      const bDefault = b?.isDefault ? 0 : 1;
+      return aDefault - bDefault;
+    });
+  };
+
   useEffect(() => {
     const fetchProvinces = async () => {
       try {
@@ -199,6 +224,14 @@ const CheckoutPage = () => {
     };
     fetchProvinces();
   }, []);
+
+  useEffect(() => {
+    if (addresses.length > 0) {
+      const defaultAddr = selectDefaultAddress(addresses);
+      setSelectedAddress(defaultAddr);
+      setTempSelectedAddress(defaultAddr);
+    }
+  }, [addresses]);
 
   const startPolling = (orderId, paymentMethod) => {
     setIsPolling(true);
@@ -233,6 +266,13 @@ const CheckoutPage = () => {
             if (order.status === 'PAYMENT_PENDING' && order.paymentUrl) {
               clearInterval(pollInterval);
               window.location.href = order.paymentUrl;
+            } else if (order.status === 'CONFIRMED') {
+              clearInterval(pollInterval);
+              if (!buyNowItem) {
+                clearCart();
+              }
+              setPollStatus('CONFIRMED');
+              setPollMessage('Đơn hàng của bạn đã được đặt thành công!');
             } else if (order.status === 'CANCELLED') {
               clearInterval(pollInterval);
               setPollStatus('CANCELLED');
@@ -246,7 +286,9 @@ const CheckoutPage = () => {
               setPollMessage(order.errorMessage || 'Đơn hàng bị hủy do lỗi tồn kho.');
             } else if (order.status === 'CONFIRMED') {
               clearInterval(pollInterval);
-              clearCart();
+              if (!buyNowItem) {
+                clearCart();
+              }
               setPollStatus('CONFIRMED');
               setPollMessage('Đơn hàng của bạn đã được đặt thành công!');
             }
@@ -314,7 +356,7 @@ const CheckoutPage = () => {
 
 
   const handlePlaceOrder = async () => {
-    if (cartItems.length === 0) {
+    if (checkoutItems.length === 0) {
       alert('Giỏ hàng của bạn đang trống.');
       return;
     }
@@ -328,7 +370,7 @@ const CheckoutPage = () => {
       setLoading(true);
       const orderData = {
         paymentMethod: selectedPayment,
-        orderItems: cartItems.map(item => ({
+        orderItems: checkoutItems.map(item => ({
           productId: item.id,
           quantity: item.quantity
         })),
@@ -438,17 +480,18 @@ const CheckoutPage = () => {
             </div>
 
             <div className="p-8 max-h-[500px] overflow-y-auto space-y-5">
-              {addresses.map((addr, index) => {
+              {sortAddressesByDefault(addresses).map((addr, index) => {
                 const isSelected = tempSelectedAddress
                   ? (tempSelectedAddress.id === addr.id && addr.id) ||
                   (tempSelectedAddress.street === addr.street && tempSelectedAddress.city === addr.city && tempSelectedAddress.ward === addr.ward)
                   : false;
 
+                const isDefault = addr.isDefault || false;
+
                 return (
                   <label
                     key={addr.id || index}
-                    className={`block p-4 border rounded-sm cursor-pointer transition-all hover:bg-gray-50 ${isSelected ? 'border-primary bg-primary/[0.02]' : 'border-gray-100'
-                      }`}
+                    className={`block p-4 border rounded-xl cursor-pointer transition-all shadow-sm ${isSelected ? 'border-primary bg-primary/[0.06] ring-1 ring-primary/20' : 'border-gray-100 bg-white hover:border-primary/30 hover:bg-primary/[0.03]'} `}
                   >
                     <div className="flex gap-3">
                       <input
@@ -461,19 +504,18 @@ const CheckoutPage = () => {
                         }}
                       />
                       <div className="flex-1 text-sm">
-                        <div className="flex items-center gap-3 mb-1">
+                        <div className="flex flex-wrap items-center gap-3 mb-2">
                           <span className="font-bold text-gray-800">{profile?.fullname || user?.fullName}</span>
                           <span className="text-gray-500">{profile?.phone || user?.phone}</span>
+                          {isDefault && (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-primary bg-primary/10 border border-primary rounded-full px-2 py-0.5">
+                              <span className="material-symbols-outlined text-[14px]">check_circle</span>
+                              MẶC ĐỊNH
+                            </span>
+                          )}
                         </div>
-                        <div className="text-gray-600 mb-1">
-                          {addr.street}
-                        </div>
-                        <div className="text-gray-600">
-                          {addr.ward}, {addr.district}, {addr.city}
-                        </div>
-                        {addr.isDefault && (
-                          <span className="inline-block mt-2 border border-primary text-primary text-[10px] px-1 py-0.5 rounded-sm">Mặc định</span>
-                        )}
+                        <div className="text-gray-600 mb-1 font-medium">{addr.street}</div>
+                        <div className="text-gray-600">{addr.ward}, {addr.district}, {addr.city}</div>
                       </div>
                     </div>
                   </label>
@@ -623,8 +665,15 @@ const CheckoutPage = () => {
                   </div>
                   <div className="text-gray-600">
                     {selectedAddress.street}, {selectedAddress.ward}, {selectedAddress.city}
-                    {selectedAddress.isDefault && (
-                      <span className="ml-3 border border-primary text-primary text-[10px] px-1 py-0.5 rounded-sm">Mặc định</span>
+                    {selectedAddress.isDefault ? (
+                      <span className="ml-3 inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-primary">
+                        <span className="material-symbols-outlined text-[14px]">check_circle</span>
+                        Địa chỉ mặc định
+                      </span>
+                    ) : (
+                      <span className="ml-3 inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-400">
+                        Địa chỉ được chọn
+                      </span>
                     )}
                   </div>
                 </div>
@@ -663,7 +712,7 @@ const CheckoutPage = () => {
           </div>
 
           <div className="divide-y divide-gray-50">
-            {cartItems.map((item) => (
+            {checkoutItems.map((item) => (
               <div key={item.id} className="grid grid-cols-12 p-4 items-center hover:bg-gray-50/50 transition-colors">
                 <div className="col-span-6 flex gap-3">
                   <div
@@ -716,7 +765,7 @@ const CheckoutPage = () => {
             <div className="flex flex-col gap-3 text-sm text-gray-600">
               <div className="flex justify-between items-center">
                 <span>Tổng tiền hàng:</span>
-                <span className="text-gray-800">{formatCurrency(cartTotal)}</span>
+                <span className="text-gray-800">{formatCurrency(checkoutTotal)}</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>Phí vận chuyển:</span>
@@ -730,7 +779,7 @@ const CheckoutPage = () => {
               <div className="w-full mt-2">
                 <button
                   type="button"
-                  disabled={loading || cartItems.length === 0}
+                  disabled={loading || checkoutItems.length === 0}
                   onClick={handlePlaceOrder}
                   className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 rounded-sm text-base shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >

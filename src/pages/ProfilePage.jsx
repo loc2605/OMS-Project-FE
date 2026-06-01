@@ -11,6 +11,7 @@ const ProfilePage = () => {
   const [addresses, setAddresses] = useState([]);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [showAddressListModal, setShowAddressListModal] = useState(false);
 
   const [editForm, setEditForm] = useState({
@@ -29,6 +30,10 @@ const ProfilePage = () => {
     setSaveError('');
     setAvatarFile(null);
     setAvatarPreview('');
+  };
+
+  const closeAvatarModal = () => {
+    setShowAvatarModal(false);
   };
 
   const handleStartEditProfile = () => {
@@ -121,6 +126,25 @@ const ProfilePage = () => {
   const defaultAvatar = 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y';
   const currentAvatar = profile?.avatarUrl || user?.avatarUrl || profile?.avatar || user?.avatar || defaultAvatar;
   const userAvatar = avatarPreview || currentAvatar;
+
+  const getAddressId = (addr) => addr?.id || addr?._id || addr?.addressId;
+  const normalizeAddress = (addr) => ({
+    ...addr,
+    isDefault: !!(addr?.isDefault || addr?.default)
+  });
+  const normalizeAddresses = (list) => (Array.isArray(list) ? list.map(normalizeAddress) : []);
+  const sortAddressesByDefault = (list) => {
+    if (!Array.isArray(list)) return [];
+    return [...list].sort((a, b) => {
+      const aDefault = a?.isDefault ? 0 : 1;
+      const bDefault = b?.isDefault ? 0 : 1;
+      return aDefault - bDefault;
+    });
+  };
+  const formatAddressLine = (addr) => {
+    if (!addr) return '';
+    return [addr.street, addr.ward, addr.district, addr.city].filter(Boolean).join(', ');
+  };
   const displayName = profile?.fullname || profile?.fullName || user?.fullName || 'User';
 
   useEffect(() => {
@@ -138,6 +162,7 @@ const ProfilePage = () => {
     const fetchData = async () => {
       try {
         const profileRes = await profileApi.getProfile();
+        console.log('Profile fetch response:', profileRes);
         if (profileRes.success) {
           setProfile(profileRes.result);
           // Sync auth context / session so Header and other components show updated avatar
@@ -148,7 +173,10 @@ const ProfilePage = () => {
           } catch (_) {}
           // If addresses are included in profile result, use them
           if (profileRes.result.addresses) {
-            setAddresses(profileRes.result.addresses);
+            console.log('Profile addresses loaded:', profileRes.result.addresses);
+            setAddresses(sortAddressesByDefault(normalizeAddresses(profileRes.result.addresses)));
+          } else {
+            console.log('Profile response has no addresses field');
           }
         }
       } catch (error) {
@@ -162,12 +190,12 @@ const ProfilePage = () => {
     e.preventDefault();
     try {
       const { street, ward, city, isDefault } = addressForm;
-      const res = await profileApi.addAddress({ street, ward, city, isDefault });
+      const res = await profileApi.addAddress({ street, ward, city, isDefault, default: isDefault });
       if (res.success) {
         // Fetch lại toàn bộ profile để đảm bảo dữ liệu (bao gồm ID địa chỉ mới) đồng bộ với Server
         const profileRes = await profileApi.getProfile();
         if (profileRes.success && profileRes.result.addresses) {
-          setAddresses(profileRes.result.addresses);
+          setAddresses(sortAddressesByDefault(normalizeAddresses(profileRes.result.addresses)));
         }
         setShowAddressModal(false);
         setAddressForm({
@@ -186,7 +214,7 @@ const ProfilePage = () => {
     try {
       const res = await profileApi.updateAddress(id, updatedData);
       if (res.success) {
-        setAddresses(addresses.map(addr => addr.id === id ? res.result : addr));
+        setAddresses(addresses.map(addr => getAddressId(addr) === id ? res.result : addr));
       }
     } catch (error) {
       alert("Update address failed!");
@@ -194,11 +222,11 @@ const ProfilePage = () => {
   };
 
   const handleDeleteAddress = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this address?")) return;
+    if (!window.confirm("Bạn có muốn xóa địa chỉ này không?")) return;
     try {
       const res = await profileApi.deleteAddress(id);
       if (res.success) {
-        setAddresses(addresses.filter(addr => addr.id !== id));
+        setAddresses(addresses.filter(addr => getAddressId(addr) !== id));
       }
     } catch (error) {
       alert("Delete address failed!");
@@ -206,17 +234,39 @@ const ProfilePage = () => {
   };
 
   const handleSetDefaultAddress = async (id) => {
+    if (!id) {
+      alert('Địa chỉ không hợp lệ. Vui lòng thử lại.');
+      return;
+    }
     try {
+      console.log('Request set default address id:', id);
       const res = await profileApi.setDefaultAddress(id);
+      console.log('Set default address response:', res);
       if (res.success) {
-        // Update all addresses locally: only one is default
-        setAddresses(addresses.map(addr => ({
-          ...addr,
-          isDefault: addr.id === id
-        })));
+        const profileRes = await profileApi.getProfile();
+        console.log('Profile after set default response:', profileRes);
+        if (profileRes.success) {
+          setProfile(profileRes.result);
+          const updatedAddresses = sortAddressesByDefault(normalizeAddresses(profileRes.result.addresses || []));
+          setAddresses(updatedAddresses);
+          if (updatedAddresses.length > 0) {
+            console.log('Updated address list:', updatedAddresses);
+            const defaultAddr = updatedAddresses.find(addr => addr.isDefault);
+            console.log('Default address after update:', defaultAddr);
+          }
+          alert('Đã cập nhật địa chỉ mặc định thành công.');
+        } else {
+          setAddresses(addresses.map(addr => ({
+            ...addr,
+            isDefault: getAddressId(addr) === id
+          })));
+        }
+      } else {
+        alert(res.message || 'Không thể đặt địa chỉ mặc định.');
       }
     } catch (error) {
-      alert("Set default address failed!");
+      console.error('Set default address error:', error);
+      alert('Đặt địa chỉ mặc định thất bại. Vui lòng thử lại.');
     }
   };
 
@@ -319,11 +369,17 @@ const ProfilePage = () => {
         {/* Top Profile Summary Card */}
         <div className="bg-white rounded-3xl shadow-xl shadow-gray-200/50 p-5 md:p-6 mb-6 flex flex-col md:flex-row items-center md:items-end gap-6 border border-gray-50">
           <div className="relative group">
-            <img 
-              src={userAvatar} 
-              className="w-28 h-28 md:w-32 md:h-32 rounded-full border-[4px] md:border-[6px] border-white object-cover shadow-lg bg-white" 
-              alt="User Avatar" 
-            />
+            <button
+              type="button"
+              onClick={() => setShowAvatarModal(true)}
+              className="inline-block rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary"
+            >
+              <img 
+                src={userAvatar} 
+                className="w-28 h-28 md:w-32 md:h-32 rounded-full border-[4px] md:border-[6px] border-white object-cover shadow-lg bg-white" 
+                alt="User Avatar" 
+              />
+            </button>
             {/* Avatar change button removed from header — input moved into edit modal */}
           </div>
           <div className="flex-1 text-center md:text-left mb-2">
@@ -439,7 +495,7 @@ const ProfilePage = () => {
                     <p className="text-sm text-gray-600 leading-relaxed">
                       {(() => {
                         const defaultAddr = addresses.find(a => a.isDefault) || addresses[0];
-                        return defaultAddr ? `${defaultAddr.street}, ${defaultAddr.ward}, ${defaultAddr.city}` : '';
+                        return defaultAddr ? formatAddressLine(defaultAddr) : '';
                       })()}
                     </p>
                   </div>
@@ -451,6 +507,24 @@ const ProfilePage = () => {
         </div>
       </main>
 
+      {showAvatarModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" onClick={closeAvatarModal}>
+          <div className="relative max-w-full max-h-full rounded-3xl overflow-hidden bg-black" onClick={(e) => e.stopPropagation()}>
+            <button
+              type="button"
+              onClick={closeAvatarModal}
+              className="absolute top-4 right-4 z-20 rounded-full bg-white/90 text-gray-900 p-2 shadow-lg hover:bg-white transition"
+            >
+              <span className="material-symbols-outlined">close</span>
+            </button>
+            <img
+              src={userAvatar}
+              alt="Avatar enlarged"
+              className="max-w-full max-h-[90vh] object-contain"
+            />
+          </div>
+        </div>
+      )}
       <nav className="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 bg-white border-t border-gray-100 shadow-lg">
         <button type="button" className="flex flex-col items-center justify-center text-[#666666] px-4 py-1">
           <span className="material-symbols-outlined">home</span>
@@ -483,11 +557,17 @@ const ProfilePage = () => {
             <div className="p-6 space-y-5">
               <div className="flex flex-col items-center gap-3 md:flex-row md:items-start">
                 <div className="relative">
-                  <img
-                    src={avatarPreview || currentAvatar}
-                    alt="Avatar preview"
-                    className="w-28 h-28 rounded-full object-cover border border-gray-200 shadow-sm"
-                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowAvatarModal(true)}
+                    className="inline-block rounded-full overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    <img
+                      src={avatarPreview || currentAvatar}
+                      alt="Avatar preview"
+                      className="w-28 h-28 rounded-full object-cover border border-gray-200 shadow-sm"
+                    />
+                  </button>
                     <input
                       ref={avatarInputRef}
                       type="file"
@@ -601,12 +681,12 @@ const ProfilePage = () => {
               {addresses.length === 0 ? (
                 <div className="text-center text-gray-500 py-4">Không tìm thấy địa chỉ nào.</div>
               ) : (
-                addresses.map((addr, index) => {
+                sortAddressesByDefault(addresses).map((addr, index) => {
                   if (!addr) return null;
                   const isThisDefault = addr.isDefault || (addresses.every(a => !a?.isDefault) && index === 0);
                   return (
                     <div 
-                      key={addr.id || index} 
+                      key={getAddressId(addr) || index} 
                       className={`p-5 border rounded-xl flex flex-col md:flex-row justify-between gap-4 transition-all shadow-sm ${
                         isThisDefault 
                           ? 'border-primary bg-primary/[0.02] ring-1 ring-primary/20' 
@@ -624,17 +704,16 @@ const ProfilePage = () => {
                           )}
                         </div>
                         <div className="text-sm text-[#666666] leading-relaxed font-medium">
-                          {addr?.street}, {addr?.ward}, {addr?.city}
+                          {formatAddressLine(addr)}
                         </div>
                       </div>
                       <div className="flex flex-col items-end justify-between gap-3">
                         <div className="flex gap-4">
-                          <button className="text-blue-500 text-sm font-medium hover:text-blue-600 transition-colors" onClick={() => alert("Tính năng chỉnh sửa sẽ sớm được hỗ trợ!")}>Chỉnh sửa</button>
-                          <button className="text-red-500 text-sm font-medium hover:text-red-600 transition-colors" onClick={() => handleDeleteAddress(addr.id)}>Xóa</button>
+                          <button className="text-red-500 text-sm font-medium hover:text-red-600 transition-colors" onClick={() => handleDeleteAddress(getAddressId(addr))}>Xóa</button>
                         </div>
                         {!isThisDefault && (
                           <button
-                            onClick={() => handleSetDefaultAddress(addr.id)}
+                            onClick={() => handleSetDefaultAddress(getAddressId(addr))}
                             className="border border-gray-200 px-3 py-1.5 rounded-[6px] text-xs font-bold text-[#666666] hover:bg-gray-50 transition-colors uppercase tracking-wider"
                           >
                             Thiết lập mặc định

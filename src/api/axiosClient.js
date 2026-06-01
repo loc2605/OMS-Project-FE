@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL: 'http://192.168.10.159:8888/api/v1',
+  baseURL: 'http://192.168.1.243:8888/api/v1',
 });
 
 // Interceptor cho Request
@@ -58,6 +58,15 @@ axiosClient.interceptors.response.use(
   },
   async (error) => {
     const originalRequest = error.config;
+
+    // Xử lý lỗi 403 (Forbidden) - Tài khoản bị khoá
+    if (error.response && error.response.status === 403) {
+      const message = error.response.data?.message || 'Tài khoản của bạn đã bị khoá trên hệ thống';
+      window.dispatchEvent(new Event('app-logout'));
+      alert(message);
+      window.location.href = '/login';
+      return Promise.reject(error.response.data || { message });
+    }
 
     // Xử lý lỗi 401 (Unauthorized) - Thử refresh token
     if (error.response && error.response.status === 401 && !originalRequest._retry) {

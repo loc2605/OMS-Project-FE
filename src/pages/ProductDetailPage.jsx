@@ -65,8 +65,7 @@ const ProductDetailPage = () => {
       navigate('/login');
       return;
     }
-    addToCart(product, quantity);
-    navigate('/cart');
+    navigate('/checkout', { state: { buyNowItem: { ...product, quantity } } });
   };
 
   if (loading) {

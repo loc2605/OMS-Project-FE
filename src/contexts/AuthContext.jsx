@@ -101,7 +101,20 @@ export const AuthProvider = ({ children }) => {
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('refreshToken');
     sessionStorage.removeItem('user');
+    sessionStorage.removeItem('accountId');
+    sessionStorage.removeItem('userRole');
   };
+
+  useEffect(() => {
+    const handleAppLogout = () => {
+      logout();
+    };
+
+    window.addEventListener('app-logout', handleAppLogout);
+    return () => {
+      window.removeEventListener('app-logout', handleAppLogout);
+    };
+  }, []);
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
