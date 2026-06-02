@@ -1,7 +1,8 @@
 import axios from 'axios';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://192.168.1.243:8888/api/v1';
 const axiosClient = axios.create({
-  baseURL: 'http://192.168.1.243:8888/api/v1',
+  baseURL: API_BASE_URL,
 });
 
 // Interceptor cho Request
@@ -76,7 +77,8 @@ axiosClient.interceptors.response.use(
         const refreshToken = sessionStorage.getItem('refreshToken');
         if (refreshToken) {
           // Gọi API refresh token (sử dụng axios gốc để tránh interceptor lặp vô tận nếu refresh cũng lỗi 401)
-          const res = await axios.post('http://localhost:8080/api/v1/auth/refresh', { refreshToken });
+          const refreshUrl = `${API_BASE_URL.replace(/\/$/, '')}/auth/refresh`;
+          const res = await axios.post(refreshUrl, { refreshToken });
 
           if (res.data && res.data.success) {
             const newToken = res.data.result.token;
