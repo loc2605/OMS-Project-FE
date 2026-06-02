@@ -676,14 +676,10 @@ const CheckoutPage = () => {
                   </div>
                   <div className="text-gray-600">
                     {formatAddressLine(selectedAddress)}
-                    {selectedAddress.isDefault ? (
+                    {selectedAddress.isDefault && (
                       <span className="ml-3 inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-primary">
                         <span className="material-symbols-outlined text-[14px]">check_circle</span>
                         Địa chỉ mặc định
-                      </span>
-                    ) : (
-                      <span className="ml-3 inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-gray-400">
-                        Địa chỉ được chọn
                       </span>
                     )}
                   </div>
